@@ -377,6 +377,8 @@ export default function ChatFlyout() {
           aria-label="Golden Wings Chatbot"
           role="dialog"
           aria-modal="false"
+          onWheel={(event) => event.stopPropagation()}
+          onTouchMove={(event) => event.stopPropagation()}
         >
           {/* Header */}
           <div className="chat-flyout__header">
@@ -417,7 +419,13 @@ export default function ChatFlyout() {
           </div>
 
           {/* Messages Area */}
-          <div className="chat-flyout__messages" tabIndex={0} aria-live="polite">
+          <div
+            className="chat-flyout__messages"
+            tabIndex={0}
+            aria-live="polite"
+            onWheel={(event) => event.stopPropagation()}
+            onTouchMove={(event) => event.stopPropagation()}
+          >
             <div className="chat-flyout__security-badge">
               <Plane size={13} className="chat-flyout__security-icon" />
               <span>FAA & EASA Certified Aerospace Support</span>
