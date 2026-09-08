@@ -13,7 +13,9 @@ const loaderImages = [
 ]
 
 const BLUE_HOLD = 140
-const LOADER_DURATION = 2800
+// LOADER_DURATION original con stack de tarjetas: 2800ms
+// const LOADER_DURATION_WITH_IMAGES = 2800
+const LOADER_DURATION = 2050
 const FIRST_IMAGE_TIMEOUT = 650
 const SCROLL_KEYS = new Set([' ', 'ArrowDown', 'ArrowUp', 'PageDown', 'PageUp', 'Home', 'End'])
 const SCROLL_STORAGE_PREFIX = 'golden-wings:scroll:'
@@ -26,13 +28,11 @@ const readSavedScroll = () => {
 }
 
 function PageLoader() {
-  const isLegalRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/legal')
-  if (isLegalRoute) return null
-
   const [isDone, setIsDone] = useState(false)
   const [isReady, setIsReady] = useState(false)
   const scrollYRef = useRef(0)
   const unlockedRef = useRef(false)
+  const isLegalRoute = typeof window !== 'undefined' && window.location.pathname.startsWith('/legal')
 
   useLayoutEffect(() => {
     if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual'
@@ -168,10 +168,14 @@ function PageLoader() {
     }
   }, [])
 
-  if (isDone) return null
+  if (isDone || isLegalRoute) return null
 
   return (
     <div className={`page-loader${isReady ? ' page-loader--ready' : ''}`} aria-label="Loading Golden Wings" role="status">
+      {/*
+      // =========================================================================
+      // FASE 1: STACK DE TARJETAS (Comentado: solo la primera parte ya no)
+      // =========================================================================
       <div className="page-loader__stack">
         {loaderImages.map((image, index) => (
           <figure className={`page-loader__card page-loader__card--${index + 1}`} key={image.src}>
@@ -185,23 +189,34 @@ function PageLoader() {
           </figure>
         ))}
       </div>
+      */}
+
+      {/* FASE 2: LOGO CON SU ANIMACIÓN ENCIMA Y SLOGAN DEBAJO */}
       <div className="page-loader__phase-two" aria-hidden="true">
-        <div
-          className="page-loader__logo-mask"
-          style={{
-            maskImage: `url(${eagleLogo})`,
-            WebkitMaskImage: `url(${eagleLogo})`,
-          }}
-        >
-          {loaderImages.map((image, index) => (
-            <span
-              className={`page-loader__logo-frame page-loader__logo-frame--${index + 1}`}
-              key={`logo-${image.src}`}
-              style={{ backgroundImage: `url(${image.src})` }}
-            />
-          ))}
+        {/* LOGO CON SU ANIMACIÓN COMO ANTES (Máscara con fotos en silueta + Águila dorada) */}
+        <div className="page-loader__logo-lockup">
+          <div
+            className="page-loader__logo-mask"
+            style={{
+              maskImage: `url(${eagleLogo})`,
+              WebkitMaskImage: `url(${eagleLogo})`,
+            }}
+          >
+            {loaderImages.map((image, index) => (
+              <span
+                className={`page-loader__logo-frame page-loader__logo-frame--${index + 1}`}
+                key={`logo-${image.src}`}
+                style={{ backgroundImage: `url(${image.src})` }}
+              />
+            ))}
+          </div>
+          <img className="page-loader__logo-gold" src={eagleLogo} alt="Golden Wings" />
         </div>
-        <img className="page-loader__logo-gold" src={eagleLogo} alt="" />
+
+        {/* SLOGAN JUSTO DEBAJO DEL LOGO */}
+        <div className="page-loader__slogan">
+          <span>WE HAVE THE PART YOU ARE LOOKING FOR</span>
+        </div>
       </div>
     </div>
   )

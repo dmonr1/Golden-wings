@@ -6,7 +6,7 @@ import AtmosphericClouds from './AtmosphericClouds.jsx'
 import AeroRadarGrid from './AeroRadarGrid.jsx'
 import GlobalNetworkMap from './GlobalNetworkMap.jsx'
 import RunwayBeaconGraphic from './RunwayBeaconGraphic.jsx'
-import avion from '../assets/avion.jpg'
+import lostDeals from '../assets/lost deals.jpg'
 
 function PageIntro({
   eyebrow,
@@ -228,7 +228,7 @@ function PageIntro({
       {theme === 'runway' && <RunwayBeaconGraphic />}
       {theme === 'contact-hero' && (
         <div className="page-intro__parallax-bg" aria-hidden="true">
-          <img src={avion} alt="" className="page-intro__parallax-img" />
+          <img src={lostDeals} alt="" className="page-intro__parallax-img" />
         </div>
       )}
 

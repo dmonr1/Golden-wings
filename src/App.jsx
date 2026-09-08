@@ -12,6 +12,8 @@ import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Legal from './pages/Legal.jsx'
 import CookieBanner from './components/CookieBanner.jsx'
+import BackToTop from './components/BackToTop.jsx'
+import ChatFlyout from './components/ChatFlyout.jsx'
 import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -112,6 +114,8 @@ function App() {
         <Route path="/legal" element={<Legal />} />
       </Routes>
       {!isLegal && <Footer />}
+      {!isLegal && <BackToTop />}
+      {!isLegal && <ChatFlyout />}
       <CookieBanner />
     </>
   )

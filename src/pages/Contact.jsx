@@ -10,15 +10,19 @@ import {
   CheckCircle2,
   Search,
   ArrowRight,
-  ArrowUpRight
+  ArrowUpRight,
+  Briefcase
 } from 'lucide-react'
 import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
+import { submitContactForm } from '../services/contactForm.js'
 
 function Contact() {
   const layoutRef = useRef(null)
   const entitiesRef = useRef(null)
   const [submitted, setSubmitted] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
+  const [submitError, setSubmitError] = useState('')
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -31,19 +35,19 @@ function Contact() {
     setFormData((prev) => ({ ...prev, [name]: value }))
   }
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault()
-    setSubmitted(true)
-    const subject = encodeURIComponent(
-      `RFQ Inquiry: Part #${formData.partNumber || 'General'} - ${formData.name || 'Client'}`
-    )
-    const body = encodeURIComponent(
-      `Name: ${formData.name}\n` +
-      `Email: ${formData.email}\n` +
-      `Part Number: ${formData.partNumber}\n\n` +
-      `Request / Specifications:\n${formData.request}`
-    )
-    window.location.href = `mailto:sales@goldenwingsinternational.net?subject=${subject}&body=${body}`
+    setIsSubmitting(true)
+    setSubmitError('')
+
+    try {
+      await submitContactForm(formData)
+      setSubmitted(true)
+    } catch (error) {
+      setSubmitError(error.message)
+    } finally {
+      setIsSubmitting(false)
+    }
   }
 
   useLayoutEffect(() => {
@@ -191,6 +195,7 @@ function Contact() {
                       className="contact-submit-btn contact-submit-btn--reset"
                       onClick={() => {
                         setSubmitted(false)
+                        setSubmitError('')
                         setFormData({ name: '', email: '', partNumber: '', request: '' })
                       }}
                     >
@@ -262,8 +267,9 @@ function Contact() {
                     </div>
 
                     <div className="contact-submit-wrap">
-                      <button type="submit" className="contact-submit-btn">
-                        <span>Send RFQ</span>
+                      {submitError && <p className="contact-form-error" role="alert">{submitError}</p>}
+                      <button type="submit" className="contact-submit-btn" disabled={isSubmitting}>
+                        <span>{isSubmitting ? 'Sending...' : 'Send RFQ'}</span>
                         <ArrowRight size={18} aria-hidden="true" />
                       </button>
                     </div>
@@ -320,22 +326,25 @@ function Contact() {
           </div>
 
           <div className="entities-showcase-list">
-            {/* Entity 1: Golden Wings International Peru S.A.C (Solid #005395) - Details Left (30%), Map Right (70%) */}
+            {/* Entity 1: Golden Wings International Peru S.A.C */}
             <article className="entity-card-box entity-card-box--gw">
               <div className="entity-details-pane">
-                <h3 className="entity-showcase-title">Golden Wings International Peru S.A.C</h3>
-                <div className="entity-showcase-meta-group">
-                  <p className="entity-showcase-address">
-                    <MapPin size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>MZ K LT 21, GRUPO 5, ASENT H. NUEVO PROGRESO, VILLA MARÍA DEL TRIUNFO, LIMA, PERÚ</span>
-                  </p>
-                  <p className="entity-showcase-data-item">
-                    <FileText size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>RUC: 20614040832</span>
-                  </p>
-                </div>
-                <div className="entity-showcase-role">
-                  <span>Direct Aviation Sourcing &amp; Customer Support</span>
+                <div>
+                  <h3 className="entity-showcase-title">Golden Wings International Peru S.A.C</h3>
+                  <div className="entity-showcase-meta-group">
+                    <div className="entity-info-row">
+                      <Briefcase size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Direct Aviation Sourcing &amp; Customer Support</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Mz. K Lt. 21, Grupo 5, Asent. H. Nuevo Progreso, Villa María del Triunfo, Lima, Perú</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">RUC: 20614040832</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="entity-showcase-action">
                   <a
@@ -345,17 +354,24 @@ function Contact() {
                     className="entity-location-btn"
                   >
                     <span>View on Maps</span>
-                    <ArrowUpRight size={16} aria-hidden="true" />
+                    <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>
               </div>
 
               <div className="entity-map-pane">
                 <div className="entity-map-top-bar" aria-hidden="true">
-                  <div className="entity-map-search-pill">
-                    <Search size={14} className="entity-search-icon" />
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="entity-map-search-pill"
+                    title="Open location in Google Maps"
+                  >
+                    <Search size={13} className="entity-search-icon" aria-hidden="true" />
                     <span>Villa María del Triunfo, Lima</span>
-                  </div>
+                    <ArrowUpRight size={12} className="entity-pill-arrow" aria-hidden="true" />
+                  </a>
                 </div>
                 <iframe
                   title="Golden Wings International Peru S.A.C Map Location"
@@ -367,14 +383,21 @@ function Contact() {
               </div>
             </article>
 
-            {/* Entity 2: Corporación Alas Doradas EIRL (Solid #005395) - INVERTED: Map Left (70%), Details Right (30%) */}
+            {/* Entity 2: Corporación Alas Doradas EIRL (Inverted) */}
             <article className="entity-card-box entity-card-box--alas entity-card-box--inverted">
               <div className="entity-map-pane">
                 <div className="entity-map-top-bar" aria-hidden="true">
-                  <div className="entity-map-search-pill">
-                    <Search size={14} className="entity-search-icon" />
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="entity-map-search-pill"
+                    title="Open location in Google Maps"
+                  >
+                    <Search size={13} className="entity-search-icon" aria-hidden="true" />
                     <span>Distrito Villa María del Triunfo, Lima</span>
-                  </div>
+                    <ArrowUpRight size={12} className="entity-pill-arrow" aria-hidden="true" />
+                  </a>
                 </div>
                 <iframe
                   title="Corporación Alas Doradas EIRL Map Location"
@@ -386,19 +409,22 @@ function Contact() {
               </div>
 
               <div className="entity-details-pane">
-                <h3 className="entity-showcase-title">Corporación Alas Doradas EIRL</h3>
-                <div className="entity-showcase-meta-group">
-                  <p className="entity-showcase-address">
-                    <MapPin size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>MZ K LT 21, DISTRITO VILLA MARÍA DEL TRIUNFO, LIMA, PERÚ</span>
-                  </p>
-                  <p className="entity-showcase-data-item">
-                    <FileText size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>RUC: 20610972498</span>
-                  </p>
-                </div>
-                <div className="entity-showcase-role">
-                  <span>Commercial Representation &amp; Fleet Logistics</span>
+                <div>
+                  <h3 className="entity-showcase-title">Corporación Alas Doradas EIRL</h3>
+                  <div className="entity-showcase-meta-group">
+                    <div className="entity-info-row">
+                      <Briefcase size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Commercial Representation &amp; Fleet Logistics</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Mz. K Lt. 21, Distrito Villa María del Triunfo, Lima, Perú</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">RUC: 20610972498</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="entity-showcase-action">
                   <a
@@ -408,28 +434,31 @@ function Contact() {
                     className="entity-location-btn"
                   >
                     <span>View on Maps</span>
-                    <ArrowUpRight size={16} aria-hidden="true" />
+                    <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>
               </div>
             </article>
 
-            {/* Entity 3: AVIOTERRA EIRL (Solid #005395) - Details Left (30%), Map Right (70%) */}
+            {/* Entity 3: AVIOTERRA EIRL */}
             <article className="entity-card-box entity-card-box--avioterra">
               <div className="entity-details-pane">
-                <h3 className="entity-showcase-title">AVIOTERRA EIRL</h3>
-                <div className="entity-showcase-meta-group">
-                  <p className="entity-showcase-address">
-                    <MapPin size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>CAL. SAN MARTÍN DE PORRES 180 OFICINA 701 SAN MIGUEL, LIMA, PERÚ</span>
-                  </p>
-                  <p className="entity-showcase-data-item">
-                    <FileText size={17} aria-hidden="true" className="entity-showcase-icon" />
-                    <span>RUC: 20614032767</span>
-                  </p>
-                </div>
-                <div className="entity-showcase-role">
-                  <span>Technical Services &amp; Sourcing Affiliate</span>
+                <div>
+                  <h3 className="entity-showcase-title">AVIOTERRA EIRL</h3>
+                  <div className="entity-showcase-meta-group">
+                    <div className="entity-info-row">
+                      <Briefcase size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Technical Services &amp; Sourcing Affiliate</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">Calle San Martín de Porres 180, Of. 701, San Miguel, Lima, Perú</span>
+                    </div>
+                    <div className="entity-info-row">
+                      <MapPin size={16} aria-hidden="true" className="entity-icon" />
+                      <span className="entity-address-text">RUC: 20614032767</span>
+                    </div>
+                  </div>
                 </div>
                 <div className="entity-showcase-action">
                   <a
@@ -439,21 +468,28 @@ function Contact() {
                     className="entity-location-btn"
                   >
                     <span>View on Maps</span>
-                    <ArrowUpRight size={16} aria-hidden="true" />
+                    <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>
               </div>
 
               <div className="entity-map-pane">
                 <div className="entity-map-top-bar" aria-hidden="true">
-                  <div className="entity-map-search-pill">
-                    <Search size={14} className="entity-search-icon" />
+                  <a
+                    href="https://www.google.com/maps/search/?api=1&query=Calle+San+Martin+de+Porres+180+San+Miguel+Lima+Peru"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="entity-map-search-pill"
+                    title="Open location in Google Maps"
+                  >
+                    <Search size={13} className="entity-search-icon" aria-hidden="true" />
                     <span>San Miguel, Lima</span>
-                  </div>
+                    <ArrowUpRight size={12} className="entity-pill-arrow" aria-hidden="true" />
+                  </a>
                 </div>
                 <iframe
                   title="AVIOTERRA EIRL Map Location"
-                  src="https://maps.google.com/maps?q=Calle+San+Martin+de+Porres+180,+San+Miguel,+Lima,+Peru&t=&z=15&ie=UTF8&iwloc=&output=embed"
+                  src="https://maps.google.com/maps?q=San+Martin+de+Porres+180,+San+Miguel,+Lima,+Peru&t=&z=14&ie=UTF8&iwloc=&output=embed"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
                   aria-label="Map location of AVIOTERRA in San Miguel, Lima"

@@ -34,13 +34,32 @@ function Catalog() {
   const statusBarRef = useRef(null)
   const gridRef = useRef(null)
 
-  // Sync state with URL params when navigating back/forward
+  // Sync state with URL params when navigating back/forward or from Hero search
   useEffect(() => {
     const s = searchParams.get('search')
     const cat = searchParams.get('category')
 
-    if (s !== null) setSearchQuery(s)
-    if (cat && categoryFilters.includes(cat)) setSelectedCategory(cat)
+    if (s !== null) {
+      setSearchQuery(s)
+      if (!cat) {
+        setSelectedCategory('All Parts')
+      }
+    }
+    if (cat && categoryFilters.includes(cat)) {
+      setSelectedCategory(cat)
+    }
+  }, [searchParams])
+
+  // Scroll to search toolbar when arriving with a search query
+  useEffect(() => {
+    const s = searchParams.get('search')
+    if (s && toolbarRef.current) {
+      const timer = setTimeout(() => {
+        const top = toolbarRef.current.getBoundingClientRect().top + window.scrollY - 110
+        window.scrollTo({ top: Math.max(0, top), behavior: 'smooth' })
+      }, 140)
+      return () => clearTimeout(timer)
+    }
   }, [searchParams])
 
   // Reset page when filters change
@@ -133,6 +152,7 @@ function Catalog() {
   // Filter items
   const filteredItems = useMemo(() => {
     const query = searchQuery.trim().toLowerCase()
+    const cleanQuery = query.replace(/[-\s]/g, '')
 
     return partsInventory.filter((item) => {
       // Category match
@@ -140,12 +160,16 @@ function Catalog() {
         selectedCategory === 'All Parts' ||
         item.category.toLowerCase() === selectedCategory.toLowerCase()
 
+      const cleanPn = (item.partNumber || '').toLowerCase().replace(/[-\s]/g, '')
+
       // Text query match
       const matchesQuery =
         !query ||
         item.partNumber.toLowerCase().includes(query) ||
+        cleanPn.includes(cleanQuery) ||
         item.description.toLowerCase().includes(query) ||
         item.fleet.toLowerCase().includes(query) ||
+        (item.category || '').toLowerCase().includes(query) ||
         item.company.toLowerCase().includes(query) ||
         item.condition.toLowerCase().includes(query)
 
@@ -249,6 +273,15 @@ function Catalog() {
               className="catalog-search-wrap"
               onSubmit={(e) => {
                 e.preventDefault()
+                setSearchParams((prev) => {
+                  const next = new URLSearchParams(prev)
+                  if (searchQuery.trim()) {
+                    next.set('search', searchQuery.trim())
+                  } else {
+                    next.delete('search')
+                  }
+                  return next
+                })
               }}
             >
               <Search size={20} className="catalog-search-icon" aria-hidden="true" />
@@ -262,7 +295,14 @@ function Catalog() {
               {searchQuery && (
                 <button
                   type="button"
-                  onClick={() => setSearchQuery('')}
+                  onClick={() => {
+                    setSearchQuery('')
+                    setSearchParams((prev) => {
+                      const next = new URLSearchParams(prev)
+                      next.delete('search')
+                      return next
+                    })
+                  }}
                   className="catalog-search-clear"
                   aria-label="Clear search query"
                 >

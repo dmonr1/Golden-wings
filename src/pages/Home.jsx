@@ -21,118 +21,115 @@ import fokkerLogo from '../assets/partners/Fokker_official_logo.png'
 import gulfstreamLogo from '../assets/partners/Gulfstream_Aerospace_logo.svg'
 import planeVector from '../assets/svgs/avion-vector.svg'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
+import { submitContactForm } from '../services/contactForm.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
 const highlights = [
   {
     value: 'FAA/EASA',
-    label: 'Traceable components',
-    description: 'Documented parts for compliant operations.',
+    label: 'Traceable Components',
     type: 'text',
   },
   {
     value: 25,
     start: 8,
     suffix: '+',
-    label: 'Combined experience',
-    description: 'Aftermarket expertise for active fleets.',
+    label: 'Years Experience',
     type: 'number',
   },
   {
     value: 100,
     start: 72,
     suffix: 'k+',
-    label: 'Product lines managed',
-    description: 'Global sourcing for urgent spares.',
+    label: 'Parts Managed',
     type: 'number',
+  },
+  {
+    value: '24/7',
+    label: 'AOG Rapid Support',
+    type: 'text',
   },
 ]
 
 const partners = [
-  { name: 'Gulfstream Aerospace', logo: gulfstreamLogo },
-  { name: 'Fokker', logo: fokkerLogo },
-  { name: 'Embraer', logo: embraerLogo },
-  { name: 'De Havilland', logo: deHavillandLogo },
-  { name: 'Continental', logo: continentalLogo },
-  { name: 'Bell Textron', logo: bellLogo },
-  { name: 'Beechcraft', logo: beechcraftLogo },
-  { name: 'ATR', logo: atrLogo },
+  { name: 'Gulfstream Aerospace', brand: 'Gulfstream', color: '#005088', logo: gulfstreamLogo },
+  { name: 'Fokker', brand: 'Fokker', color: '#ea580c', logo: fokkerLogo },
+  { name: 'Embraer', brand: 'Embraer', color: '#0066b2', logo: embraerLogo },
+  { name: 'De Havilland', brand: 'De Havilland', color: '#b91c1c', logo: deHavillandLogo },
+  { name: 'Continental', brand: 'Continental', color: '#dc2626', logo: continentalLogo },
+  { name: 'Bell Textron', brand: 'Bell', color: '#e11d48', logo: bellLogo },
+  { name: 'Beechcraft', brand: 'Beechcraft', color: '#9f1239', logo: beechcraftLogo },
+  { name: 'ATR', brand: 'ATR', color: '#f97316', logo: atrLogo },
 ]
 
 const servicesData = [
   {
-    number: '01.',
-    title: 'Aircraft Spares Support',
+    title: 'Inventory Acquisition',
     description:
-      'We provide aircraft spares support with a focus on Gulfstream, Dassault Falcon, CFM56 material, Sikorsky, Bell helicopter and Airbus helicopter. With our stock located in Florida we are strategically located to attend to your urgent inquiries.',
-    caption: 'Detailed view of a classic airplane propeller with visible text under a clear blue sky.',
-    image: propellerImg,
-    badge: 'Immediate Dispatch • Florida Stock',
-    tags: ['Gulfstream', 'Falcon', 'CFM56', 'Sikorsky', 'Bell', 'Airbus'],
-    bgTheme: 'spares',
+      'We specialize in locating, evaluating, and acquiring complete aircraft inventories for airlines, operators, and MROs under strict quality and traceability criteria.',
+    link: '/contact?subject=Inventory+Acquisition',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M6 38H42M12 38V42M24 38V42M36 38V42" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
+        <path d="M9 18L24 9L39 18V34H9V18Z" fill="#eef2f7" stroke="#18365d" strokeWidth="2.8" strokeLinejoin="round" />
+        <path d="M24 9V34M9 18L24 26L39 18" stroke="#18365d" strokeWidth="2.2" strokeLinejoin="round" />
+        <circle cx="33" cy="27" r="8" fill="#8f6b2d" stroke="#ffffff" strokeWidth="2" />
+        <path d="M29.5 27L32 29.5L36.5 24.5" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+      </svg>
+    ),
   },
   {
-    number: '02.',
-    title: 'Tooling',
-    description: 'Reliable tooling support for multiple aircraft platforms.',
-    items: [
-      'Boeing Aircraft Tooling',
-      'Airbus Aircraft Tooling',
-      'Embraer Aircraft Tooling',
-      'Bombardier Aircraft Tooling',
-      'Gulfstream Aircraft Tooling',
-      'Dassault Falcon Aircraft Tooling',
-    ],
-    caption: 'Aircraft precision tooling and maintenance in modern aerospace hangar.',
-    image: toolingImg,
-    badge: 'Multi-Platform Certified',
-    tags: ['Boeing Tooling', 'Airbus Tooling', 'Embraer', 'Bombardier', 'Gulfstream'],
-    bgTheme: 'tooling',
+    title: 'Rotables & Expendables',
+    description:
+      'We offer an extensive pool of aeronautical spare parts, including rotables and expendables, ready for immediate dispatch with complete airworthiness documentation.',
+    link: '/catalog?category=Rotables',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="24" cy="24" r="19" stroke="#cbd5e1" strokeWidth="2.2" strokeDasharray="4 3" />
+        <circle cx="24" cy="24" r="8" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.8" />
+        <circle cx="24" cy="24" r="3" fill="#fef08a" />
+        <path d="M24 16V5M24 32V43M16 24H5M32 24H43" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
+        <path d="M18.3 18.3L10.5 10.5M29.7 29.7L37.5 37.5M29.7 18.3L37.5 10.5M18.3 29.7L10.5 37.5" stroke="#8f6b2d" strokeWidth="2.8" strokeLinecap="round" />
+        <path d="M39 15C42 19 42 22 42 24M6 24C6 20 8 17 10 15" stroke="#0284c7" strokeWidth="2.8" strokeLinecap="round" />
+      </svg>
+    ),
   },
   {
-    number: '03.',
-    title: 'Supporting',
-    description: 'Ground support equipment and heavy maintenance tooling.',
-    items: [
-      'APU Tooling',
-      'Aircraft Jacks',
-      'Landing Gear Tooling',
-    ],
-    caption: 'Hydraulic aircraft jacks lifting landing gear during heavy maintenance.',
-    image: supportingImg,
-    badge: 'Ground Support Equipment',
-    tags: ['APU Tooling', 'Aircraft Jacks', 'Landing Gear', 'Maintenance GSE'],
-    bgTheme: 'supporting',
+    title: 'Tooling & Ground Support',
+    description:
+      'Precision aircraft maintenance tooling, hydraulic tripod jacks, APU tooling, and heavy ground support equipment engineered for active commercial and corporate fleets.',
+    link: '/catalog?category=Tooling',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="20" cy="28" r="10" fill="#eef2f7" stroke="#64748b" strokeWidth="2.4" />
+        <path d="M20 15V18M20 38V41M7 28H10M30 28H33M11 19L13.5 21.5M26.5 34.5L29 37M11 37L13.5 34.5M26.5 21.5L29 19" stroke="#64748b" strokeWidth="2.4" strokeLinecap="round" />
+        <circle cx="20" cy="28" r="4.5" fill="#ffffff" stroke="#18365d" strokeWidth="2.2" />
+        <path d="M38.5 7.5C40.5 9.5 41 12.5 39.5 15L35 19.5L29.5 14L34 9.5C35.5 8 37.5 7 38.5 7.5Z" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.4" strokeLinejoin="round" />
+        <path d="M29.5 14L15.5 28" stroke="#18365d" strokeWidth="4" strokeLinecap="round" />
+        <path d="M15.5 28L12 31.5L16.5 36L20 32.5" stroke="#8f6b2d" strokeWidth="2.4" strokeLinejoin="round" />
+      </svg>
+    ),
   },
   {
-    number: '04.',
-    title: 'Electrical Components',
-    description: 'High-grade electrical interconnect and avionics systems for active fleets.',
-    items: [
-      'Connectors & Accessories',
-      'Backshells',
-      'Conduit & Wire Protection',
-      'Switches',
-      'Relays & Contactors',
-      'Contacts & Terminals',
-      'Cable Assemblies',
-      'Harness Components',
-      'Circuit Protection',
-      'Specialty Electrical Components',
-    ],
-    caption: 'Inside view of a vintage aircraft cockpit at an airshow, showcasing gauges and controls.',
-    image: cockpitImg,
-    badge: 'Traceable FAA / EASA Material',
-    tags: ['Connectors', 'Backshells', 'Switches', 'Relays', 'Harness'],
-    bgTheme: 'electrical',
+    title: 'AOG Critical Logistics',
+    description:
+      'Urgent 24/7 aircraft-on-ground logistics protocol with immediate quoting, expedited warehouse retrieval, and fast express dispatch worldwide.',
+    link: '/contact?subject=AOG+Emergency+Support',
+    icon: (
+      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M5 17H16M3 24H13M7 31H18" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
+        <path d="M15 22L28 17L38 6H44L36 21L45 23L38 26L34 38H29L29 26L19 25L15 31H11L15 22Z" fill="#18365d" stroke="#18365d" strokeWidth="1.6" strokeLinejoin="round" />
+        <path d="M29 28L24 37H30L27 44L37 34H30L33 28H29Z" fill="#eab308" stroke="#8f6b2d" strokeWidth="1.6" strokeLinejoin="round" />
+      </svg>
+    ),
   },
 ]
 
 const serviceTiles = [
-  { title: 'Avionics', image: avionicsImage, link: '/catalog?category=Avionics' },
-  { title: 'Hot Parts', image: hotPartsImage, link: '/catalog?category=Rotables' },
-  { title: 'Last Deals', image: lostDealsImage, link: '/catalog' },
+  { title: 'Avionics', brand: 'Avionics', color: '#0284c7', image: avionicsImage, link: '/catalog?category=Avionics' },
+  { title: 'Hot Parts', brand: 'Hot Parts', color: '#ea580c', image: hotPartsImage, link: '/catalog?category=Rotables' },
+  { title: 'Last Deals', brand: 'Last Deals', color: '#8f6b2d', image: lostDealsImage, link: '/catalog' },
 ]
 
 const faqs = [
@@ -168,45 +165,40 @@ function Home() {
   const contextSectionRef = useRef(null)
   const contextCardRef = useRef(null)
   const servicesTitleRef = useRef(null)
-  const servicesLineRef = useRef(null)
   const partnersSectionRef = useRef(null)
+  const partnerTooltipRef = useRef(null)
+  const tooltipPrefixRef = useRef(null)
+  const tooltipBrandRef = useRef(null)
   const categoriesSectionRef = useRef(null)
   const partsTitleRef = useRef(null)
   const partsLineRef = useRef(null)
   const quoteBandRef = useRef(null)
   const contactRef = useRef(null)
   const [activeFaq, setActiveFaq] = useState(0)
+  const [contactForm, setContactForm] = useState({ name: '', email: '', partNumber: '', request: '' })
+  const [contactStatus, setContactStatus] = useState('idle')
+  const [contactError, setContactError] = useState('')
 
-  const carouselRef = useRef(null)
-  const isDraggingRef = useRef(false)
-  const startXRef = useRef(0)
-  const scrollLeftRef = useRef(0)
-
-  const handlePointerDown = (e) => {
-    if (e.button !== 0) return
-    isDraggingRef.current = true
-    startXRef.current = e.clientX
-    scrollLeftRef.current = carouselRef.current?.scrollLeft || 0
-    carouselRef.current?.classList.add('is-dragging')
-    carouselRef.current?.setPointerCapture(e.pointerId)
+  const handleHomeContactChange = (event) => {
+    const { name, value } = event.target
+    setContactForm((previous) => ({ ...previous, [name]: value }))
   }
 
-  const handlePointerMove = (e) => {
-    if (!isDraggingRef.current || !carouselRef.current) return
-    const dx = e.clientX - startXRef.current
-    carouselRef.current.scrollLeft = scrollLeftRef.current - dx
-  }
+  const handleHomeContactSubmit = async (event) => {
+    event.preventDefault()
+    setContactStatus('sending')
+    setContactError('')
 
-  const handlePointerUp = (e) => {
-    if (!isDraggingRef.current) return
-    isDraggingRef.current = false
-    carouselRef.current?.classList.remove('is-dragging')
     try {
-      carouselRef.current?.releasePointerCapture(e.pointerId)
-    } catch {
-      // ignore
+      await submitContactForm(contactForm)
+      setContactStatus('sent')
+      setContactForm({ name: '', email: '', partNumber: '', request: '' })
+    } catch (error) {
+      setContactStatus('error')
+      setContactError(error.message)
     }
   }
+
 
   useEffect(() => {
     const ctx = gsap.context(() => {
@@ -235,66 +227,52 @@ function Home() {
         )
       })
 
-      const indicatorNodes = gsap.utils.toArray('.home-strip > div')
-      let canReplayIndicators = true
-      let indicatorTween
+      const indicatorNodes = gsap.utils.toArray('.home-indicator-item')
 
-      indicatorTween = gsap.fromTo(
+      gsap.fromTo(
         indicatorNodes,
-        { y: 54, opacity: 0 },
+        { y: 28, opacity: 0 },
         {
           y: 0,
           opacity: 1,
-          duration: 1,
-          stagger: {
-            each: 0.12,
-            from: 'end',
-          },
+          duration: 0.85,
+          stagger: 0.1,
           ease: 'power3.out',
-          paused: true,
+          scrollTrigger: {
+            trigger: stripRef.current,
+            start: 'top 88%',
+            toggleActions: 'play none none none',
+          },
         },
       )
 
-      ScrollTrigger.create({
-        trigger: stripRef.current,
-        start: 'top 78%',
-        end: 'bottom top',
-        onEnter: () => {
-          if (!canReplayIndicators) return
-          canReplayIndicators = false
-          indicatorTween.restart()
-        },
-        onEnterBack: () => {
-          canReplayIndicators = false
-          indicatorTween.progress(1).pause()
-        },
-        onLeaveBack: () => {
-          canReplayIndicators = true
-          gsap.set(indicatorNodes, { y: 54, opacity: 0 })
-        },
-      })
+      // Indicators animate smoothly via ScrollTrigger fromTo above
 
-      gsap.set(indicatorNodes, { y: 54, opacity: 0 })
-
-      if (contextCardRef.current && contextSectionRef.current) {
-        gsap.fromTo(
-          contextCardRef.current,
-          {
-            y: 50,
-            opacity: 0.85,
-          },
-          {
-            y: 0,
-            opacity: 1,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: contextSectionRef.current,
-              start: 'top 85%',
-              end: 'top 35%',
-              scrub: 1,
+      if (contextCardRef.current) {
+        const serviceCards = contextCardRef.current.querySelectorAll('.service-feature-card')
+        serviceCards.forEach((card, index) => {
+          const fromLeft = index % 2 === 0
+          gsap.fromTo(
+            card,
+            {
+              x: fromLeft ? -80 : 80,
+              opacity: 0,
+              scale: 0.94,
             },
-          },
-        )
+            {
+              x: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 1.05,
+              ease: 'power3.out',
+              scrollTrigger: {
+                trigger: card,
+                start: 'top 88%',
+                toggleActions: 'play reverse play reverse',
+              },
+            },
+          )
+        })
       }
 
       if (servicesTitleRef.current) {
@@ -317,25 +295,6 @@ function Home() {
               trigger: servicesTitleRef.current,
               start: 'top 85%',
               toggleActions: 'play none none reverse',
-            },
-          },
-        )
-      }
-
-      if (servicesLineRef.current && contextSectionRef.current) {
-        gsap.fromTo(
-          servicesLineRef.current,
-          {
-            width: '54px',
-          },
-          {
-            width: '100%',
-            ease: 'none',
-            scrollTrigger: {
-              trigger: contextSectionRef.current,
-              start: 'top 85%',
-              end: 'top 20%',
-              scrub: 0.8,
             },
           },
         )
@@ -410,6 +369,119 @@ function Home() {
         },
       )
 
+      // Unified cursor tooltip with inertia follow (for Partners and Parts Inventory cards)
+      const cursorTooltip = partnerTooltipRef.current
+      let handleTooltipMouseMove
+      let handleWindowScroll
+      let handleDocLeave
+
+      if (cursorTooltip && !window.matchMedia('(hover: none)').matches) {
+        // Centered directly on cursor
+        gsap.set(cursorTooltip, {
+          xPercent: -50,
+          yPercent: -50,
+          scale: 0.6,
+          opacity: 0,
+          pointerEvents: 'none',
+        })
+
+        const xTo = gsap.quickTo(cursorTooltip, 'x', { duration: 0.32, ease: 'power3.out' })
+        const yTo = gsap.quickTo(cursorTooltip, 'y', { duration: 0.32, ease: 'power3.out' })
+
+        let isTooltipActive = false
+        let currentCard = null
+        let lastPointerX = -1000
+        let lastPointerY = -1000
+
+        const updateTooltipForPoint = (clientX, clientY) => {
+          if (clientX < 0 || clientY < 0) return
+          lastPointerX = clientX
+          lastPointerY = clientY
+
+          const el = document.elementFromPoint(clientX, clientY)
+          const card = el?.closest?.('.partner-card, .service-strip__item')
+
+          if (card) {
+            const prefix = card.getAttribute('data-tooltip-prefix') || 'Explore Fleet'
+            const brand = card.getAttribute('data-tooltip-brand') || ''
+            const brandColor = card.getAttribute('data-tooltip-color') || '#8f6b2d'
+
+            if (currentCard !== card) {
+              currentCard = card
+              if (tooltipPrefixRef.current) {
+                tooltipPrefixRef.current.textContent = prefix
+              }
+              if (tooltipBrandRef.current) {
+                tooltipBrandRef.current.textContent = brand
+                tooltipBrandRef.current.style.color = brandColor
+              }
+
+              if (!isTooltipActive) {
+                isTooltipActive = true
+                gsap.set(cursorTooltip, {
+                  x: clientX,
+                  y: clientY,
+                  scale: 0.6,
+                  opacity: 0,
+                })
+                gsap.to(cursorTooltip, {
+                  scale: 1,
+                  opacity: 1,
+                  duration: 0.25,
+                  ease: 'back.out(1.6)',
+                  overwrite: 'auto',
+                })
+              }
+            }
+
+            const clampX = Math.max(120, Math.min(window.innerWidth - 120, clientX))
+            const clampY = Math.max(30, Math.min(window.innerHeight - 30, clientY))
+            xTo(clampX)
+            yTo(clampY)
+          } else {
+            if (isTooltipActive) {
+              isTooltipActive = false
+              currentCard = null
+              gsap.to(cursorTooltip, {
+                scale: 0.6,
+                opacity: 0,
+                duration: 0.2,
+                ease: 'power2.in',
+                overwrite: 'auto',
+              })
+            }
+          }
+        }
+
+        handleTooltipMouseMove = (e) => {
+          updateTooltipForPoint(e.clientX, e.clientY)
+        }
+
+        handleWindowScroll = () => {
+          if (lastPointerX > 0 && lastPointerY > 0) {
+            updateTooltipForPoint(lastPointerX, lastPointerY)
+          }
+        }
+
+        handleDocLeave = () => {
+          if (isTooltipActive) {
+            isTooltipActive = false
+            currentCard = null
+            gsap.to(cursorTooltip, {
+              scale: 0.6,
+              opacity: 0,
+              duration: 0.18,
+              ease: 'power2.in',
+              overwrite: 'auto',
+            })
+          }
+        }
+
+        window.addEventListener('pointermove', handleTooltipMouseMove, { passive: true })
+        window.addEventListener('scroll', handleWindowScroll, { passive: true })
+        document.addEventListener('mouseleave', handleDocLeave)
+      }
+
       if (partsTitleRef.current) {
         gsap.fromTo(
           partsTitleRef.current,
@@ -476,59 +548,63 @@ function Home() {
         },
       )
 
-      gsap.set('.quote-plane', { x: '-26vw', y: '34vh', rotate: -10, scale: 0.72, opacity: 0 })
-      gsap.set('.quote-band__intro', { y: 0 })
-      gsap.set('.quote-band__statement', { y: 18, clipPath: 'inset(100% 0 0 0)' })
-      const getIntroTopY = () => {
-        const intro = quoteBandRef.current?.querySelector('.quote-band__intro')
-        if (!intro || !quoteBandRef.current) return -220
-        const quoteRect = quoteBandRef.current.getBoundingClientRect()
-        const introRect = intro.getBoundingClientRect()
-        const quoteStyles = window.getComputedStyle(quoteBandRef.current)
-        const topPadding = Number.parseFloat(quoteStyles.paddingTop) || 92
-        return -(introRect.top - quoteRect.top - topPadding + 360)
-      }
+      gsap.set('.quote-plane', { x: '-28vw', y: '16vh', rotate: -6, scale: 0.75, opacity: 0 })
+      gsap.set('.quote-plane__wind span', { scaleX: 0, opacity: 0 })
 
       gsap
         .timeline({
           scrollTrigger: {
             trigger: quoteBandRef.current,
             start: 'top bottom',
-            end: 'top top',
-            scrub: 0.9,
+            end: 'bottom 45%',
+            scrub: 0.8,
             invalidateOnRefresh: true,
           },
         })
-        .to('.quote-band__intro', { y: () => getIntroTopY() * 0.42, duration: 1, ease: 'none' }, 0)
-        .to('.quote-plane', { x: '18vw', y: '2vh', scale: 0.82, opacity: 0.18, duration: 1, ease: 'none' }, 0.14)
+        .to(
+          '.quote-plane',
+          { x: '140vw', y: '-70vh', rotate: -2, scale: 1.1, duration: 1, ease: 'none' },
+          0,
+        )
+        .fromTo(
+          '.quote-plane',
+          { opacity: 0 },
+          { opacity: 0.24, duration: 0.2, ease: 'power1.out' },
+          0,
+        )
+        .to(
+          '.quote-plane',
+          { opacity: 0, duration: 0.2, ease: 'power1.in' },
+          0.65,
+        )
         .fromTo(
           '.quote-plane__wind span',
           { scaleX: 0, opacity: 0 },
-          { scaleX: 1, opacity: 0.62, stagger: 0.06, duration: 0.44, ease: 'none' },
-          0.4,
+          { scaleX: 1, opacity: 0.55, stagger: 0.07, duration: 0.28, ease: 'power1.out' },
+          0.08,
+        )
+        .to(
+          '.quote-plane__wind span',
+          { opacity: 0, stagger: 0.04, duration: 0.18, ease: 'power1.in' },
+          0.58,
         )
 
-      gsap
-        .timeline({
+      gsap.fromTo(
+        ['.quote-band__copy', '.quote-band__questions'],
+        { y: 32, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          stagger: 0.16,
+          ease: 'power3.out',
           scrollTrigger: {
             trigger: quoteBandRef.current,
-            start: 'top top',
-            end: '+=88%',
-            pin: true,
-            anticipatePin: 1,
-            scrub: 1.1,
-            invalidateOnRefresh: true,
+            start: 'top 82%',
+            toggleActions: 'play none none reverse',
           },
-        })
-        .to('.quote-band__intro', { y: getIntroTopY, duration: 0.78, ease: 'none' }, 0)
-        .to('.quote-band__statement', { y: 0, clipPath: 'inset(0% 0 0 0)', duration: 0.32, ease: 'none' }, 0.28)
-        .to(
-          '.quote-plane',
-          { x: '188vw', y: '-172vh', rotate: -10, scale: 1.06, opacity: 0.24, duration: 1, ease: 'none' },
-          0,
-        )
-        .to('.quote-plane', { opacity: 0, duration: 0.1, ease: 'none' }, 0.92)
-        .to('.quote-plane__wind span', { opacity: 0, stagger: 0.04, duration: 0.28, ease: 'none' }, 0.62)
+        },
+      )
 
       gsap
         .timeline({
@@ -553,7 +629,16 @@ function Home() {
         marquee?.removeEventListener('pointerup', handleMarqueeUp)
         marquee?.removeEventListener('pointercancel', handleMarqueeUp)
         cancelAnimationFrame(marqueeFrame)
-        indicatorTween?.kill()
+
+        if (handleTooltipMouseMove) {
+          window.removeEventListener('pointermove', handleTooltipMouseMove)
+        }
+        if (handleWindowScroll) {
+          window.removeEventListener('scroll', handleWindowScroll)
+        }
+        if (handleDocLeave) {
+          document.removeEventListener('mouseleave', handleDocLeave)
+        }
       }
     })
 
@@ -562,29 +647,33 @@ function Home() {
 
   return (
     <main>
-      <HeroSlider />
-      <div className="home-lift">
-        <section className="home-strip" ref={stripRef}>
-          {highlights.map((item) => (
-            <div className="home-indicator home-indicator--split" key={item.label}>
-              <strong
-                {...(item.type === 'number'
-                  ? {
-                    'data-count': true,
-                    'data-start': item.start,
-                    'data-end': item.value,
-                    'data-suffix': item.suffix,
-                  }
-                  : {})}
-              >
-                {item.type === 'number' ? `${item.start}${item.suffix}` : item.value}
-              </strong>
-              <div className="home-indicator__copy">
-                <span>{item.label}</span>
-                <p>{item.description}</p>
-              </div>
+      <div className="hero-slider-wrap">
+        <HeroSlider />
+      </div>
+      <div className="home-content-body">
+        <section className="home-indicators-section" ref={stripRef} aria-label="Key company indicators">
+          <div className="home-indicators-inner">
+            <div className="home-indicators-grid">
+              {highlights.map((item) => (
+                <div className="home-indicator-item" key={item.label}>
+                  <strong
+                    className="home-indicator-item__number"
+                    {...(item.type === 'number'
+                      ? {
+                        'data-count': true,
+                        'data-start': item.start,
+                        'data-end': item.value,
+                        'data-suffix': item.suffix,
+                      }
+                      : {})}
+                  >
+                    {item.type === 'number' ? `${item.start}${item.suffix}` : item.value}
+                  </strong>
+                  <span className="home-indicator-item__label">{item.label}</span>
+                </div>
+              ))}
             </div>
-          ))}
+          </div>
         </section>
         <section
           className="home-context-section"
@@ -595,87 +684,32 @@ function Home() {
             <h2 className="home-services-heading" ref={servicesTitleRef}>
               OUR SERVICES
             </h2>
-            <div className="home-services-heading__bar" ref={servicesLineRef} aria-hidden="true" />
           </div>
 
-          {/* 4 Separate Draggable Cards Carousel as requested */}
-          <div className="services-drag-wrapper" ref={contextCardRef}>
-
-            <div
-              className="services-drag-container"
-              ref={carouselRef}
-              onPointerDown={handlePointerDown}
-              onPointerMove={handlePointerMove}
-              onPointerUp={handlePointerUp}
-              onPointerCancel={handlePointerUp}
-            >
-              <div className="services-drag-track">
-                {servicesData.map((service, index) => (
-                  <article className="services-drag-card" key={service.number}>
-                    {/* The black card container with title & image design */}
-                    <div className="services-card-box">
-                      <h3 className="services-card-title">{service.title}</h3>
-
-                      {/* Middle: The Image Design (Alternate between 3D Arc & Scattered Gallery) */}
-                      {index % 2 === 0 ? (
-                        /* 3D Arched Curved Perspective Gallery */
-                        <div className="service-cylinder-stage" aria-hidden="true">
-                          <div className="service-cylinder-arc">
-                            <div className="cylinder-card cylinder-card--1">
-                              <img src={cockpitImg} alt="" />
-                            </div>
-                            <div className="cylinder-card cylinder-card--2">
-                              <img src={propellerImg} alt="" />
-                            </div>
-                            <div className="cylinder-card cylinder-card--3">
-                              <img src={service.image} alt="" />
-                            </div>
-                            <div className="cylinder-card cylinder-card--4">
-                              <img src={supportingImg} alt="" />
-                            </div>
-                            <div className="cylinder-card cylinder-card--5">
-                              <img src={hotPartsImage} alt="" />
-                            </div>
-                          </div>
-                        </div>
-                      ) : (
-                        /* Floating Scattered Photo Gallery with Watermark */
-                        <div className="service-scattered-stage" aria-hidden="true">
-                          <span className="service-scattered-watermark">
-                            {service.title.split(' ')[0].toUpperCase()}
-                          </span>
-                          <div className="scattered-photo scattered-photo--1">
-                            <img src={service.image} alt="" />
-                          </div>
-                          <div className="scattered-photo scattered-photo--2">
-                            <img src={index === 1 ? toolingImg : cockpitImg} alt="" />
-                          </div>
-                          <div className="scattered-photo scattered-photo--3">
-                            <img src={avionicsImage} alt="" />
-                          </div>
-                          <div className="scattered-photo scattered-photo--4">
-                            <img src={lostDealsImage} alt="" />
-                          </div>
-                        </div>
-                      )}
+          {/* Services Grid: 4 Clean Feature Cards matching user reference */}
+          <div className="services-grid-wrapper" ref={contextCardRef}>
+            <div className="services-feature-grid">
+              {servicesData.map((service) => (
+                <Link
+                  to={service.link}
+                  className="service-feature-card"
+                  key={service.title}
+                >
+                  <div className="service-feature-card__icon-wrap" aria-hidden="true">
+                    {service.icon}
+                  </div>
+                  <div className="service-feature-card__body">
+                    <h3 className="service-feature-card__title">{service.title}</h3>
+                    <p className="service-feature-card__desc">{service.description}</p>
+                    <div className="service-feature-card__action">
+                      <span className="service-feature-card__btn">
+                        <span>View More</span>
+                        <ArrowRight size={16} aria-hidden="true" />
+                      </span>
                     </div>
-
-                    {/* Outside / below the black card: description and tags (como estaba antes) */}
-                    <div className="services-card-info">
-                      <p className="services-card-desc">{service.description}</p>
-                      {service.tags && (
-                        <div className="services-card-tags">
-                          {service.tags.map((tag) => (
-                            <span key={tag} className="services-card-tag">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </article>
-                ))}
-              </div>
+                  </div>
+                </Link>
+              ))}
             </div>
           </div>
         </section>
@@ -703,7 +737,10 @@ function Home() {
                   to={`/catalog?search=${encodeURIComponent(partner.name)}`}
                   className="partner-card"
                   key={partner.name}
-                  title={`View parts for ${partner.name}`}
+                  data-tooltip-prefix="Explore Fleet"
+                  data-tooltip-brand={partner.brand}
+                  data-tooltip-color={partner.color}
+                  aria-label={`Explore fleet parts for ${partner.name}`}
                 >
                   <span>{String(index + 1).padStart(2, '0')}</span>
                   <img src={partner.logo} alt={partner.name} />
@@ -731,7 +768,6 @@ function Home() {
             <h2 className="categories-header__title" ref={partsTitleRef}>
               PARTS INVENTORY
             </h2>
-            <div className="categories-header__bar" ref={partsLineRef} aria-hidden="true" />
           </div>
           <div className="service-strip">
             {serviceTiles.map((item) => (
@@ -739,6 +775,10 @@ function Home() {
                 to={item.link}
                 className="service-strip__item"
                 key={item.title}
+                data-tooltip-prefix="Explore Parts"
+                data-tooltip-brand={item.brand}
+                data-tooltip-color={item.color}
+                aria-label={`Explore ${item.title} inventory`}
               >
                 <img src={item.image} alt="" aria-hidden="true" />
                 <div className="service-strip__overlay" />
@@ -755,6 +795,19 @@ function Home() {
               <ArrowUpRight size={18} aria-hidden="true" />
             </Link>
           </div>
+          {/* Wave cut transitioning from paper to white quote band */}
+          <div className="categories-section__wave" aria-hidden="true">
+            <svg viewBox="0 0 1440 96" fill="none" preserveAspectRatio="none">
+              <path
+                d="M 0,32 C 320,78 680,14 1040,58 C 1220,78 1360,48 1440,42 L 1440,96 L 0,96 Z"
+                fill="#ffffff"
+              />
+              <path
+                d="M 0,44 C 340,90 710,26 1060,68 C 1230,86 1360,58 1440,50 L 1440,96 L 0,96 Z"
+                fill="#ffffff"
+              />
+            </svg>
+          </div>
         </section>
         <section className="quote-band" ref={quoteBandRef} aria-label="Frequently asked quote questions">
           <div className="quote-plane" aria-hidden="true">
@@ -766,12 +819,15 @@ function Home() {
             <img src={planeVector} alt="" />
           </div>
           <div className="quote-band__copy">
-            <p className="quote-band__statement">
-              Every quote we send is a commitment to performance, safety, and reliability to our customers.
-            </p>
+
             <div className="quote-band__intro">
               <h2>Everything you need to know</h2>
               <p>We are ready for your questions. Send us your request and we will help you move faster.</p>
+            </div>
+            <div className="quote-band__commitment">
+              <p className="quote-band__statement">
+                “Every quote we send is a commitment to performance, safety, and reliability to our customers.”
+              </p>
             </div>
           </div>
           <div className="quote-band__questions">
@@ -787,7 +843,7 @@ function Home() {
                   <h3>{item.question}</h3>
                   <p>{item.answer}</p>
                 </div>
-                <ArrowUpRight size={26} aria-hidden="true" />
+                <ArrowUpRight size={22} aria-hidden="true" />
               </button>
             ))}
           </div>
@@ -800,30 +856,45 @@ function Home() {
               <h2>Send your aircraft parts request.</h2>
               <span>Doral, Florida</span>
             </div>
-            <form className="home-contact__form" onSubmit={(event) => event.preventDefault()}>
+            <form className="home-contact__form" onSubmit={handleHomeContactSubmit}>
               <label>
                 Name
-                <input type="text" name="name" autoComplete="name" />
+                <input type="text" name="name" autoComplete="name" value={contactForm.name} onChange={handleHomeContactChange} required />
               </label>
               <label>
                 Email
-                <input type="email" name="email" autoComplete="email" />
+                <input type="email" name="email" autoComplete="email" value={contactForm.email} onChange={handleHomeContactChange} required />
               </label>
               <label>
                 Part number
-                <input type="text" name="partNumber" />
+                <input type="text" name="partNumber" value={contactForm.partNumber} onChange={handleHomeContactChange} />
               </label>
               <label>
                 Request
-                <textarea name="request" rows="3" />
+                <textarea name="request" rows="3" value={contactForm.request} onChange={handleHomeContactChange} required />
               </label>
-              <button className="button button--light" type="submit">
-                Send RFQ
+              {contactStatus === 'sent' && <p className="home-contact__status home-contact__status--success" role="status">Your request has been sent successfully.</p>}
+              {contactStatus === 'error' && <p className="home-contact__status home-contact__status--error" role="alert">{contactError}</p>}
+              <button className="button button--light" type="submit" disabled={contactStatus === 'sending'}>
+                {contactStatus === 'sending' ? 'Sending...' : 'Send RFQ'}
                 <ArrowRight size={18} aria-hidden="true" />
               </button>
             </form>
           </section>
         </div>
+      </div>
+      {/* Floating cursor tooltip that follows pointer with inertia over partner and parts cards */}
+      <div
+        className="floating-cursor-tooltip"
+        ref={partnerTooltipRef}
+        aria-hidden="true"
+      >
+        <span className="floating-cursor-tooltip__prefix" ref={tooltipPrefixRef}>
+          Explore Fleet
+        </span>
+        <span className="floating-cursor-tooltip__separator" aria-hidden="true">•</span>
+        <span className="floating-cursor-tooltip__brand" ref={tooltipBrandRef} />
+        <ArrowUpRight size={16} className="floating-cursor-tooltip__icon" />
       </div>
     </main>
   )

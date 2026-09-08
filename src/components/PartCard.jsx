@@ -37,7 +37,7 @@ function PartCard({ item }) {
 
   return (
     <article className="part-card" id={`part-${item.partNumber.replace(/[^a-zA-Z0-9]/g, '-')}`}>
-      {/* Top Image: Full bleed, fills the entire top area */}
+      {/* Left Media: Dedicated photo container with full component visibility */}
       <div className="part-card__media">
         <img
           src={item.image}
@@ -54,7 +54,7 @@ function PartCard({ item }) {
         </div>
       </div>
 
-      {/* Bottom Specifications: Clean layout without enclosing box */}
+      {/* Right Specifications & Actions */}
       <div className="part-card__body">
         {/* Part Number & One-Click Copy */}
         <div className="part-card__pn-row">

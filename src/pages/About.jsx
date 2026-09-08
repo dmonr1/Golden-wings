@@ -360,6 +360,15 @@ function About() {
         </div>
       </section>
 
+      {/* Separator between Mission & Vision Cards */}
+      <div className="about-mv-separator" aria-hidden="true">
+        <span className="about-mv-separator__line" />
+        <span className="about-mv-separator__badge">
+          <span className="about-mv-separator__dot" />
+        </span>
+        <span className="about-mv-separator__line" />
+      </div>
+
       {/* =========================================================================
           SECTION 2B: OUR VISION (Pure White Background, Inverted: Left Content, Right Title)
           ========================================================================= */}
@@ -396,22 +405,22 @@ function About() {
             </div>
 
             <div className="values-stage">
-              {/* Left Column: Cards 01 & 03 */}
-              <div className="values-column values-column--left">
-                <div className="values-card">
-                  <span className="values-card__num">01</span>
-                  <h3 className="values-card__title">Traceability &amp; Compliance</h3>
-                  <p className="values-card__text">
-                    Every component is delivered with authentic FAA 8130-3 or EASA Form 1 certification, complete non-incident verification, and unbroken chain of custody.
-                  </p>
-                </div>
-                <div className="values-card">
-                  <span className="values-card__num">03</span>
-                  <h3 className="values-card__title">Technical Integrity</h3>
-                  <p className="values-card__text">
-                    Transparent market pricing, certified quality standards, and dependable fulfillment across commercial, regional, and corporate platforms.
-                  </p>
-                </div>
+              {/* Card 01: Top Left */}
+              <div className="values-card values-card--01">
+                <span className="values-card__num">01</span>
+                <h3 className="values-card__title">Traceability &amp; Compliance</h3>
+                <p className="values-card__text">
+                  Every component is delivered with authentic FAA 8130-3 or EASA Form 1 certification, complete non-incident verification, and unbroken chain of custody.
+                </p>
+              </div>
+
+              {/* Card 03: Bottom Left */}
+              <div className="values-card values-card--03">
+                <span className="values-card__num">03</span>
+                <h3 className="values-card__title">Technical Integrity</h3>
+                <p className="values-card__text">
+                  Transparent market pricing, certified quality standards, and dependable fulfillment across commercial, regional, and corporate platforms.
+                </p>
               </div>
 
               {/* Center Column: Tall Rounded Aircraft Technician / Hangar Image */}
@@ -423,27 +432,36 @@ function About() {
                 />
               </div>
 
-              {/* Right Column: Cards 02 & 04 */}
-              <div className="values-column values-column--right">
-                <div className="values-card">
-                  <span className="values-card__num">02</span>
-                  <h3 className="values-card__title">AOG Velocity</h3>
-                  <p className="values-card__text">
-                    Urgent aircraft-on-ground response protocol with immediate quoting, rapid warehouse retrieval, and prompt worldwide express dispatch.
-                  </p>
-                </div>
-                <div className="values-card">
-                  <span className="values-card__num">04</span>
-                  <h3 className="values-card__title">Global Sourcing Reach</h3>
-                  <p className="values-card__text">
-                    Direct access to an established international aftermarket network, reliably procuring hard-to-find rotables, avionics, and specialized tooling.
-                  </p>
-                </div>
+              {/* Card 02: Top Right */}
+              <div className="values-card values-card--02">
+                <span className="values-card__num">02</span>
+                <h3 className="values-card__title">AOG Velocity</h3>
+                <p className="values-card__text">
+                  Urgent aircraft-on-ground response protocol with immediate quoting, rapid warehouse retrieval, and prompt worldwide express dispatch.
+                </p>
+              </div>
+
+              {/* Card 04: Bottom Right */}
+              <div className="values-card values-card--04">
+                <span className="values-card__num">04</span>
+                <h3 className="values-card__title">Global Sourcing Reach</h3>
+                <p className="values-card__text">
+                  Direct access to an established international aftermarket network, reliably procuring hard-to-find rotables, avionics, and specialized tooling.
+                </p>
               </div>
             </div>
           </div>
         </div>
       </section>
+
+      {/* Separator between Core Values & Meet The Principals */}
+      <div className="about-mv-separator" aria-hidden="true">
+        <span className="about-mv-separator__line" />
+        <span className="about-mv-separator__badge">
+          <span className="about-mv-separator__dot" />
+        </span>
+        <span className="about-mv-separator__line" />
+      </div>
 
       {/* =========================================================================
           SECTION 3: MEET THE PRINCIPALS (Directly matching reference image design)

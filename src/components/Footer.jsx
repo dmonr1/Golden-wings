@@ -1,16 +1,8 @@
 import { Link } from 'react-router-dom'
-import { Mail, MapPin, Phone, FileText, Shield, Cookie, ArrowUpRight, Scale } from 'lucide-react'
+import { Mail, MapPin, Phone, FileText, Shield, Cookie, Scale } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 
 function Footer() {
-  const scrollToTop = () => {
-    if (window.lenis) {
-      window.lenis.scrollTo(0, { immediate: false })
-    } else {
-      window.scrollTo({ top: 0, behavior: 'smooth' })
-    }
-  }
-
   return (
     <footer className="site-footer" aria-label="Global site footer">
       <div className="site-footer__inner">
@@ -18,28 +10,14 @@ function Footer() {
         <div className="site-footer__grid">
           {/* Column 1: Brand */}
           <div className="site-footer__col site-footer__col--brand">
-            <div className="site-footer__brand-inline">
-              <img src={eagleLogo} alt="Golden Wings International Logo" className="site-footer__logo" />
-              <div>
-                <strong className="site-footer__company">Golden Wings International LLC</strong>
-                <p className="site-footer__tagline">
-                  Aircraft parts supplier and aviation aftermarket support with immediate global dispatch.
-                </p>
+            <img src={eagleLogo} alt="Golden Wings International Logo" className="site-footer__logo" />
+            <div className="site-footer__brand-details">
+              <strong className="site-footer__company">Golden Wings International LLC</strong>
+              <div className="site-footer__location-chip">
+                <MapPin size={14} aria-hidden="true" />
+                <span>1782 NW 82nd Ave, Doral, FL 33126, USA</span>
               </div>
             </div>
-            <div className="site-footer__location-chip">
-              <MapPin size={14} aria-hidden="true" />
-              <span>1782 NW 82nd Ave, Doral, FL 33126, USA</span>
-            </div>
-            <button
-              type="button"
-              className="site-footer__back-to-top"
-              onClick={scrollToTop}
-              aria-label="Scroll back to top"
-            >
-              <span>Back to top</span>
-              <ArrowUpRight size={15} aria-hidden="true" />
-            </button>
           </div>
 
           {/* Column 2: Direct Inquiries */}
