@@ -22,6 +22,7 @@ import gulfstreamLogo from '../assets/partners/Gulfstream_Aerospace_logo.svg'
 import planeVector from '../assets/svgs/avion-vector.svg'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 import { submitContactForm } from '../services/contactForm.js'
+import FeedbackModal from '../components/FeedbackModal.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
@@ -178,6 +179,7 @@ function Home() {
   const [contactForm, setContactForm] = useState({ name: '', email: '', partNumber: '', request: '' })
   const [contactStatus, setContactStatus] = useState('idle')
   const [contactError, setContactError] = useState('')
+  const [contactAlert, setContactAlert] = useState({ type: '', message: '' })
 
   const handleHomeContactChange = (event) => {
     const { name, value } = event.target
@@ -192,10 +194,12 @@ function Home() {
     try {
       await submitContactForm(contactForm)
       setContactStatus('sent')
+      setContactAlert({ type: 'success', message: 'Your RFQ request was sent successfully.' })
       setContactForm({ name: '', email: '', partNumber: '', request: '' })
     } catch (error) {
       setContactStatus('error')
       setContactError(error.message)
+      setContactAlert({ type: 'error', message: error.message })
     }
   }
 
@@ -646,6 +650,13 @@ function Home() {
   }, [])
 
   return (
+    <>
+      <FeedbackModal
+        type={contactAlert.type}
+        title={contactAlert.type === 'error' ? 'Unable to send your request' : 'Request sent successfully'}
+        message={contactAlert.message}
+        onClose={() => setContactAlert({ type: '', message: '' })}
+      />
     <main>
       <div className="hero-slider-wrap">
         <HeroSlider />
@@ -873,8 +884,6 @@ function Home() {
                 Request
                 <textarea name="request" rows="3" value={contactForm.request} onChange={handleHomeContactChange} required />
               </label>
-              {contactStatus === 'sent' && <p className="home-contact__status home-contact__status--success" role="status">Your request has been sent successfully.</p>}
-              {contactStatus === 'error' && <p className="home-contact__status home-contact__status--error" role="alert">{contactError}</p>}
               <button className="button button--light" type="submit" disabled={contactStatus === 'sending'}>
                 {contactStatus === 'sending' ? 'Sending...' : 'Send RFQ'}
                 <ArrowRight size={18} aria-hidden="true" />
@@ -897,6 +906,7 @@ function Home() {
         <ArrowUpRight size={16} className="floating-cursor-tooltip__icon" />
       </div>
     </main>
+    </>
   )
 }
 

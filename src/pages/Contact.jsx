@@ -16,6 +16,7 @@ import {
 import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
 import { submitContactForm } from '../services/contactForm.js'
+import FeedbackModal from '../components/FeedbackModal.jsx'
 
 function Contact() {
   const layoutRef = useRef(null)
@@ -23,6 +24,7 @@ function Contact() {
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [submitError, setSubmitError] = useState('')
+  const [alert, setAlert] = useState({ type: '', message: '' })
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -43,8 +45,10 @@ function Contact() {
     try {
       await submitContactForm(formData)
       setSubmitted(true)
+      setAlert({ type: 'success', message: 'Your RFQ request was sent successfully.' })
     } catch (error) {
       setSubmitError(error.message)
+      setAlert({ type: 'error', message: error.message })
     } finally {
       setIsSubmitting(false)
     }
@@ -118,6 +122,12 @@ function Contact() {
 
   return (
     <main className="contact-page">
+      <FeedbackModal
+        type={alert.type}
+        title={alert.type === 'error' ? 'Unable to send your request' : 'Request sent successfully'}
+        message={alert.message}
+        onClose={() => setAlert({ type: '', message: '' })}
+      />
       <PageIntro
         title="Contact Us"
         theme="contact-hero"
@@ -267,7 +277,6 @@ function Contact() {
                     </div>
 
                     <div className="contact-submit-wrap">
-                      {submitError && <p className="contact-form-error" role="alert">{submitError}</p>}
                       <button type="submit" className="contact-submit-btn" disabled={isSubmitting}>
                         <span>{isSubmitting ? 'Sending...' : 'Send RFQ'}</span>
                         <ArrowRight size={18} aria-hidden="true" />
