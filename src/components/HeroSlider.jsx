@@ -202,11 +202,11 @@ function HeroSlider() {
         outgoing,
         { xPercent: 0, opacity: 1, scale: 1 },
         {
-          xPercent: -34 * direction,
-          opacity: 1,
-          scale: 1.01,
-          duration: 1.72,
-          ease: 'power2.out',
+          xPercent: 0,
+          opacity: 0,
+          scale: 1.025,
+          duration: 1.35,
+          ease: 'power2.inOut',
         },
       )
     }
@@ -223,8 +223,8 @@ function HeroSlider() {
           xPercent: 0,
           opacity: 1,
           scale: 1,
-          duration: previous === null ? 0.9 : 1.18,
-          ease: 'power4.out',
+          duration: previous === null ? 0.9 : 1.45,
+          ease: 'power2.inOut',
         },
       )
     }
@@ -237,17 +237,6 @@ function HeroSlider() {
 
     return () => window.clearTimeout(timerRef.current)
   }, [active, goTo])
-
-  // Close dropdown on outside click
-  useEffect(() => {
-    const handlePointerDown = (e) => {
-      if (searchContainerRef.current && !searchContainerRef.current.contains(e.target)) {
-        setIsDropdownOpen(false)
-      }
-    }
-    document.addEventListener('pointerdown', handlePointerDown)
-    return () => document.removeEventListener('pointerdown', handlePointerDown)
-  }, [])
 
   // Filter inventory parts matching query
   const filteredParts = useMemo(() => {
@@ -419,7 +408,18 @@ function HeroSlider() {
                     <span className="hero-search-dropdown__count">
                       Found <strong>{filteredParts.length}</strong> matching {filteredParts.length === 1 ? 'part' : 'parts'}:
                     </span>
-                    <span className="hero-search-dropdown__hint">Select item to view in Catalog</span>
+                    <div className="hero-search-dropdown__header-actions">
+                      <span className="hero-search-dropdown__hint">Select item to view in Catalog</span>
+                      <button
+                        type="button"
+                        className="hero-search-dropdown__close"
+                        onClick={() => setIsDropdownOpen(false)}
+                        aria-label="Close search suggestions"
+                        title="Close suggestions"
+                      >
+                        <X size={16} aria-hidden="true" />
+                      </button>
+                    </div>
                   </div>
 
                   <div className="hero-search-dropdown__list">

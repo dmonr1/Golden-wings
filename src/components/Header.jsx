@@ -73,6 +73,19 @@ function Header() {
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
 
+  useEffect(() => {
+    if (!isMobileMenuOpen) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.lenis?.stop?.()
+
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.lenis?.start?.()
+    }
+  }, [isMobileMenuOpen])
+
   return (
     <>
       <div className={`site-header-wrapper ${!isVisible ? 'site-header-wrapper--hidden' : ''}`}>
@@ -161,6 +174,14 @@ function Header() {
           {/* Mobile Navigation Drawer */}
           {isMobileMenuOpen && (
             <div className="site-header__mobile-drawer">
+              <button
+                type="button"
+                className="site-header__mobile-drawer-close"
+                onClick={() => setIsMobileMenuOpen(false)}
+                aria-label="Close navigation menu"
+              >
+                <X size={25} />
+              </button>
               {links.map(([label, to]) => (
                 <NavLink
                   key={to}
