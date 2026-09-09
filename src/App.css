@@ -6486,6 +6486,9 @@ a.site-footer__link:hover {
     padding: 32px 0 0;
   }
 
+  .hero-slider-wrap {
+    padding-inline: 16px;
+  }
 
   .hero-slider {
     height: 98svh;
@@ -6493,7 +6496,54 @@ a.site-footer__link:hover {
   }
 
   .hero-slider__content {
+    padding-inline: 0;
+    transform: translateY(-clamp(34px, 8vh, 58px));
+  }
+
+  .hero-slider__title {
+    margin-bottom: 20px;
+  }
+
+  .hero-slider__search-container,
+  .hero-slider__search-wrap--expanded {
+    width: 100%;
+  }
+
+  .hero-slider__search-wrap--expanded {
+    height: 48px;
+  }
+
+  .hero-slider__search-wrap--expanded .hero-slider__search {
+    padding: 3px 5px 3px 16px;
+  }
+
+  .hero-slider__search-wrap--expanded input {
+    height: 36px;
+    padding-right: 8px;
+    font-size: 14px;
+  }
+
+  .hero-slider__search-clear {
+    width: 26px;
+    height: 26px;
+    flex-basis: 26px;
+    margin-right: 5px;
+  }
+
+  .hero-slider__search-wrap--expanded .hero-slider__search-submit {
+    width: 40px;
+    min-width: 40px;
+    height: 40px;
+    padding: 0;
+    border-radius: 50%;
+  }
+
+  .hero-search-dropdown {
+    left: 0;
+    width: 100%;
     transform: none;
+    top: calc(100% + 8px);
+    border-radius: 16px;
   }
 
   .hero-slider__brand {
