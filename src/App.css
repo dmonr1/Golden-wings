@@ -145,8 +145,8 @@ select {
 /* MAIN WHITE HEADER (Matching reference image 1) */
 .site-header {
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(5, 12, 24, 0.04);
-  border-bottom: 2px solid rgba(5, 12, 24, 0.02);
+  box-shadow: 0 10px 26px -18px rgba(7, 13, 24, 0.36), 0 3px 8px rgba(7, 13, 24, 0.06);
+  border-bottom: none;
 }
 
 .site-header__container {
