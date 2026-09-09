@@ -1476,14 +1476,15 @@ body:has(.page-loader) .chat-fab {
    ========================================================================== */
 
 .hero-slider-wrap {
+  --hero-frame-gap: clamp(20px, 3.5vh, 36px);
   position: relative;
   width: 100%;
   min-height: calc(100svh - 0px);
   box-sizing: border-box;
   background: #ffffff;
-  padding-top: clamp(108px, 13.5vh, 138px);
+  padding-top: calc(106px + var(--hero-frame-gap));
   padding-inline: clamp(14px, 2.6vw, 36px);
-  padding-bottom: clamp(20px, 3.5vh, 36px);
+  padding-bottom: var(--hero-frame-gap);
   display: flex;
   flex-direction: column;
 }
@@ -6489,6 +6490,7 @@ a.site-footer__link:hover {
   }
 
   .hero-slider-wrap {
+    --hero-frame-gap: 25px;
     padding-inline: 16px;
   }
 
