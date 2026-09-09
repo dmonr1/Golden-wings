@@ -3476,7 +3476,8 @@ body:has(.page-loader) .chat-fab {
   position: relative;
   z-index: 1;
   display: grid;
-  gap: 8px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px 12px;
   width: 100%;
   padding: clamp(14px, 1.8vw, 24px);
   border: 1px solid rgba(248, 243, 234, 0.18);
@@ -3486,11 +3487,16 @@ body:has(.page-loader) .chat-fab {
 
 .home-contact__form label {
   display: grid;
-  gap: 4px;
+  gap: 5px;
   color: rgba(248, 243, 234, 0.78);
   font-size: 12px;
   font-weight: 850;
   text-transform: uppercase;
+}
+
+.home-contact__form label:nth-of-type(3),
+.home-contact__form label:nth-of-type(4) {
+  grid-column: 1 / -1;
 }
 
 .home-contact__form input,
@@ -3498,7 +3504,7 @@ body:has(.page-loader) .chat-fab {
   width: 100%;
   border: 1px solid rgba(248, 243, 234, 0.2);
   border-radius: 4px;
-  padding: 7px 12px;
+  padding: 0 12px;
   color: #050608;
   background: #faf8f3;
   font: inherit;
@@ -3513,7 +3519,12 @@ body:has(.page-loader) .chat-fab {
 }
 
 .home-contact__form textarea {
-  height: 68px;
+  height: 74px;
+  padding: 10px 12px;
+}
+
+.home-contact__form input {
+  height: 40px;
 }
 
 .home-contact__form input:focus,
@@ -3523,11 +3534,25 @@ body:has(.page-loader) .chat-fab {
 }
 
 .home-contact__form .button {
+  grid-column: 1 / -1;
   justify-self: start;
   margin-top: 4px;
   border: 0;
   background: #ffc83b;
   color: #050608;
+}
+
+@media (max-width: 520px) {
+  .home-contact__form {
+    grid-template-columns: 1fr;
+    gap: 9px;
+  }
+
+  .home-contact__form label:nth-of-type(3),
+  .home-contact__form label:nth-of-type(4),
+  .home-contact__form .button {
+    grid-column: auto;
+  }
 }
 
 .home-contact__form .button:disabled {
