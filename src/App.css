@@ -1502,6 +1502,15 @@ body:has(.page-loader) .chat-fab {
 
 }
 
+/* Let the autocomplete escape the hero frame only while it is open. */
+.hero-slider:has(.hero-search-dropdown) {
+  overflow: visible;
+}
+
+.hero-slider:has(.hero-search-dropdown) .hero-slider__content {
+  z-index: 30;
+}
+
 .hero-slider__grain {
   position: absolute;
   inset: 0;
