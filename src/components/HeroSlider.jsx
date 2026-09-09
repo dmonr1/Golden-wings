@@ -207,6 +207,7 @@ function HeroSlider() {
       removeLoaderEndListener?.()
       removeVisibilityListener?.()
       introTimelineRef.current?.kill()
+      introPlayedRef.current = false
       ctx.revert()
     }
   }, [])
