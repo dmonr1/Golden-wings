@@ -6544,12 +6544,72 @@ a.site-footer__link:hover {
     border-radius: 50%;
   }
 
+  .hero-slider__search-wrap--expanded .hero-slider__search-submit svg {
+    width: 18px;
+    height: 18px;
+  }
+
   .hero-search-dropdown {
     left: 0;
     width: 100%;
     transform: none;
     top: calc(100% + 8px);
     border-radius: 16px;
+  }
+
+  .hero-search-dropdown__header {
+    padding: 9px 14px;
+    font-size: 11px;
+  }
+
+  .hero-search-dropdown__item {
+    gap: 9px;
+    padding: 9px 12px;
+  }
+
+  .hero-search-dropdown__thumb-wrap {
+    width: 40px;
+    height: 40px;
+    min-width: 40px;
+  }
+
+  .hero-search-dropdown__pn-title,
+  .hero-search-dropdown__pn {
+    font-size: 12.5px;
+  }
+
+  .hero-search-dropdown__category,
+  .hero-search-dropdown__fleet,
+  .hero-search-dropdown__condition,
+  .hero-search-dropdown__price {
+    font-size: 10px;
+  }
+
+  .hero-search-dropdown__name {
+    font-size: 12px;
+  }
+
+  .hero-search-dropdown__meta {
+    gap: 6px;
+  }
+
+  .hero-search-dropdown__action {
+    padding: 5px;
+  }
+
+  .hero-search-dropdown__action svg {
+    width: 15px;
+    height: 15px;
+  }
+
+  .hero-search-dropdown__footer {
+    padding: 7px 10px;
+  }
+
+  .hero-search-dropdown__footer-btn {
+    gap: 6px;
+    padding: 8px 10px;
+    font-size: 12px;
   }
 
   .hero-slider__brand {
