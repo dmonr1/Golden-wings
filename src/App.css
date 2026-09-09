@@ -1695,6 +1695,37 @@ body:has(.page-loader) .chat-fab {
   transition: opacity 0.4s ease 0.25s;
 }
 
+/* Use the styled clear control below instead of the browser's native search X. */
+.hero-slider__search-wrap--expanded input[type='search']::-webkit-search-cancel-button,
+.hero-slider__search-wrap--expanded input[type='search']::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+  display: none;
+}
+
+.hero-slider__search-clear {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  flex: 0 0 32px;
+  place-items: center;
+  margin-right: 8px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: #e0f2fe;
+  color: #005395;
+  cursor: pointer;
+  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
+}
+
+.hero-slider__search-clear:hover,
+.hero-slider__search-clear:focus-visible {
+  background: #005395;
+  color: #ffffff;
+  transform: scale(1.06);
+}
+
 .hero-slider__search input::placeholder {
   color: #718096;
   font-weight: 450;
@@ -1726,7 +1757,8 @@ body:has(.page-loader) .chat-fab {
 
 .hero-slider__search-wrap--expanded .hero-slider__search-submit {
   height: 48px;
-  padding: 0 0 clamp(10px, 2.2vw, 15px);
+  min-width: 96px;
+  padding: 0 clamp(12px, 2.2vw, 15px);
   border-radius: 999px;
   background: #005395;
   color: #ffffff;
@@ -1749,7 +1781,8 @@ body:has(.page-loader) .chat-fab {
   }
 
   .hero-slider__search-wrap--expanded .hero-slider__search-submit {
-    padding: 0 16px;
+    min-width: 48px;
+    padding: 0 14px;
   }
 }
 
