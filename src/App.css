@@ -2250,6 +2250,22 @@ body:has(.page-loader) .chat-fab {
   text-align: center;
 }
 
+.home-indicators-wave {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  height: clamp(44px, 5.5vw, 76px);
+  background: #ffffff;
+  line-height: 0;
+  margin-bottom: -1px;
+}
+
+.home-indicators-wave svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
 @media (max-width: 900px) {
   .home-indicators-grid {
     grid-template-columns: repeat(2, 1fr);

@@ -686,6 +686,11 @@ function Home() {
             </div>
           </div>
         </section>
+        <div className="home-indicators-wave" aria-hidden="true">
+          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
+            <path d="M 0,32 C 380,82 820,86 1440,8 L 1440,80 L 0,80 Z" fill="#faf8f3" />
+          </svg>
+        </div>
         <section
           className="home-context-section"
           ref={contextSectionRef}
