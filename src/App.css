@@ -308,6 +308,7 @@ select {
   display: none;
   align-items: center;
   justify-content: center;
+  gap: 8px;
   padding: 8px 22px;
   background: none;
   color: #000000;
@@ -317,8 +318,8 @@ select {
   font-weight: 750;
   border-radius: 20px;
   letter-spacing: 0.02em;
-  transition: background 200ms ease, transform 150ms ease;
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+  transition: color 180ms ease, border-color 180ms ease, box-shadow 180ms ease, transform 180ms ease;
+  box-shadow: 0 3px 10px rgba(7, 13, 24, 0.1);
 }
 
 @media (min-width: 600px) {
@@ -328,9 +329,11 @@ select {
 }
 
 .site-header__quote-btn:hover {
-  background: #003e73;
+  background: transparent;
+  color: #144485;
+  border-color: #144485;
   transform: translateY(-1px);
-  box-shadow: 0 6px 18px rgba(0, 83, 149, 0.35);
+  box-shadow: 0 5px 13px rgba(7, 13, 24, 0.14);
 }
 
 .site-header__mobile-toggle {

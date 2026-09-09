@@ -1,6 +1,6 @@
 import { NavLink, useLocation } from 'react-router-dom'
 import { useEffect, useRef, useState } from 'react'
-import { X, ChevronDown, Menu } from 'lucide-react'
+import { X, ChevronDown, Mail, Menu } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 
 const links = [
@@ -237,6 +237,7 @@ function Header() {
             {/* RIGHT: Quick Action CTA & Mobile Hamburger */}
             <div className="site-header__right">
               <NavLink to="/contact" className="site-header__quote-btn">
+                <Mail size={15} strokeWidth={2} aria-hidden="true" />
                 <span>Request RFQ</span>
               </NavLink>
 
