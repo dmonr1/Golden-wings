@@ -1565,7 +1565,7 @@ body:has(.page-loader) .chat-fab {
   padding: 0 clamp(16px, 4vw, 56px);
   pointer-events: none;
   text-align: center;
-  transform: translateY(-clamp(18px, 4.5vh, 52px));
+  transform: translateY(calc(-1 * clamp(18px, 4.5vh, 52px)));
   will-change: transform, opacity;
 }
 
