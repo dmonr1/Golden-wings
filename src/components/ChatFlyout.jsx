@@ -2,7 +2,6 @@ import { useState, useRef, useEffect, useCallback } from 'react'
 import { Link } from 'react-router-dom'
 import {
   MessageCircle,
-  X,
   ChevronDown,
   Send,
   Plane,
@@ -365,7 +364,7 @@ export default function ChatFlyout() {
             className={`chat-fab__icon chat-fab__icon--chat ${isOpen ? 'chat-fab__icon--hidden' : ''}`}
             aria-hidden="true"
           />
-          <X
+          <ChevronDown
             size={22}
             className={`chat-fab__icon chat-fab__icon--close ${!isOpen ? 'chat-fab__icon--hidden' : ''}`}
             aria-hidden="true"
