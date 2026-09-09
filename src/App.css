@@ -143,6 +143,8 @@ select {
   right: 0;
   z-index: 1200;
   min-width: 136px;
+  display: grid;
+  gap: 3px;
   padding: 5px;
   border-radius: 9px;
   background: #ffffff;
@@ -4299,7 +4301,15 @@ h3 {
   gap: 8px;
 }
 
-.catalog-filter-label {
+.catalog-sort-picker {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.catalog-filter-label,
+.catalog-sort-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -4311,54 +4321,60 @@ h3 {
   font-family: var(--body);
 }
 
-.catalog-category-trigger {
+.catalog-category-trigger,
+.catalog-sort-trigger {
   display: inline-flex;
   align-items: center;
   justify-content: space-between;
   min-width: 190px;
-  padding: 8px 34px 8px 12px;
+  padding: 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgba(7, 13, 20, 0.13);
+  border: 0;
   background: #ffffff;
   color: #070d14;
   font-size: 13px;
   font-weight: 700;
   font-family: var(--body);
   cursor: pointer;
-  box-shadow: 0 2px 7px rgba(7, 13, 20, 0.04);
+  box-shadow: 0 5px 14px rgba(7, 13, 20, 0.1);
   outline: none;
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.catalog-category-trigger svg {
+.catalog-category-trigger svg,
+.catalog-sort-trigger svg {
   flex-shrink: 0;
   transition: transform 0.18s ease;
 }
 
-.catalog-category-trigger[aria-expanded='true'] svg {
+.catalog-category-trigger[aria-expanded='true'] svg,
+.catalog-sort-trigger[aria-expanded='true'] svg {
   transform: rotate(180deg);
 }
 
 .catalog-category-trigger:hover,
-.catalog-category-trigger:focus-visible {
-  border-color: #144485;
-  box-shadow: 0 0 0 3px rgb(20 68 133 / 12%);
+.catalog-category-trigger:focus-visible,
+.catalog-sort-trigger:hover,
+.catalog-sort-trigger:focus-visible {
+  box-shadow: 0 7px 18px rgba(7, 13, 20, 0.16);
 }
 
-.catalog-category-menu {
+.catalog-category-menu,
+.catalog-sort-menu {
   position: absolute;
   top: calc(100% + 7px);
   right: 0;
-  z-index: 20;
+  z-index: 50;
   min-width: 190px;
   overflow: hidden;
-  border: 1px solid rgba(7, 13, 20, 0.1);
+  border: 0;
   border-radius: 9px;
   background: #ffffff;
   box-shadow: 0 12px 28px rgba(7, 13, 24, 0.2);
 }
 
-.catalog-category-option {
+.catalog-category-option,
+.catalog-sort-option {
   width: 100%;
   padding: 9px 12px;
   border: 0;
@@ -4373,40 +4389,12 @@ h3 {
 
 .catalog-category-option:hover,
 .catalog-category-option:focus-visible,
-.catalog-category-option.is-selected {
+.catalog-category-option.is-selected,
+.catalog-sort-option:hover,
+.catalog-sort-option:focus-visible,
+.catalog-sort-option.is-selected {
   background: #edf5ff;
   color: #144485;
-}
-
-.catalog-sort-wrap {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.catalog-sort-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 5px;
-  font-size: 12px;
-  font-weight: 700;
-  color: #64748b;
-  text-transform: uppercase;
-  font-family: var(--body);
-}
-
-.catalog-sort-select {
-  padding: 7px 14px;
-  border-radius: 8px;
-  border: 1px solid rgba(7, 13, 20, 0.08);
-  background: #ffffff;
-  color: #070d14;
-  font-family: var(--body);
-  font-size: 13px;
-  font-weight: 700;
-  outline: none;
-  cursor: pointer;
-  box-shadow: 0 2px 6px rgba(7, 13, 20, 0.04);
 }
 
 /* Status Bar */
@@ -7011,7 +6999,7 @@ a.site-footer__link:hover {
   background:
     linear-gradient(90deg, rgb(20 68 133 / 60%) 0%, rgb(20 68 133 / 55%) 50%, rgb(20 68 133 / 72%) 100%),
     url('./assets/avionics.jpg') center center / cover no-repeat;
-  opacity: 0.58;
+  opacity: 0.48;
   filter: saturate(0.78) contrast(1.08);
   -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgb(0 0 0 / 62%) 72%, transparent 94%);
   mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgb(0 0 0 / 62%) 72%, transparent 94%);

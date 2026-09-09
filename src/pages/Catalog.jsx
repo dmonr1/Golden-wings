@@ -16,6 +16,13 @@ const categoryFilters = [
   'Electrical',
 ]
 
+const sortOptions = [
+  { value: 'default', label: 'Relevance' },
+  { value: 'pn-asc', label: 'Part Number (A - Z)' },
+  { value: 'pn-desc', label: 'Part Number (Z - A)' },
+  { value: 'price-desc', label: 'Price (High to Low)' },
+]
+
 function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams()
 
@@ -28,6 +35,7 @@ function Catalog() {
   const [sortBy, setSortBy] = useState('default')
   const [currentPage, setCurrentPage] = useState(1)
   const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
+  const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
 
   const sectionRef = useRef(null)
   const toolbarRef = useRef(null)
@@ -35,19 +43,26 @@ function Catalog() {
   const statusBarRef = useRef(null)
   const gridRef = useRef(null)
   const categoryPickerRef = useRef(null)
+  const sortPickerRef = useRef(null)
 
   useEffect(() => {
-    if (!isCategoryMenuOpen) return undefined
+    if (!isCategoryMenuOpen && !isSortMenuOpen) return undefined
 
     const closeOnOutsideClick = (event) => {
-      if (!categoryPickerRef.current?.contains(event.target)) {
+      const isInsideCategory = categoryPickerRef.current?.contains(event.target)
+      const isInsideSort = sortPickerRef.current?.contains(event.target)
+
+      if (!isInsideCategory && !isInsideSort) {
         setIsCategoryMenuOpen(false)
+        setIsSortMenuOpen(false)
       }
     }
 
     document.addEventListener('pointerdown', closeOnOutsideClick)
     return () => document.removeEventListener('pointerdown', closeOnOutsideClick)
-  }, [isCategoryMenuOpen])
+  }, [isCategoryMenuOpen, isSortMenuOpen])
+
+  const selectedSortLabel = sortOptions.find((option) => option.value === sortBy)?.label || sortOptions[0].label
 
   // Sync state with URL params when navigating back/forward or from Hero search
   useEffect(() => {
@@ -344,7 +359,10 @@ function Catalog() {
               <button
                 type="button"
                 className="catalog-category-trigger"
-                onClick={() => setIsCategoryMenuOpen((isOpen) => !isOpen)}
+                onClick={() => {
+                  setIsCategoryMenuOpen((isOpen) => !isOpen)
+                  setIsSortMenuOpen(false)
+                }}
                 aria-expanded={isCategoryMenuOpen}
                 aria-haspopup="menu"
                 aria-label={`Category: ${selectedCategory}`}
@@ -373,21 +391,43 @@ function Catalog() {
               )}
             </div>
 
-            <div className="catalog-sort-wrap">
+            <div className="catalog-sort-picker" ref={sortPickerRef}>
               <span className="catalog-sort-label">
                 <ArrowUpDown size={14} aria-hidden="true" /> Sort:
               </span>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value)}
-                className="catalog-sort-select"
-                aria-label="Sort parts results"
+              <button
+                type="button"
+                className="catalog-sort-trigger"
+                onClick={() => {
+                  setIsSortMenuOpen((isOpen) => !isOpen)
+                  setIsCategoryMenuOpen(false)
+                }}
+                aria-expanded={isSortMenuOpen}
+                aria-haspopup="menu"
+                aria-label={`Sort: ${selectedSortLabel}`}
               >
-                <option value="default">Relevance</option>
-                <option value="pn-asc">Part Number (A - Z)</option>
-                <option value="pn-desc">Part Number (Z - A)</option>
-                <option value="price-desc">Price (High to Low)</option>
-              </select>
+                <span>{selectedSortLabel}</span>
+                <ChevronDown size={15} aria-hidden="true" />
+              </button>
+              {isSortMenuOpen && (
+                <div className="catalog-sort-menu" role="menu" aria-label="Sort catalog parts">
+                  {sortOptions.map((option) => (
+                    <button
+                      key={option.value}
+                      type="button"
+                      className={`catalog-sort-option ${sortBy === option.value ? 'is-selected' : ''}`}
+                      role="menuitemradio"
+                      aria-checked={sortBy === option.value}
+                      onClick={() => {
+                        setSortBy(option.value)
+                        setIsSortMenuOpen(false)
+                      }}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
