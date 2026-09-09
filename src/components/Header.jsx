@@ -10,15 +10,58 @@ const links = [
   ['Contact', '/contact'],
 ]
 
+function LanguageFlag({ language }) {
+  if (language === 'es') {
+    return (
+      <svg viewBox="0 0 640 480" width="16" height="12" className="site-topbar__flag" aria-hidden="true">
+        <path fill="#aa151b" d="M0 0h640v480H0z" />
+        <path fill="#f1bf00" d="M0 120h640v240H0z" />
+      </svg>
+    )
+  }
+
+  return (
+    <svg viewBox="0 0 30 20" width="16" height="12" className="site-topbar__flag" aria-hidden="true">
+      <path fill="#fff" d="M0 0h30v20H0z" />
+      <path fill="#b22234" d="M0 0h30v1.54H0zm0 3.08h30v1.54H0zm0 3.08h30v1.54H0zm0 3.08h30v1.54H0zm0 3.08h30v1.54H0zm0 3.08h30v1.54H0zm0 3.08h30V20H0z" />
+      <path fill="#3c3b6e" d="M0 0h12v10.77H0z" />
+    </svg>
+  )
+}
+
 function Header() {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
+  const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
+  const [language, setLanguage] = useState(() => {
+    if (typeof window === 'undefined') return 'en'
+    return window.localStorage.getItem('golden-wings-language') === 'es' ? 'es' : 'en'
+  })
   const [isLoaderFinished, setIsLoaderFinished] = useState(() => {
     if (typeof document === 'undefined') return true
     return !document.querySelector('.page-loader') && document.body.style.position !== 'fixed'
   })
   const location = useLocation()
   const lastScrollYRef = useRef(0)
+  const languagePickerRef = useRef(null)
+
+  useEffect(() => {
+    document.documentElement.lang = language
+    window.localStorage.setItem('golden-wings-language', language)
+  }, [language])
+
+  useEffect(() => {
+    if (!isLanguageMenuOpen) return undefined
+
+    const closeOnOutsideClick = (event) => {
+      if (!languagePickerRef.current?.contains(event.target)) {
+        setIsLanguageMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    return () => document.removeEventListener('pointerdown', closeOnOutsideClick)
+  }, [isLanguageMenuOpen])
 
   useEffect(() => {
     if (isLoaderFinished) return
@@ -37,6 +80,7 @@ function Header() {
   useEffect(() => {
     setIsVisible(true)
     setIsMobileMenuOpen(false)
+    setIsLanguageMenuOpen(false)
     lastScrollYRef.current = window.scrollY
   }, [location.pathname])
 
@@ -115,12 +159,49 @@ function Header() {
                 </a>
               </div>
               <div className="site-topbar__sep" />
-              <div className="site-topbar__lang" title="Language selection">
-                <svg viewBox="0 0 640 480" width="16" height="12" className="site-topbar__flag" aria-hidden="true">
-                  <path fill="#aa151b" d="M0 0h640v480H0z"/>
-                  <path fill="#f1bf00" d="M0 120h640v240H0z"/>
-                </svg>
-                <ChevronDown size={13} aria-hidden="true" />
+              <div className="site-topbar__language-picker" ref={languagePickerRef}>
+                <button
+                  type="button"
+                  className="site-topbar__lang"
+                  title="Language selection"
+                  onClick={() => setIsLanguageMenuOpen((isOpen) => !isOpen)}
+                  aria-expanded={isLanguageMenuOpen}
+                  aria-haspopup="menu"
+                  aria-label={`Language: ${language === 'en' ? 'English' : 'Español'}`}
+                >
+                  <LanguageFlag language={language} />
+                  <ChevronDown size={13} className="site-topbar__lang-chevron" aria-hidden="true" />
+                </button>
+                {isLanguageMenuOpen && (
+                  <div className="site-topbar__language-menu" role="menu" aria-label="Language selection">
+                    <button
+                      type="button"
+                      className={`site-topbar__language-option ${language === 'en' ? 'is-selected' : ''}`}
+                      role="menuitemradio"
+                      aria-checked={language === 'en'}
+                      onClick={() => {
+                        setLanguage('en')
+                        setIsLanguageMenuOpen(false)
+                      }}
+                    >
+                      <LanguageFlag language="en" />
+                      <span>English</span>
+                    </button>
+                    <button
+                      type="button"
+                      className={`site-topbar__language-option ${language === 'es' ? 'is-selected' : ''}`}
+                      role="menuitemradio"
+                      aria-checked={language === 'es'}
+                      onClick={() => {
+                        setLanguage('es')
+                        setIsLanguageMenuOpen(false)
+                      }}
+                    >
+                      <LanguageFlag language="es" />
+                      <span>Español</span>
+                    </button>
+                  </div>
+                )}
               </div>
             </div>
           </div>
