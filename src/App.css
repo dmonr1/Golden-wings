@@ -2814,12 +2814,24 @@ body:has(.page-loader) .chat-fab {
   flex-shrink: 0;
 }
 
-@media (hover: none),
-(max-width: 900px) {
+@media (max-width: 900px) {
 
   .floating-cursor-tooltip,
   .partner-cursor-tooltip {
-    display: none !important;
+    max-width: calc(100vw - 28px);
+    padding: 9px 15px;
+    gap: 7px;
+    font-size: 12px;
+  }
+
+  .floating-cursor-tooltip__prefix,
+  .floating-cursor-tooltip__brand {
+    font-size: 12px;
+  }
+
+  .floating-cursor-tooltip__icon {
+    width: 14px;
+    height: 14px;
   }
 }
 

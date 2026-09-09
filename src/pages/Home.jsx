@@ -376,10 +376,12 @@ function Home() {
       // Unified cursor tooltip with inertia follow (for Partners and Parts Inventory cards)
       const cursorTooltip = partnerTooltipRef.current
       let handleTooltipMouseMove
+      let handleTooltipTouchStart
       let handleWindowScroll
       let handleDocLeave
+      let touchHideTimer
 
-      if (cursorTooltip && !window.matchMedia('(hover: none)').matches) {
+      if (cursorTooltip) {
         // Centered directly on cursor
         gsap.set(cursorTooltip, {
           xPercent: -50,
@@ -392,10 +394,38 @@ function Home() {
         const xTo = gsap.quickTo(cursorTooltip, 'x', { duration: 0.32, ease: 'power3.out' })
         const yTo = gsap.quickTo(cursorTooltip, 'y', { duration: 0.32, ease: 'power3.out' })
 
+        const isTouchLayout = window.matchMedia('(hover: none), (pointer: coarse)').matches
         let isTooltipActive = false
         let currentCard = null
         let lastPointerX = -1000
         let lastPointerY = -1000
+
+        const setTooltipContent = (card) => {
+          const prefix = card.getAttribute('data-tooltip-prefix') || 'Explore Fleet'
+          const brand = card.getAttribute('data-tooltip-brand') || ''
+          const brandColor = card.getAttribute('data-tooltip-color') || '#8f6b2d'
+
+          if (tooltipPrefixRef.current) {
+            tooltipPrefixRef.current.textContent = prefix
+          }
+          if (tooltipBrandRef.current) {
+            tooltipBrandRef.current.textContent = brand
+            tooltipBrandRef.current.style.color = brandColor
+          }
+        }
+
+        const hideTooltip = (duration = 0.2) => {
+          if (!isTooltipActive) return
+          isTooltipActive = false
+          currentCard = null
+          gsap.to(cursorTooltip, {
+            scale: 0.6,
+            opacity: 0,
+            duration,
+            ease: 'power2.in',
+            overwrite: 'auto',
+          })
+        }
 
         const updateTooltipForPoint = (clientX, clientY) => {
           if (clientX < 0 || clientY < 0) return
@@ -406,19 +436,9 @@ function Home() {
           const card = el?.closest?.('.partner-card, .service-strip__item')
 
           if (card) {
-            const prefix = card.getAttribute('data-tooltip-prefix') || 'Explore Fleet'
-            const brand = card.getAttribute('data-tooltip-brand') || ''
-            const brandColor = card.getAttribute('data-tooltip-color') || '#8f6b2d'
-
             if (currentCard !== card) {
               currentCard = card
-              if (tooltipPrefixRef.current) {
-                tooltipPrefixRef.current.textContent = prefix
-              }
-              if (tooltipBrandRef.current) {
-                tooltipBrandRef.current.textContent = brand
-                tooltipBrandRef.current.style.color = brandColor
-              }
+              setTooltipContent(card)
 
               if (!isTooltipActive) {
                 isTooltipActive = true
@@ -443,17 +463,7 @@ function Home() {
             xTo(clampX)
             yTo(clampY)
           } else {
-            if (isTooltipActive) {
-              isTooltipActive = false
-              currentCard = null
-              gsap.to(cursorTooltip, {
-                scale: 0.6,
-                opacity: 0,
-                duration: 0.2,
-                ease: 'power2.in',
-                overwrite: 'auto',
-              })
-            }
+            hideTooltip()
           }
         }
 
@@ -468,20 +478,45 @@ function Home() {
         }
 
         handleDocLeave = () => {
-          if (isTooltipActive) {
-            isTooltipActive = false
-            currentCard = null
-            gsap.to(cursorTooltip, {
-              scale: 0.6,
-              opacity: 0,
-              duration: 0.18,
-              ease: 'power2.in',
-              overwrite: 'auto',
-            })
-          }
+          hideTooltip(0.18)
+        }
+
+        handleTooltipTouchStart = (e) => {
+          if (!isTouchLayout && e.pointerType !== 'touch' && e.pointerType !== 'pen') return
+
+          const card = e.target?.closest?.('.partner-card, .service-strip__item')
+          if (!card) return
+
+          setTooltipContent(card)
+          currentCard = card
+          isTooltipActive = true
+          window.clearTimeout(touchHideTimer)
+
+          const rect = card.getBoundingClientRect()
+          const tooltipX = Math.max(120, Math.min(window.innerWidth - 120, rect.left + rect.width / 2))
+          const tooltipY = Math.max(58, rect.top - 12)
+
+          gsap.set(cursorTooltip, {
+            xPercent: -50,
+            yPercent: -100,
+            x: tooltipX,
+            y: tooltipY,
+            scale: 0.88,
+            opacity: 0,
+          })
+          gsap.to(cursorTooltip, {
+            scale: 1,
+            opacity: 1,
+            duration: 0.2,
+            ease: 'power2.out',
+            overwrite: 'auto',
+          })
+
+          touchHideTimer = window.setTimeout(() => hideTooltip(0.25), 2200)
         }
 
         window.addEventListener('pointermove', handleTooltipMouseMove, { passive: true })
+        window.addEventListener('pointerdown', handleTooltipTouchStart, { passive: true })
         window.addEventListener('scroll', handleWindowScroll, { passive: true })
         document.addEventListener('mouseleave', handleDocLeave)
       }
@@ -637,6 +672,10 @@ function Home() {
         if (handleTooltipMouseMove) {
           window.removeEventListener('pointermove', handleTooltipMouseMove)
         }
+        if (handleTooltipTouchStart) {
+          window.removeEventListener('pointerdown', handleTooltipTouchStart)
+        }
+        window.clearTimeout(touchHideTimer)
         if (handleWindowScroll) {
           window.removeEventListener('scroll', handleWindowScroll)
         }
