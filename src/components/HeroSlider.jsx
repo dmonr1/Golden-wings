@@ -87,18 +87,6 @@ function HeroSlider() {
     let removeVisibilityListener = null
 
     const ctx = gsap.context(() => {
-      // Gentle parallax on the background image stage during normal page scroll
-      gsap.to(heroRef.current?.querySelector('.hero-slider__stage'), {
-        yPercent: 12,
-        ease: 'none',
-        scrollTrigger: {
-          trigger: heroRef.current,
-          start: 'top top',
-          end: 'bottom top',
-          scrub: 0.2,
-        },
-      })
-
       const playIntro = () => {
         if (introPlayedRef.current) return
         introPlayedRef.current = true
