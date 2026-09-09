@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom'
 import {
   MessageCircle,
   X,
+  ChevronDown,
   Send,
   Plane,
   RotateCcw,
@@ -417,7 +418,7 @@ export default function ChatFlyout() {
                 title="Close window"
                 aria-label="Close chat"
               >
-                <X size={17} />
+                <ChevronDown size={18} strokeWidth={2.4} />
               </button>
             </div>
           </div>
