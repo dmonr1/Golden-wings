@@ -1537,12 +1537,6 @@ body:has(.page-loader) .chat-fab {
   will-change: transform, opacity;
 }
 
-.hero-slider__media--image {
-  opacity: 0.98;
-  filter: contrast(1.03) brightness(0.97) saturate(0.96);
-}
-
-.hero-slider__media img,
 .hero-slider__media video {
   width: 100%;
   height: 100%;
@@ -1554,7 +1548,9 @@ body:has(.page-loader) .chat-fab {
   inset: 0;
   z-index: 2;
   pointer-events: none;
-  background: linear-gradient(180deg, rgba(8, 14, 24, 0.28) 0%, rgba(8, 14, 24, 0.08) 40%, rgba(8, 14, 24, 0.42) 100%);
+  background:
+    linear-gradient(180deg, rgba(198, 149, 53, 0.2) 0%, rgba(236, 185, 74, 0.16) 48%, rgba(111, 72, 18, 0.34) 100%),
+    linear-gradient(180deg, rgba(8, 14, 24, 0.2) 0%, rgba(8, 14, 24, 0.06) 42%, rgba(8, 14, 24, 0.42) 100%);
   clip-path: inset(0 round clamp(24px, 3.2vw, 42px));
 }
 

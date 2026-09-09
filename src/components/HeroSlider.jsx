@@ -3,9 +3,9 @@ import gsap from 'gsap'
 import { Search, X, ArrowUpRight, ArrowRight, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { partsInventory } from '../data/partsInventory.js'
-import avion from '../assets/avion.jpg'
-import helicoptero from '../assets/helicoptero.jpg'
-import turbina from '../assets/videos/turbina.webm'
+import videoTwo from '../assets/videos/video2.webm'
+import videoThree from '../assets/videos/video3.webm'
+import videoFour from '../assets/videos/video 4.mp4'
 
 const slides = [
   {
@@ -13,9 +13,9 @@ const slides = [
     title: 'Commercial Aviation Fleet',
     year: '2026',
     type: 'Aircraft parts',
-    media: avion,
-    mediaType: 'image',
-    alt: 'Commercial aircraft flying above clouds',
+    media: videoTwo,
+    mediaType: 'video',
+    alt: 'Commercial aviation operations video',
     tone: 'dark',
   },
   {
@@ -23,9 +23,9 @@ const slides = [
     title: 'Turbine Flow & Power',
     year: 'MRO',
     type: 'Hot parts',
-    media: turbina,
+    media: videoThree,
     mediaType: 'video',
-    alt: 'Aircraft turbine video',
+    alt: 'Aircraft turbine operations video',
     tone: 'white',
   },
   {
@@ -33,9 +33,9 @@ const slides = [
     title: 'Mission Ready Rotables',
     year: 'AOG',
     type: 'Rotables',
-    media: helicoptero,
-    mediaType: 'image',
-    alt: 'Helicopter in flight',
+    media: videoFour,
+    mediaType: 'video',
+    alt: 'Mission-ready aviation video',
     tone: 'dark',
   },
 ]
@@ -50,10 +50,9 @@ const fleetShortcuts = [
 ]
 
 function HeroSlider() {
-  const [{ active, previous, direction }, setSlideState] = useState({
+  const [{ active, previous }, setSlideState] = useState({
     active: 0,
     previous: null,
-    direction: 1,
   })
   const [introReleased, setIntroReleased] = useState(false)
   const [isSearchExpanded, setIsSearchExpanded] = useState(false)
@@ -69,14 +68,13 @@ function HeroSlider() {
   const navigate = useNavigate()
 
   const goTo = useCallback(
-    (index, forcedDirection) => {
+    (index) => {
       window.clearTimeout(timerRef.current)
       const next = (index + slides.length) % slides.length
       if (next === active) return
       setSlideState({
         active: next,
         previous: active,
-        direction: forcedDirection ?? (next > active ? 1 : -1),
       })
     },
     [active],
@@ -216,13 +214,12 @@ function HeroSlider() {
     if (outgoing) {
       gsap.fromTo(
         outgoing,
-        { xPercent: 0, opacity: 1, scale: 1 },
+        { opacity: 1, scale: 1 },
         {
-          xPercent: 0,
           opacity: 0,
           scale: 1.025,
-          duration: 1.35,
-          ease: 'power2.inOut',
+          duration: 1.2,
+          ease: 'power2.out',
         },
       )
     }
@@ -231,24 +228,24 @@ function HeroSlider() {
       gsap.fromTo(
         incoming,
         {
-          xPercent: previous === null ? 0 : 100 * direction,
+          xPercent: 0,
           opacity: previous === null ? 0 : 1,
-          scale: previous === null ? 1.06 : 1.02,
+          scale: 1.07,
         },
         {
           xPercent: 0,
           opacity: 1,
           scale: 1,
-          duration: previous === null ? 0.9 : 1.45,
-          ease: 'power2.inOut',
+          duration: previous === null ? 1.1 : 1.5,
+          ease: 'power2.out',
         },
       )
     }
-  }, [active, previous, direction])
+  }, [active, previous])
 
   useEffect(() => {
     timerRef.current = window.setTimeout(() => {
-      goTo(active + 1, 1)
+      goTo(active + 1)
     }, 10000)
 
     return () => window.clearTimeout(timerRef.current)
