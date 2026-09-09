@@ -6527,10 +6527,10 @@ a.site-footer__link:hover {
   }
 
   .hero-slider__search-clear {
-    width: 26px;
-    height: 26px;
-    flex-basis: 26px;
-    min-width: 26px;
+    width: 36px;
+    height: 36px;
+    flex-basis: 36px;
+    min-width: 36px;
     margin-right: 5px;
     padding: 0;
     border-radius: 50%;
@@ -6585,7 +6585,7 @@ a.site-footer__link:hover {
   }
 
   .hero-slider__search button {
-    min-width: 50px;
+    min-width: 0;
     padding: 0;
   }
 
