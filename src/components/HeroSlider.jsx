@@ -98,28 +98,28 @@ function HeroSlider() {
           // 1. Company Name "GOLDEN WINGS"
           .fromTo(
             heroRef.current?.querySelector('.hero-slider__company'),
-            { y: 48, opacity: 0, scale: 0.95 },
+            { y: 0, opacity: 0, scale: 0.96 },
             { y: 0, opacity: 1, scale: 1, duration: 1.05 },
             0.05,
           )
           // 2. Subtitle "INTERNATIONAL LLC"
           .fromTo(
             heroRef.current?.querySelector('.hero-slider__llc'),
-            { y: 24, opacity: 0, letterSpacing: '0.42em' },
+            { y: 0, opacity: 0, letterSpacing: '0.42em' },
             { y: 0, opacity: 1, letterSpacing: '0.28em', duration: 0.95 },
             0.18,
           )
           // 3. Tagline description
           .fromTo(
             heroRef.current?.querySelector('.hero-slider__tagline'),
-            { y: 20, opacity: 0 },
+            { y: 0, opacity: 0 },
             { y: 0, opacity: 1, duration: 0.85 },
             0.3,
           )
           // 4. Search button enters as a round compact button
           .fromTo(
             heroRef.current?.querySelector('.hero-slider__search-wrap'),
-            { y: 22, scale: 0.5, opacity: 0 },
+            { y: 0, scale: 0.92, opacity: 0 },
             { y: 0, scale: 1, opacity: 1, duration: 0.65, ease: 'back.out(1.8)' },
             0.42,
           )
@@ -130,7 +130,7 @@ function HeroSlider() {
           // 6. Fleet shortcut tags appear right after search expands
           .fromTo(
             heroRef.current?.querySelectorAll('.hero-fleet-tag'),
-            { y: 14, opacity: 0 },
+            { y: 0, opacity: 0 },
             { y: 0, opacity: 1, duration: 0.6, stagger: 0.05, ease: 'power3.out' },
             1.15,
           )
@@ -143,11 +143,11 @@ function HeroSlider() {
         setIsSearchExpanded(false)
         heroRef.current?.classList.add('hero-slider--intro-hidden')
 
-        gsap.set(heroRef.current?.querySelector('.hero-slider__company'), { y: 48, opacity: 0, scale: 0.95 })
-        gsap.set(heroRef.current?.querySelector('.hero-slider__llc'), { y: 24, opacity: 0 })
-        gsap.set(heroRef.current?.querySelector('.hero-slider__tagline'), { y: 20, opacity: 0 })
-        gsap.set(heroRef.current?.querySelector('.hero-slider__search-wrap'), { y: 22, scale: 0.5, opacity: 0 })
-        gsap.set(heroRef.current?.querySelectorAll('.hero-fleet-tag'), { y: 14, opacity: 0 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__company'), { y: 0, opacity: 0, scale: 0.96 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__llc'), { y: 0, opacity: 0 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__tagline'), { y: 0, opacity: 0 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__search-wrap'), { y: 0, scale: 0.92, opacity: 0 })
+        gsap.set(heroRef.current?.querySelectorAll('.hero-fleet-tag'), { y: 0, opacity: 0 })
       }
 
       const handleVisibilityChange = () => {
@@ -164,11 +164,11 @@ function HeroSlider() {
       if (introPlayedRef.current) return
 
       // Set initial hidden state
-      gsap.set(heroRef.current?.querySelector('.hero-slider__company'), { y: 48, opacity: 0, scale: 0.95 })
-      gsap.set(heroRef.current?.querySelector('.hero-slider__llc'), { y: 24, opacity: 0 })
-      gsap.set(heroRef.current?.querySelector('.hero-slider__tagline'), { y: 20, opacity: 0 })
-      gsap.set(heroRef.current?.querySelector('.hero-slider__search-wrap'), { y: 22, scale: 0.5, opacity: 0 })
-      gsap.set(heroRef.current?.querySelectorAll('.hero-fleet-tag'), { y: 14, opacity: 0 })
+      gsap.set(heroRef.current?.querySelector('.hero-slider__company'), { y: 0, opacity: 0, scale: 0.96 })
+      gsap.set(heroRef.current?.querySelector('.hero-slider__llc'), { y: 0, opacity: 0 })
+      gsap.set(heroRef.current?.querySelector('.hero-slider__tagline'), { y: 0, opacity: 0 })
+      gsap.set(heroRef.current?.querySelector('.hero-slider__search-wrap'), { y: 0, scale: 0.92, opacity: 0 })
+      gsap.set(heroRef.current?.querySelectorAll('.hero-fleet-tag'), { y: 0, opacity: 0 })
 
       const waitForLoader = document.querySelector('.page-loader') || document.body.style.position === 'fixed'
 
@@ -205,6 +205,8 @@ function HeroSlider() {
       gsap.set(element, {
         display: index === active || index === previous ? 'block' : 'none',
         zIndex: index === active ? 2 : 1,
+        xPercent: 0,
+        yPercent: 0,
       })
     })
 
@@ -214,11 +216,13 @@ function HeroSlider() {
     if (outgoing) {
       gsap.fromTo(
         outgoing,
-        { opacity: 1, scale: 1 },
+        { xPercent: 0, yPercent: 0, opacity: 1, scale: 1 },
         {
+          xPercent: 0,
+          yPercent: 0,
           opacity: 0,
-          scale: 1.025,
-          duration: 1.2,
+          scale: 1,
+          duration: 0.9,
           ease: 'power2.out',
         },
       )
@@ -229,14 +233,16 @@ function HeroSlider() {
         incoming,
         {
           xPercent: 0,
-          opacity: previous === null ? 0 : 1,
-          scale: 1.07,
+          yPercent: 0,
+          opacity: 0,
+          scale: 1.02,
         },
         {
           xPercent: 0,
+          yPercent: 0,
           opacity: 1,
           scale: 1,
-          duration: previous === null ? 1.1 : 1.5,
+          duration: previous === null ? 1.1 : 1.05,
           ease: 'power2.out',
         },
       )

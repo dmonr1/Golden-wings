@@ -1598,6 +1598,7 @@ body:has(.page-loader) .chat-fab {
   font-family: var(--body);
   font-size: clamp(42px, 7.2vw, 104px);
   font-weight: 900;
+  font-style: italic;
   letter-spacing: -0.01em;
   line-height: 0.92;
   color: #ffffff;
