@@ -5884,11 +5884,11 @@ a.site-footer__link:hover {
   z-index: 0;
   width: min(760px, 68vw);
   height: auto;
-  opacity: 0.055;
+  opacity: 0.09;
   pointer-events: none;
   user-select: none;
   transform: translate(-50%, -50%);
-  filter: grayscale(1) saturate(0.7);
+  filter: saturate(1.15);
 }
 
 .legal-page__topbar,
