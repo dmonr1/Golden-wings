@@ -2,10 +2,6 @@ import { useLayoutEffect, useRef } from 'react'
 import { useLocation } from 'react-router-dom'
 import gsap from 'gsap'
 import HelicopterAnimation from './HelicopterAnimation.jsx'
-import AtmosphericClouds from './AtmosphericClouds.jsx'
-import AeroRadarGrid from './AeroRadarGrid.jsx'
-import GlobalNetworkMap from './GlobalNetworkMap.jsx'
-import RunwayBeaconGraphic from './RunwayBeaconGraphic.jsx'
 import lostDeals from '../assets/lost deals.jpg'
 
 function PageIntro({
@@ -221,11 +217,7 @@ function PageIntro({
 
   return (
     <section className={`page-intro page-intro--${theme}`} ref={containerRef}>
-      {/* Background visual graphics - each page has its own distinctive design */}
-      {theme === 'clouds' && <AtmosphericClouds />}
-      {theme === 'radar' && <AeroRadarGrid />}
-      {theme === 'network' && <GlobalNetworkMap />}
-      {theme === 'runway' && <RunwayBeaconGraphic />}
+      {/* Contact page background image */}
       {theme === 'contact-hero' && (
         <div className="page-intro__parallax-bg" aria-hidden="true">
           <img src={lostDeals} alt="" className="page-intro__parallax-img" />
