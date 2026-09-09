@@ -1,4 +1,4 @@
-import { useEffect } from 'react'
+import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
@@ -14,9 +14,31 @@ const TABS = [
 function Legal() {
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') || 'cookies'
+  const tabsNavRef = useRef(null)
+  const tabButtonRefs = useRef({})
+  const [indicatorStyle, setIndicatorStyle] = useState({ left: 0, width: 0 })
 
   useEffect(() => {
     window.scrollTo(0, 0)
+  }, [activeTab])
+
+  useLayoutEffect(() => {
+    const updateIndicator = () => {
+      const nav = tabsNavRef.current
+      const activeButton = tabButtonRefs.current[activeTab]
+      if (!nav || !activeButton) return
+
+      const navRect = nav.getBoundingClientRect()
+      const buttonRect = activeButton.getBoundingClientRect()
+      setIndicatorStyle({
+        left: buttonRect.left - navRect.left + nav.scrollLeft,
+        width: buttonRect.width,
+      })
+    }
+
+    updateIndicator()
+    window.addEventListener('resize', updateIndicator)
+    return () => window.removeEventListener('resize', updateIndicator)
   }, [activeTab])
 
   const setTab = (tabId) => {
@@ -48,18 +70,25 @@ function Legal() {
         <header className="legal-page__header">
           <h1 className="legal-page__main-title">LEGAL</h1>
           <div className="legal-page__tabs-bar">
-            <nav className="legal-page__tabs-nav" aria-label="Legal navigation">
+            <nav ref={tabsNavRef} className="legal-page__tabs-nav" aria-label="Legal navigation">
               {TABS.map((tab) => (
                 <button
                   key={tab.id}
                   type="button"
+                  ref={(node) => {
+                    tabButtonRefs.current[tab.id] = node
+                  }}
                   className={`legal-page__tab-btn ${activeTab === tab.id ? 'is-active' : ''}`}
                   onClick={() => setTab(tab.id)}
                 >
                   {tab.label}
-                  {activeTab === tab.id && <span className="legal-page__tab-indicator" />}
                 </button>
               ))}
+              <span
+                className="legal-page__tab-indicator"
+                aria-hidden="true"
+                style={{ left: `${indicatorStyle.left}px`, width: `${indicatorStyle.width}px` }}
+              />
             </nav>
           </div>
         </header>
