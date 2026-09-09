@@ -1647,7 +1647,7 @@ body:has(.page-loader) .chat-fab {
 
 .hero-slider__search-wrap--expanded {
   width: min(720px, calc(100vw - 32px));
-  height: 60px;
+  height: 54px;
   background: #ffffff;
   box-shadow: 0 18px 48px rgba(0, 0, 0, 0.38);
   border: 1px solid rgba(255, 255, 255, 0.95);
@@ -1669,7 +1669,7 @@ body:has(.page-loader) .chat-fab {
 }
 
 .hero-slider__search-wrap--expanded .hero-slider__search {
-  padding: 5px 6px 5px 22px;
+  padding: 4px 6px 4px 22px;
 }
 
 .hero-slider__search-wrap:not(.hero-slider__search-wrap--expanded) input {
@@ -1683,7 +1683,7 @@ body:has(.page-loader) .chat-fab {
   display: block;
   flex: 1;
   min-width: 0;
-  height: 48px;
+  height: 42px;
   border: none;
   outline: none;
   background: transparent;
@@ -1705,9 +1705,9 @@ body:has(.page-loader) .chat-fab {
 
 .hero-slider__search-clear {
   display: grid;
-  width: 32px;
-  height: 32px;
-  flex: 0 0 32px;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
   place-items: center;
   margin-right: 8px;
   padding: 0;
@@ -1756,7 +1756,7 @@ body:has(.page-loader) .chat-fab {
 }
 
 .hero-slider__search-wrap--expanded .hero-slider__search-submit {
-  height: 48px;
+  height: 42px;
   min-width: 96px;
   padding: 0 clamp(12px, 2.2vw, 15px);
   border-radius: 999px;
