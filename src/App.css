@@ -777,10 +777,6 @@ select {
   }
 }
 
-.hero-slider__content {
-  transform: translateY(-clamp(14px, 3.5vh, 30px));
-}
-
 /* Matched Parts List in Bot Message */
 .chat-bubble__parts-list {
   margin-top: 8px;
@@ -1639,6 +1635,7 @@ body:has(.page-loader) .chat-fab {
     box-shadow 0.35s ease,
     border-color 0.35s ease;
   pointer-events: auto;
+  border: 1px solid rgba(255, 255, 255, 0.35);
   display: flex;
   align-items: center;
   justify-content: center;
