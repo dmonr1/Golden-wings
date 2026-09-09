@@ -6504,7 +6504,10 @@ a.site-footer__link:hover {
     margin-bottom: 20px;
   }
 
-  .hero-slider__search-container,
+  .hero-slider__search-container {
+    width: calc(100% - 24px);
+  }
+
   .hero-slider__search-wrap--expanded {
     width: 100%;
   }
