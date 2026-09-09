@@ -5888,7 +5888,7 @@ a.site-footer__link:hover {
   pointer-events: none;
   user-select: none;
   transform: translate(-50%, -50%);
-  filter: saturate(1.15);
+  filter: brightness(0.72) saturate(1.25);
 }
 
 .legal-page__topbar,
