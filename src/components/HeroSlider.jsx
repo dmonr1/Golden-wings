@@ -423,7 +423,7 @@ function HeroSlider() {
                   </div>
 
                   <div className="hero-search-dropdown__list">
-                    {filteredParts.slice(0, 5).map((part) => (
+                    {filteredParts.slice(0, 3).map((part) => (
                       <div
                         key={part.id || part.partNumber}
                         className="hero-search-dropdown__item"
