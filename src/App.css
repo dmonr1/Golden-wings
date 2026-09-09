@@ -5867,12 +5867,35 @@ a.site-footer__link:hover {
    ========================================================================== */
 
 .legal-page {
+  position: relative;
+  overflow: hidden;
   min-height: 100vh;
   background: #ffffff;
   color: #0f172a;
   display: flex;
   flex-direction: column;
   font-family: var(--body);
+}
+
+.legal-page__watermark {
+  position: absolute;
+  top: 46%;
+  left: 50%;
+  z-index: 0;
+  width: min(760px, 68vw);
+  height: auto;
+  opacity: 0.055;
+  pointer-events: none;
+  user-select: none;
+  transform: translate(-50%, -50%);
+  filter: grayscale(1) saturate(0.7);
+}
+
+.legal-page__topbar,
+.legal-page__wrapper,
+.legal-page__footer {
+  position: relative;
+  z-index: 1;
 }
 
 .legal-page__topbar {
@@ -5924,7 +5947,7 @@ a.site-footer__link:hover {
 .legal-page__header {
   padding-top: clamp(36px, 3.8vw, 56px);
   text-align: center;
-  background: #ffffff;
+  background: transparent;
 }
 
 .legal-page__main-title {

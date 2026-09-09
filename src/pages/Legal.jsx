@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
+import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 
 const TABS = [
   { id: 'terms', label: 'Terms of Use' },
@@ -24,6 +25,13 @@ function Legal() {
 
   return (
     <div className="legal-page">
+      <img
+        className="legal-page__watermark"
+        src={eagleLogo}
+        alt=""
+        aria-hidden="true"
+      />
+
       {/* Top minimal header bar */}
       <div className="legal-page__topbar">
         <div className="legal-page__topbar-inner">
