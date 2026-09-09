@@ -84,6 +84,7 @@ function HeroSlider() {
 
   useEffect(() => {
     let removeLoaderEndListener = null
+    let removeVisibilityListener = null
 
     const ctx = gsap.context(() => {
       // Gentle parallax on the background image stage during normal page scroll
@@ -149,6 +150,31 @@ function HeroSlider() {
           )
       }
 
+      const resetIntro = () => {
+        introTimelineRef.current?.kill()
+        introPlayedRef.current = false
+        setIntroReleased(false)
+        setIsSearchExpanded(false)
+        heroRef.current?.classList.add('hero-slider--intro-hidden')
+
+        gsap.set(heroRef.current?.querySelector('.hero-slider__company'), { y: 48, opacity: 0, scale: 0.95 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__llc'), { y: 24, opacity: 0 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__tagline'), { y: 20, opacity: 0 })
+        gsap.set(heroRef.current?.querySelector('.hero-slider__search-wrap'), { y: 22, scale: 0.5, opacity: 0 })
+        gsap.set(heroRef.current?.querySelectorAll('.hero-fleet-tag'), { y: 14, opacity: 0 })
+      }
+
+      const handleVisibilityChange = () => {
+        if (document.visibilityState !== 'visible' || !introPlayedRef.current) return
+        if (document.querySelector('.page-loader')) return
+
+        resetIntro()
+        requestAnimationFrame(() => playIntro())
+      }
+
+      document.addEventListener('visibilitychange', handleVisibilityChange)
+      removeVisibilityListener = () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+
       if (introPlayedRef.current) return
 
       // Set initial hidden state
@@ -179,6 +205,7 @@ function HeroSlider() {
 
     return () => {
       removeLoaderEndListener?.()
+      removeVisibilityListener?.()
       introTimelineRef.current?.kill()
       ctx.revert()
     }
