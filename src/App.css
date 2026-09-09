@@ -6508,6 +6508,8 @@ a.site-footer__link:hover {
 
   .hero-slider__search-container {
     width: calc(100% - 24px);
+    display: flex;
+    justify-content: center;
   }
 
   .hero-slider__search-wrap--expanded {
