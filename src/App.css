@@ -1565,6 +1565,7 @@ body:has(.page-loader) .chat-fab {
   padding: 0 clamp(16px, 4vw, 56px);
   pointer-events: none;
   text-align: center;
+  transform: translateY(-clamp(18px, 4.5vh, 52px));
   will-change: transform, opacity;
 }
 
@@ -6178,6 +6179,10 @@ a.site-footer__link:hover {
   .hero-slider {
     height: 98svh;
     min-height: 620px;
+  }
+
+  .hero-slider__content {
+    transform: translateY(-clamp(14px, 3.5vh, 30px));
   }
 
   .hero-slider__brand {
