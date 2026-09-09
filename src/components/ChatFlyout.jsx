@@ -7,6 +7,10 @@ import {
   Plane,
   RotateCcw,
   ArrowRight,
+  Search,
+  Zap,
+  ClipboardList,
+  ShieldCheck,
 } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 import { partsInventory } from '../data/partsInventory.js'
@@ -15,7 +19,7 @@ const INITIAL_MESSAGES = [
   {
     id: 'msg-welcome-1',
     sender: 'bot',
-    text: 'Hello! 👋 Welcome to Golden Wings International.',
+    text: 'Hello! Welcome to Golden Wings International.',
     time: 'Now',
   },
   {
@@ -27,10 +31,10 @@ const INITIAL_MESSAGES = [
 ]
 
 const QUICK_ACTIONS = [
-  { label: '🔍 Search P/N (e.g. 212-040)', query: '212-040' },
-  { label: '⚡ Urgent AOG Support', query: 'I have an AOG emergency' },
-  { label: '📋 Request a Quote (RFQ)', query: 'How do I request an RFQ?' },
-  { label: '📦 FAA / EASA Certifications', query: 'What certifications come with the parts?' },
+  { icon: Search, label: 'Search P/N (e.g. 212-040)', query: '212-040' },
+  { icon: Zap, label: 'Urgent AOG Support', query: 'I have an AOG emergency' },
+  { icon: ClipboardList, label: 'Request a Quote (RFQ)', query: 'How do I request an RFQ?' },
+  { icon: ShieldCheck, label: 'FAA / EASA Certifications', query: 'What certifications come with the parts?' },
 ]
 
 function getFormattedTime() {
@@ -116,7 +120,7 @@ function generateBotReply(userText) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: '🚨 Priority AOG support activated! Our aircraft-on-ground response team operates 24/7/365 for immediate dispatch from our logistics centers.',
+      text: 'Priority AOG support activated. Our aircraft-on-ground response team operates 24/7/365 for immediate dispatch from our logistics centers.',
       action: {
         type: 'contact',
         label: 'Contact the 24/7 AOG Desk',
@@ -527,7 +531,8 @@ export default function ChatFlyout() {
                 className="chat-quick-chip"
                 onClick={() => handleSendMessage(item.query)}
               >
-                {item.label}
+                <item.icon size={14} aria-hidden="true" />
+                <span>{item.label}</span>
               </button>
             ))}
           </div>
