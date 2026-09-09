@@ -4283,7 +4283,7 @@ h3 {
   box-shadow: 0 5px 14px rgba(7, 13, 20, 0.25);
 }
 
-/* Secondary Subbar: Category Chips & Sort */
+/* Secondary Subbar: Category selector & sorting */
 .catalog-subbar {
   display: flex;
   flex-wrap: wrap;
@@ -4292,14 +4292,13 @@ h3 {
   gap: 12px;
 }
 
-.catalog-category-chips {
+.catalog-category-select-wrap {
   display: flex;
   align-items: center;
   gap: 8px;
-  flex-wrap: wrap;
 }
 
-.catalog-chips-label {
+.catalog-filter-label {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -4311,32 +4310,25 @@ h3 {
   font-family: var(--body);
 }
 
-.catalog-chip {
-  padding: 7px 15px;
+.catalog-category-select {
+  min-width: 190px;
+  padding: 8px 34px 8px 12px;
   border-radius: 8px;
-  border: 1px solid rgb(7, 13, 20);
+  border: 1px solid rgba(7, 13, 20, 0.13);
   background: #ffffff;
-  color: #000000;
+  color: #070d14;
   font-size: 13px;
-  font-weight: 650;
+  font-weight: 700;
   font-family: var(--body);
   cursor: pointer;
-  box-shadow: 0 2px 6px rgba(7, 13, 20, 0.03);
-  transition: all 0.2s ease;
+  box-shadow: 0 2px 7px rgba(7, 13, 20, 0.04);
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.catalog-chip:hover {
-  color: #070d14;
-  background: #f8fafc;
-  border-color: rgba(7, 13, 20, 0.16);
-}
-
-.catalog-chip.is-active {
-  background: #070d14;
-  color: #ffffff;
-  border-color: #070d14;
-  font-weight: 750;
-  box-shadow: 0 4px 12px rgba(7, 13, 20, 0.15);
+.catalog-category-select:focus {
+  border-color: #144485;
+  box-shadow: 0 0 0 3px rgb(20 68 133 / 12%);
 }
 
 .catalog-sort-wrap {
@@ -4855,6 +4847,17 @@ h3 {
   .catalog-subbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+
+  .catalog-category-select-wrap,
+  .catalog-sort-wrap {
+    width: 100%;
+  }
+
+  .catalog-category-select,
+  .catalog-sort-select {
+    flex: 1;
+    min-width: 0;
   }
 
   /* Responsive Part Cards: Full vertical display so image AND all specs are 100% visible */

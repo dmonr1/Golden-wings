@@ -320,22 +320,24 @@ function Catalog() {
             </form>
           </div>
 
-          {/* Secondary Filter Row: Categories & Sorting */}
+          {/* Secondary Filter Row: Category selector & sorting */}
           <div className="catalog-subbar" ref={subbarRef}>
-            <div className="catalog-category-chips">
-              <span className="catalog-chips-label">
+            <div className="catalog-category-select-wrap">
+              <label className="catalog-filter-label" htmlFor="catalog-category">
                 <Filter size={14} aria-hidden="true" /> Category:
-              </span>
-              {categoryFilters.map((cat) => (
-                <button
-                  key={cat}
-                  type="button"
-                  className={`catalog-chip ${selectedCategory === cat ? 'is-active' : ''}`}
-                  onClick={() => setSelectedCategory(cat)}
-                >
-                  {cat}
-                </button>
-              ))}
+              </label>
+              <select
+                id="catalog-category"
+                value={selectedCategory}
+                onChange={(e) => setSelectedCategory(e.target.value)}
+                className="catalog-category-select"
+              >
+                {categoryFilters.map((cat) => (
+                  <option key={cat} value={cat}>
+                    {cat}
+                  </option>
+                ))}
+              </select>
             </div>
 
             <div className="catalog-sort-wrap">
