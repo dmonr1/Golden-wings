@@ -6537,9 +6537,9 @@ a.site-footer__link:hover {
   }
 
   .hero-slider__search-wrap--expanded .hero-slider__search-submit {
-    width: 40px;
-    min-width: 40px;
-    height: 40px;
+    width: 36px;
+    min-width: 36px;
+    height: 36px;
     padding: 0;
     border-radius: 50%;
   }
