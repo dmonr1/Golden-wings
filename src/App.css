@@ -6946,6 +6946,52 @@ a.site-footer__link:hover {
   fill: #f1f1f1;
 }
 
+/* Catalog: deep aviation blue with a subtle aircraft-photo overlay. */
+.catalog-page .page-intro.page-intro--paper {
+  isolation: isolate;
+  background: #144485;
+  color: #ffffff;
+}
+
+.catalog-page .page-intro.page-intro--paper::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background:
+    linear-gradient(90deg, rgb(20 68 133 / 92%) 0%, rgb(20 68 133 / 78%) 54%, rgb(20 68 133 / 68%) 100%),
+    url('./assets/helicoptero.jpg') center 58% / cover no-repeat;
+  opacity: 0.42;
+  filter: saturate(0.72) contrast(1.08);
+  pointer-events: none;
+}
+
+.catalog-page .page-intro__inner {
+  z-index: 1;
+}
+
+.catalog-page .page-intro--paper h1,
+.catalog-page .page-intro--paper .page-intro__text,
+.catalog-page .page-intro--paper p:not(.eyebrow) {
+  color: #ffffff;
+}
+
+.catalog-page .page-intro--paper .page-intro__graphic-wrap {
+  z-index: 2;
+}
+
+.catalog-page .page-intro--paper .helicopter-craft-img {
+  filter: brightness(0) invert(1) drop-shadow(0 14px 22px rgb(4 26 56 / 28%));
+}
+
+.catalog-page .page-intro--paper .page-intro__wave {
+  background: #144485;
+}
+
+.catalog-page .page-intro--paper .page-intro__wave path {
+  fill: #ffffff;
+}
+
 .page-intro--radar {
   background: radial-gradient(circle at 78% 40%, #10253b 0%, #09131d 58%, #050b11 100%);
   color: #faf8f3;
