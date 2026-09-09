@@ -4292,7 +4292,8 @@ h3 {
   gap: 12px;
 }
 
-.catalog-category-select-wrap {
+.catalog-category-picker {
+  position: relative;
   display: flex;
   align-items: center;
   gap: 8px;
@@ -4310,7 +4311,10 @@ h3 {
   font-family: var(--body);
 }
 
-.catalog-category-select {
+.catalog-category-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
   min-width: 190px;
   padding: 8px 34px 8px 12px;
   border-radius: 8px;
@@ -4326,9 +4330,52 @@ h3 {
   transition: border-color 0.2s ease, box-shadow 0.2s ease;
 }
 
-.catalog-category-select:focus {
+.catalog-category-trigger svg {
+  flex-shrink: 0;
+  transition: transform 0.18s ease;
+}
+
+.catalog-category-trigger[aria-expanded='true'] svg {
+  transform: rotate(180deg);
+}
+
+.catalog-category-trigger:hover,
+.catalog-category-trigger:focus-visible {
   border-color: #144485;
   box-shadow: 0 0 0 3px rgb(20 68 133 / 12%);
+}
+
+.catalog-category-menu {
+  position: absolute;
+  top: calc(100% + 7px);
+  right: 0;
+  z-index: 20;
+  min-width: 190px;
+  overflow: hidden;
+  border: 1px solid rgba(7, 13, 20, 0.1);
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 12px 28px rgba(7, 13, 24, 0.2);
+}
+
+.catalog-category-option {
+  width: 100%;
+  padding: 9px 12px;
+  border: 0;
+  background: #ffffff;
+  color: #243042;
+  font-family: var(--body);
+  font-size: 13px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+
+.catalog-category-option:hover,
+.catalog-category-option:focus-visible,
+.catalog-category-option.is-selected {
+  background: #edf5ff;
+  color: #144485;
 }
 
 .catalog-sort-wrap {
@@ -4849,12 +4896,12 @@ h3 {
     align-items: flex-start;
   }
 
-  .catalog-category-select-wrap,
+  .catalog-category-picker,
   .catalog-sort-wrap {
     width: 100%;
   }
 
-  .catalog-category-select,
+  .catalog-category-trigger,
   .catalog-sort-select {
     flex: 1;
     min-width: 0;
@@ -6964,7 +7011,7 @@ a.site-footer__link:hover {
   background:
     linear-gradient(90deg, rgb(20 68 133 / 60%) 0%, rgb(20 68 133 / 55%) 50%, rgb(20 68 133 / 72%) 100%),
     url('./assets/avionics.jpg') center center / cover no-repeat;
-  opacity: 0.7;
+  opacity: 0.58;
   filter: saturate(0.78) contrast(1.08);
   -webkit-mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgb(0 0 0 / 62%) 72%, transparent 94%);
   mask-image: linear-gradient(180deg, #000 0%, #000 52%, rgb(0 0 0 / 62%) 72%, transparent 94%);

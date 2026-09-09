@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Search, ArrowUpDown, Sparkles, Filter, X, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { Search, ArrowUpDown, Sparkles, Filter, X, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
@@ -27,12 +27,27 @@ function Catalog() {
   })
   const [sortBy, setSortBy] = useState('default')
   const [currentPage, setCurrentPage] = useState(1)
+  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
 
   const sectionRef = useRef(null)
   const toolbarRef = useRef(null)
   const subbarRef = useRef(null)
   const statusBarRef = useRef(null)
   const gridRef = useRef(null)
+  const categoryPickerRef = useRef(null)
+
+  useEffect(() => {
+    if (!isCategoryMenuOpen) return undefined
+
+    const closeOnOutsideClick = (event) => {
+      if (!categoryPickerRef.current?.contains(event.target)) {
+        setIsCategoryMenuOpen(false)
+      }
+    }
+
+    document.addEventListener('pointerdown', closeOnOutsideClick)
+    return () => document.removeEventListener('pointerdown', closeOnOutsideClick)
+  }, [isCategoryMenuOpen])
 
   // Sync state with URL params when navigating back/forward or from Hero search
   useEffect(() => {
@@ -322,22 +337,40 @@ function Catalog() {
 
           {/* Secondary Filter Row: Category selector & sorting */}
           <div className="catalog-subbar" ref={subbarRef}>
-            <div className="catalog-category-select-wrap">
-              <label className="catalog-filter-label" htmlFor="catalog-category">
+            <div className="catalog-category-picker" ref={categoryPickerRef}>
+              <span className="catalog-filter-label">
                 <Filter size={14} aria-hidden="true" /> Category:
-              </label>
-              <select
-                id="catalog-category"
-                value={selectedCategory}
-                onChange={(e) => setSelectedCategory(e.target.value)}
-                className="catalog-category-select"
+              </span>
+              <button
+                type="button"
+                className="catalog-category-trigger"
+                onClick={() => setIsCategoryMenuOpen((isOpen) => !isOpen)}
+                aria-expanded={isCategoryMenuOpen}
+                aria-haspopup="menu"
+                aria-label={`Category: ${selectedCategory}`}
               >
-                {categoryFilters.map((cat) => (
-                  <option key={cat} value={cat}>
-                    {cat}
-                  </option>
-                ))}
-              </select>
+                <span>{selectedCategory}</span>
+                <ChevronDown size={15} aria-hidden="true" />
+              </button>
+              {isCategoryMenuOpen && (
+                <div className="catalog-category-menu" role="menu" aria-label="Select a category">
+                  {categoryFilters.map((cat) => (
+                    <button
+                      key={cat}
+                      type="button"
+                      className={`catalog-category-option ${selectedCategory === cat ? 'is-selected' : ''}`}
+                      role="menuitemradio"
+                      aria-checked={selectedCategory === cat}
+                      onClick={() => {
+                        setSelectedCategory(cat)
+                        setIsCategoryMenuOpen(false)
+                      }}
+                    >
+                      {cat}
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <div className="catalog-sort-wrap">
