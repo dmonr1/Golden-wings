@@ -1565,7 +1565,7 @@ body:has(.page-loader) .chat-fab {
   padding: 0 clamp(16px, 4vw, 56px);
   pointer-events: none;
   text-align: center;
-  transform: translateY(calc(-1 * clamp(18px, 4.5vh, 52px)));
+  transform: translateY(calc(-1 * clamp(18px, 7.5vh, 65px)));
   will-change: transform, opacity;
 }
 
@@ -1843,33 +1843,6 @@ body:has(.page-loader) .chat-fab {
   font-size: 11px;
   color: #94a3b8;
   letter-spacing: 0.01em;
-}
-
-.hero-search-dropdown__header-actions {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.hero-search-dropdown__close {
-  display: grid;
-  width: 30px;
-  height: 30px;
-  place-items: center;
-  padding: 0;
-  border: 1px solid rgba(0, 83, 149, 0.14);
-  border-radius: 999px;
-  background: #e0f2fe;
-  color: #005395;
-  cursor: pointer;
-  transition: background 160ms ease, color 160ms ease, transform 160ms ease;
-}
-
-.hero-search-dropdown__close:hover,
-.hero-search-dropdown__close:focus-visible {
-  background: #005395;
-  color: #ffffff;
-  transform: scale(1.06);
 }
 
 .hero-search-dropdown__list {

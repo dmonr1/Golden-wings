@@ -408,18 +408,7 @@ function HeroSlider() {
                     <span className="hero-search-dropdown__count">
                       Found <strong>{filteredParts.length}</strong> matching {filteredParts.length === 1 ? 'part' : 'parts'}:
                     </span>
-                    <div className="hero-search-dropdown__header-actions">
-                      <span className="hero-search-dropdown__hint">Select item to view in Catalog</span>
-                      <button
-                        type="button"
-                        className="hero-search-dropdown__close"
-                        onClick={() => setIsDropdownOpen(false)}
-                        aria-label="Close search suggestions"
-                        title="Close suggestions"
-                      >
-                        <X size={16} aria-hidden="true" />
-                      </button>
-                    </div>
+                    <span className="hero-search-dropdown__hint">Select item to view in Catalog</span>
                   </div>
 
                   <div className="hero-search-dropdown__list">
