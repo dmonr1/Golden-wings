@@ -2835,6 +2835,97 @@ body:has(.page-loader) .chat-fab {
   }
 }
 
+@media (max-width: 480px) {
+  .chat-flyout {
+    right: 12px;
+    bottom: 72px;
+    width: calc(100vw - 24px);
+    height: min(600px, calc(100dvh - 144px));
+    border-radius: 17px;
+  }
+
+  .chat-flyout__header {
+    min-height: 54px;
+    padding: 11px 12px;
+  }
+
+  .chat-flyout__brand {
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .chat-flyout__avatar {
+    width: 32px;
+    height: 32px;
+  }
+
+  .chat-flyout__avatar-img {
+    width: 20px;
+    height: 20px;
+  }
+
+  .chat-flyout__company {
+    max-width: 190px;
+    overflow: hidden;
+    font-size: 12px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .chat-flyout__header-btn {
+    width: 28px;
+    height: 28px;
+  }
+
+  .chat-flyout__messages {
+    padding: 13px 11px 8px;
+    gap: 10px;
+  }
+
+  .chat-flyout__security-badge {
+    max-width: 100%;
+    margin-bottom: 2px;
+    padding-inline: 4px;
+    font-size: 10px;
+    white-space: nowrap;
+  }
+
+  .chat-bubble {
+    max-width: 89%;
+    padding: 10px 12px;
+    font-size: 13px;
+    line-height: 1.4;
+  }
+
+  .chat-flyout__quick-actions {
+    gap: 7px;
+    padding: 9px 10px;
+  }
+
+  .chat-quick-chip {
+    min-height: 36px;
+    padding: 7px 12px;
+    gap: 6px;
+    font-size: 11.5px;
+  }
+
+  .chat-flyout__input-bar {
+    gap: 6px;
+    padding: 8px 10px;
+  }
+
+  .chat-flyout__input {
+    min-height: 38px !important;
+    padding-inline: 13px;
+    font-size: 13px;
+  }
+
+  .chat-flyout__send-btn {
+    width: 38px;
+    height: 38px;
+  }
+}
+
 /* ==========================================================================
    PARTS INVENTORY / CATEGORIES SECTION
    ========================================================================== */
