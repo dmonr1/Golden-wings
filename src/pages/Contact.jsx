@@ -302,30 +302,6 @@ function Contact() {
 
       {/* Corporate Entities & Regional Locations Section */}
       <section className="contact-entities-section" ref={entitiesRef} aria-label="Regional Locations">
-        {/* Ambient background waves & aerodynamic contours */}
-        <div className="entities-bg-waves" aria-hidden="true">
-          <svg viewBox="0 0 1440 600" fill="none" preserveAspectRatio="none">
-            <path
-              d="M-100,200 C320,100 500,380 900,220 C1250,80 1400,350 1600,240"
-              stroke="rgba(0, 83, 149, 0.07)"
-              strokeWidth="2.5"
-              fill="none"
-            />
-            <path
-              d="M-100,280 C360,180 540,460 940,300 C1290,160 1440,430 1640,320"
-              stroke="rgba(255, 154, 9, 0.08)"
-              strokeWidth="2.5"
-              fill="none"
-            />
-            <path
-              d="M-100,360 C400,260 580,540 980,380 C1330,240 1480,510 1680,400"
-              stroke="rgba(24, 54, 93, 0.05)"
-              strokeWidth="2"
-              fill="none"
-            />
-          </svg>
-        </div>
-
         <div className="contact-container contact-container--wide">
           <div className="entities-header">
             <h2 className="entities-title">Regional Locations</h2>

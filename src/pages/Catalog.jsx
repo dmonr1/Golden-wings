@@ -1,5 +1,5 @@
 import { useMemo, useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Search, ArrowUpDown, Sparkles, Filter, X, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { Search, ArrowUpDown, LayoutGrid, Sparkles, List, Table2, Filter, Trash2, X, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
@@ -27,14 +27,15 @@ function Catalog() {
   const [searchParams, setSearchParams] = useSearchParams()
 
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || '')
-  const [selectedCategory, setSelectedCategory] = useState(() => {
+  const [selectedCategories, setSelectedCategories] = useState(() => {
     const param = searchParams.get('category')
-    if (param && categoryFilters.includes(param)) return param
-    return 'All Parts'
+    if (!param) return []
+    return param.split(',').filter((category) => categoryFilters.includes(category) && category !== 'All Parts')
   })
   const [sortBy, setSortBy] = useState('default')
+  const [viewMode, setViewMode] = useState('cards')
+  const [selectedPartDetail, setSelectedPartDetail] = useState(null)
   const [currentPage, setCurrentPage] = useState(1)
-  const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false)
   const [isSortMenuOpen, setIsSortMenuOpen] = useState(false)
 
   const sectionRef = useRef(null)
@@ -42,25 +43,41 @@ function Catalog() {
   const subbarRef = useRef(null)
   const statusBarRef = useRef(null)
   const gridRef = useRef(null)
-  const categoryPickerRef = useRef(null)
   const sortPickerRef = useRef(null)
 
   useEffect(() => {
-    if (!isCategoryMenuOpen && !isSortMenuOpen) return undefined
+    if (!isSortMenuOpen) return undefined
 
     const closeOnOutsideClick = (event) => {
-      const isInsideCategory = categoryPickerRef.current?.contains(event.target)
       const isInsideSort = sortPickerRef.current?.contains(event.target)
 
-      if (!isInsideCategory && !isInsideSort) {
-        setIsCategoryMenuOpen(false)
+      if (!isInsideSort) {
         setIsSortMenuOpen(false)
       }
     }
 
     document.addEventListener('pointerdown', closeOnOutsideClick)
     return () => document.removeEventListener('pointerdown', closeOnOutsideClick)
-  }, [isCategoryMenuOpen, isSortMenuOpen])
+  }, [isSortMenuOpen])
+
+  useEffect(() => {
+    if (!selectedPartDetail) return undefined
+
+    const previousOverflow = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    window.lenis?.stop?.()
+
+    const closeOnEscape = (event) => {
+      if (event.key === 'Escape') setSelectedPartDetail(null)
+    }
+
+    window.addEventListener('keydown', closeOnEscape)
+    return () => {
+      document.body.style.overflow = previousOverflow
+      window.lenis?.start?.()
+      window.removeEventListener('keydown', closeOnEscape)
+    }
+  }, [selectedPartDetail])
 
   const selectedSortLabel = sortOptions.find((option) => option.value === sortBy)?.label || sortOptions[0].label
 
@@ -69,15 +86,10 @@ function Catalog() {
     const s = searchParams.get('search')
     const cat = searchParams.get('category')
 
-    if (s !== null) {
-      setSearchQuery(s)
-      if (!cat) {
-        setSelectedCategory('All Parts')
-      }
-    }
-    if (cat && categoryFilters.includes(cat)) {
-      setSelectedCategory(cat)
-    }
+    if (s !== null) setSearchQuery(s)
+    setSelectedCategories(
+      cat ? cat.split(',').filter((category) => categoryFilters.includes(category) && category !== 'All Parts') : [],
+    )
   }, [searchParams])
 
   // Scroll to search toolbar when arriving with a search query
@@ -95,7 +107,7 @@ function Catalog() {
   // Reset page when filters change
   useEffect(() => {
     setCurrentPage(1)
-  }, [searchQuery, selectedCategory, sortBy])
+  }, [searchQuery, selectedCategories, sortBy])
 
   // Initial entrance animation for toolbar, filters, and status bar
   useLayoutEffect(() => {
@@ -145,7 +157,7 @@ function Catalog() {
 
     const playCards = () => {
       if (!gridRef.current) return
-      const cards = gridRef.current.querySelectorAll('.part-card')
+      const cards = gridRef.current.querySelectorAll('.part-card, .catalog-list-item')
       if (cards.length === 0) return
 
       gsap.fromTo(
@@ -177,7 +189,7 @@ function Catalog() {
     return () => {
       removeListener?.()
     }
-  }, [currentPage, selectedCategory, searchQuery, sortBy])
+  }, [currentPage, selectedCategories, searchQuery, sortBy])
 
   // Filter items
   const filteredItems = useMemo(() => {
@@ -187,8 +199,8 @@ function Catalog() {
     return partsInventory.filter((item) => {
       // Category match
       const matchesCategory =
-        selectedCategory === 'All Parts' ||
-        item.category.toLowerCase() === selectedCategory.toLowerCase()
+        selectedCategories.length === 0 ||
+        selectedCategories.some((category) => item.category.toLowerCase() === category.toLowerCase())
 
       const cleanPn = (item.partNumber || '').toLowerCase().replace(/[-\s]/g, '')
 
@@ -205,7 +217,7 @@ function Catalog() {
 
       return matchesCategory && matchesQuery
     })
-  }, [searchQuery, selectedCategory])
+  }, [searchQuery, selectedCategories])
 
   // Sort items
   const sortedItems = useMemo(() => {
@@ -267,7 +279,7 @@ function Catalog() {
 
   const clearFilters = () => {
     setSearchQuery('')
-    setSelectedCategory('All Parts')
+    setSelectedCategories([])
     setSortBy('default')
     setCurrentPage(1)
     setSearchParams({})
@@ -275,8 +287,21 @@ function Catalog() {
 
   const hasActiveFilters =
     searchQuery !== '' ||
-    selectedCategory !== 'All Parts' ||
+    selectedCategories.length > 0 ||
     sortBy !== 'default'
+
+  const toggleCategory = (category) => {
+    if (category === 'All Parts') {
+      setSelectedCategories([])
+      return
+    }
+
+    setSelectedCategories((current) => (
+      current.includes(category)
+        ? current.filter((selected) => selected !== category)
+        : [...current, category]
+    ))
+  }
 
   return (
     <main className="catalog-page">
@@ -348,109 +373,229 @@ function Catalog() {
                 <span>Search</span>
               </button>
             </form>
-          </div>
 
-          {/* Secondary Filter Row: Category selector & sorting */}
-          <div className="catalog-subbar" ref={subbarRef}>
-            <div className="catalog-category-picker" ref={categoryPickerRef}>
-              <span className="catalog-filter-label">
-                <Filter size={14} aria-hidden="true" /> Category:
-              </span>
-              <button
-                type="button"
-                className="catalog-category-trigger"
-                onClick={() => {
-                  setIsCategoryMenuOpen((isOpen) => !isOpen)
-                  setIsSortMenuOpen(false)
-                }}
-                aria-expanded={isCategoryMenuOpen}
-                aria-haspopup="menu"
-                aria-label={`Category: ${selectedCategory}`}
-              >
-                <span>{selectedCategory}</span>
-                <ChevronDown size={15} aria-hidden="true" />
-              </button>
-              {isCategoryMenuOpen && (
-                <div className="catalog-category-menu" role="menu" aria-label="Select a category">
-                  {categoryFilters.map((cat) => (
-                    <button
-                      key={cat}
-                      type="button"
-                      className={`catalog-category-option ${selectedCategory === cat ? 'is-selected' : ''}`}
-                      role="menuitemradio"
-                      aria-checked={selectedCategory === cat}
-                      onClick={() => {
-                        setSelectedCategory(cat)
-                        setIsCategoryMenuOpen(false)
-                      }}
-                    >
-                      {cat}
-                    </button>
-                  ))}
+            <div className="catalog-toolbar__secondary" ref={subbarRef}>
+              {/* Secondary Filter Row: Category selector & sorting */}
+              <div className="catalog-subbar">
+                <div className="catalog-subbar__left">
+                  <div className="catalog-category-picker">
+                    <span className="catalog-filter-label">
+                      <Filter size={14} aria-hidden="true" /> Category:
+                    </span>
+                    <div className="catalog-category-chips" role="group" aria-label="Filter by one or more categories">
+                      {categoryFilters.map((category) => {
+                        const isAllCategories = category === 'All Parts'
+                        const isSelected = isAllCategories ? selectedCategories.length === 0 : selectedCategories.includes(category)
+
+                        return (
+                          <button
+                            key={category}
+                            type="button"
+                            className={`catalog-category-chip ${isSelected ? 'is-selected' : ''}`}
+                            aria-pressed={isSelected}
+                            onClick={() => toggleCategory(category)}
+                          >
+                            {category}
+                          </button>
+                        )
+                      })}
+                    </div>
+                  </div>
+
                 </div>
-              )}
+              </div>
+
+              {/* Status & Active Filters Bar */}
+              <div className="catalog-status-bar" ref={statusBarRef}>
+                <p className="catalog-status-count">
+                  Showing <strong>{sortedItems.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, sortedItems.length)}</strong> of {sortedItems.length} parts in stock {totalPages > 1 && `(Page ${currentPage} of ${totalPages})`}
+                </p>
+
+                {hasActiveFilters && (
+                  <button type="button" onClick={clearFilters} className="catalog-reset-btn">
+                    <Trash2 size={14} aria-hidden="true" /> <span>Clear all filters</span>
+                  </button>
+                )}
+              </div>
+
+              <div className="catalog-sort-picker" ref={sortPickerRef}>
+                <span className="catalog-sort-label">
+                  <ArrowUpDown size={14} aria-hidden="true" /> Sort:
+                </span>
+                <button
+                  type="button"
+                  className="catalog-sort-trigger"
+                  onClick={() => {
+                    setIsSortMenuOpen((isOpen) => !isOpen)
+                  }}
+                  aria-expanded={isSortMenuOpen}
+                  aria-haspopup="menu"
+                  aria-label={`Sort: ${selectedSortLabel}`}
+                >
+                  <span>{selectedSortLabel}</span>
+                  <ChevronDown size={15} aria-hidden="true" />
+                </button>
+                {isSortMenuOpen && (
+                  <div className="catalog-sort-menu" role="menu" aria-label="Sort catalog parts">
+                    {sortOptions.map((option) => (
+                      <button
+                        key={option.value}
+                        type="button"
+                        className={`catalog-sort-option ${sortBy === option.value ? 'is-selected' : ''}`}
+                        role="menuitemradio"
+                        aria-checked={sortBy === option.value}
+                        onClick={() => {
+                          setSortBy(option.value)
+                          setIsSortMenuOpen(false)
+                        }}
+                      >
+                        {option.label}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
+              <div className={`catalog-view-switcher is-${viewMode}`} aria-label="Catalog view">
+                <span className="catalog-view-switcher__indicator" aria-hidden="true" />
+                <button
+                  type="button"
+                  className={`catalog-view-switcher__button ${viewMode === 'cards' ? 'is-active' : ''}`}
+                  onClick={() => setViewMode('cards')}
+                  aria-pressed={viewMode === 'cards'}
+                  aria-label="Card view"
+                >
+                  <LayoutGrid size={15} aria-hidden="true" />
+                  <span>Cards</span>
+                </button>
+                <button
+                  type="button"
+                  className={`catalog-view-switcher__button ${viewMode === 'list' ? 'is-active' : ''}`}
+                  onClick={() => setViewMode('list')}
+                  aria-pressed={viewMode === 'list'}
+                  aria-label="List view"
+                >
+                  <List size={15} aria-hidden="true" />
+                  <span>List</span>
+                </button>
+              </div>
             </div>
-
-            <div className="catalog-sort-picker" ref={sortPickerRef}>
-              <span className="catalog-sort-label">
-                <ArrowUpDown size={14} aria-hidden="true" /> Sort:
-              </span>
-              <button
-                type="button"
-                className="catalog-sort-trigger"
-                onClick={() => {
-                  setIsSortMenuOpen((isOpen) => !isOpen)
-                  setIsCategoryMenuOpen(false)
-                }}
-                aria-expanded={isSortMenuOpen}
-                aria-haspopup="menu"
-                aria-label={`Sort: ${selectedSortLabel}`}
-              >
-                <span>{selectedSortLabel}</span>
-                <ChevronDown size={15} aria-hidden="true" />
-              </button>
-              {isSortMenuOpen && (
-                <div className="catalog-sort-menu" role="menu" aria-label="Sort catalog parts">
-                  {sortOptions.map((option) => (
-                    <button
-                      key={option.value}
-                      type="button"
-                      className={`catalog-sort-option ${sortBy === option.value ? 'is-selected' : ''}`}
-                      role="menuitemradio"
-                      aria-checked={sortBy === option.value}
-                      onClick={() => {
-                        setSortBy(option.value)
-                        setIsSortMenuOpen(false)
-                      }}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Status & Active Filters Bar */}
-          <div className="catalog-status-bar" ref={statusBarRef}>
-            <p className="catalog-status-count">
-              Showing <strong>{sortedItems.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, sortedItems.length)}</strong> of {sortedItems.length} parts in stock {totalPages > 1 && `(Page ${currentPage} of ${totalPages})`}
-            </p>
-
-            {hasActiveFilters && (
-              <button type="button" onClick={clearFilters} className="catalog-reset-btn">
-                <X size={14} /> Clear all filters
-              </button>
-            )}
           </div>
 
           {/* Product Cards Grid: 12 per page */}
           {paginatedItems.length > 0 ? (
             <>
-              <div className="catalog-grid" id="catalog-grid" ref={gridRef}>
-                {paginatedItems.map((item) => (
-                  <PartCard key={item.id} item={item} />
-                ))}
+              <div className={`catalog-results catalog-results--${viewMode}`} key={viewMode}>
+                {viewMode === 'cards' ? (
+                  <div className="catalog-grid" id="catalog-grid" ref={gridRef}>
+                    {paginatedItems.map((item) => (
+                      <PartCard key={item.id} item={item} onImageClick={() => setSelectedPartDetail(item)} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="catalog-list-view" id="catalog-grid" ref={gridRef}>
+                    {/* Desktop Table View */}
+                    <div className="catalog-table-wrap">
+                      <table className="catalog-table">
+                        <thead>
+                          <tr>
+                            <th scope="col">Part</th>
+                            <th scope="col">Category</th>
+                            <th scope="col">Fleet</th>
+                            <th scope="col">Condition</th>
+                            <th scope="col">Qty.</th>
+                            <th scope="col">Price</th>
+                            <th scope="col">RFQ</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {paginatedItems.map((item) => (
+                            <tr key={item.id}>
+                              <td>
+                                <div className="catalog-table__part">
+                                  <button
+                                    type="button"
+                                    className="catalog-table__image-button"
+                                    onClick={() => setSelectedPartDetail(item)}
+                                    aria-label={`View details for ${item.partNumber}`}
+                                  >
+                                    <img src={item.image} alt="" />
+                                  </button>
+                                  <div>
+                                    <strong>{item.partNumber}</strong>
+                                    <span>{item.description}</span>
+                                  </div>
+                                </div>
+                              </td>
+                              <td><span className="catalog-table__tag">{item.category}</span></td>
+                              <td>{item.fleet}</td>
+                              <td><span className="catalog-table__condition">{item.conditionLabel}</span></td>
+                              <td>{item.quantity}</td>
+                              <td><strong>{item.price}</strong></td>
+                              <td>
+                                <a
+                                  className="catalog-table__rfq"
+                                  href={`mailto:sales@goldenwingsinternational.net?subject=RFQ%20${encodeURIComponent(item.partNumber)}`}
+                                >
+                                  <span> RFQ </span><ArrowRight size={14} aria-hidden="true" />
+                                </a>
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+
+                    {/* Responsive Mobile Horizontal Cards */}
+                    <div className="catalog-mobile-list" aria-label="Parts list">
+                      {paginatedItems.map((item) => (
+                        <article
+                          key={item.id}
+                          className="catalog-list-item"
+                          onClick={() => setSelectedPartDetail(item)}
+                          role="button"
+                          tabIndex={0}
+                          onKeyDown={(e) => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault()
+                              setSelectedPartDetail(item)
+                            }
+                          }}
+                          aria-label={`View details for ${item.partNumber}`}
+                        >
+                          <div className="catalog-list-item__media">
+                            <img src={item.image} alt="" loading="lazy" />
+                          </div>
+                          <div className="catalog-list-item__body">
+                            <div className="catalog-list-item__top">
+                              <strong className="catalog-list-item__pn">{item.partNumber}</strong>
+                              <span className="catalog-list-item__condition">
+                                {item.condition !== 'N/D' ? item.condition : 'REQ'}
+                              </span>
+                            </div>
+                            <p className="catalog-list-item__desc">{item.description}</p>
+                            <div className="catalog-list-item__bottom">
+                              <div className="catalog-list-item__meta">
+                                <span className="catalog-list-item__fleet">{item.fleet}</span>
+                                <span className="catalog-list-item__dot">•</span>
+                                <span className="catalog-list-item__price">{item.price}</span>
+                              </div>
+                              <a
+                                className="catalog-list-item__rfq"
+                                href={`mailto:sales@goldenwingsinternational.net?subject=RFQ%20${encodeURIComponent(item.partNumber)}`}
+                                onClick={(e) => e.stopPropagation()}
+                                aria-label={`Request quote for ${item.partNumber}`}
+                              >
+                                <span>RFQ</span>
+                                <ArrowRight size={11} aria-hidden="true" />
+                              </a>
+                            </div>
+                          </div>
+                        </article>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Pagination Controls */}
@@ -476,7 +621,7 @@ function Catalog() {
                         onClick={() => handlePageChange(page)}
                         aria-current={currentPage === page ? 'page' : undefined}
                       >
-                        {page}
+                        <span> {page}</span>
                       </button>
                     ))}
                   </div>
@@ -517,6 +662,48 @@ function Catalog() {
                   Request Direct Sourcing (RFQ)
                 </a>
               </div>
+            </div>
+          )}
+
+          {selectedPartDetail && (
+            <div className="part-detail-modal" role="dialog" aria-modal="true" aria-labelledby="part-detail-title">
+              <button
+                type="button"
+                className="part-detail-modal__backdrop"
+                onClick={() => setSelectedPartDetail(null)}
+                aria-label="Close part details"
+              />
+              <section className="part-detail-modal__card">
+                <button
+                  type="button"
+                  className="part-detail-modal__close"
+                  onClick={() => setSelectedPartDetail(null)}
+                  aria-label="Close part details"
+                >
+                  <X size={20} aria-hidden="true" />
+                </button>
+                <div className="part-detail-modal__image-wrap">
+                  <img src={selectedPartDetail.image} alt={`${selectedPartDetail.description} - ${selectedPartDetail.partNumber}`} />
+                </div>
+                <div className="part-detail-modal__content">
+                  <span className="part-detail-modal__category">{selectedPartDetail.category}</span>
+                  <p className="part-detail-modal__label">Part Number</p>
+                  <h2 id="part-detail-title">{selectedPartDetail.partNumber}</h2>
+                  <p className="part-detail-modal__description">{selectedPartDetail.description}</p>
+                  <dl className="part-detail-modal__specs">
+                    <div><dt>Fleet</dt><dd>{selectedPartDetail.fleet}</dd></div>
+                    <div><dt>Condition</dt><dd>{selectedPartDetail.conditionLabel}</dd></div>
+                    <div><dt>Quantity</dt><dd>{selectedPartDetail.quantity}</dd></div>
+                    <div><dt>Price</dt><dd>{selectedPartDetail.price}</dd></div>
+                  </dl>
+                  <a
+                    className="part-detail-modal__rfq"
+                    href={`mailto:sales@goldenwingsinternational.net?subject=RFQ%20${encodeURIComponent(selectedPartDetail.partNumber)}`}
+                  >
+                    Request RFQ <ArrowRight size={16} aria-hidden="true" />
+                  </a>
+                </div>
+              </section>
             </div>
           )}
         </div>

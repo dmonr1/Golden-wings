@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { ArrowUpRight, Check, Copy } from 'lucide-react'
 
-function PartCard({ item }) {
+function PartCard({ item, onImageClick }) {
   const [copied, setCopied] = useState(false)
 
   const handleCopyPart = (e) => {
@@ -39,12 +39,19 @@ function PartCard({ item }) {
     <article className="part-card" id={`part-${item.partNumber.replace(/[^a-zA-Z0-9]/g, '-')}`}>
       {/* Left Media: Dedicated photo container with full component visibility */}
       <div className="part-card__media">
-        <img
-          src={item.image}
-          alt={`${item.description} - ${item.partNumber}`}
-          loading="lazy"
-          className="part-card__img"
-        />
+        <button
+          type="button"
+          className="part-card__image-button"
+          onClick={() => onImageClick?.()}
+          aria-label={`View details for ${item.partNumber}`}
+        >
+          <img
+            src={item.image}
+            alt={`${item.description} - ${item.partNumber}`}
+            loading="lazy"
+            className="part-card__img"
+          />
+        </button>
 
         {/* Floating Condition Badge */}
         <div className="part-card__badges">

@@ -324,12 +324,12 @@ export default function ChatFlyout() {
       const data = await response.json()
       const botMsg = data.products?.length
         ? {
-            id: `bot-${Date.now()}`,
-            sender: 'bot',
-            text: data.reply,
-            parts: data.products,
-            time: getFormattedTime(),
-          }
+          id: `bot-${Date.now()}`,
+          sender: 'bot',
+          text: data.reply,
+          parts: data.products,
+          time: getFormattedTime(),
+        }
         : generateBotReply(query)
 
       setMessages((prev) => [...prev, botMsg])
@@ -393,10 +393,6 @@ export default function ChatFlyout() {
               </div>
               <div className="chat-flyout__header-text">
                 <span className="chat-flyout__company">Golden Wings International</span>
-                <span className="chat-flyout__status">
-                  <span className="chat-flyout__dot-pulse" />
-                  Online · 24/7 Assistance
-                </span>
               </div>
             </div>
 
@@ -443,9 +439,8 @@ export default function ChatFlyout() {
               return (
                 <div
                   key={msg.id}
-                  className={`chat-bubble-row ${isUser ? 'chat-bubble-row--user' : 'chat-bubble-row--bot'} ${
-                    isSameSender ? 'chat-bubble-row--grouped' : ''
-                  }`}
+                  className={`chat-bubble-row ${isUser ? 'chat-bubble-row--user' : 'chat-bubble-row--bot'} ${isSameSender ? 'chat-bubble-row--grouped' : ''
+                    }`}
                 >
                   <div className={`chat-bubble ${isUser ? 'chat-bubble--user' : 'chat-bubble--bot'}`}>
                     <p className="chat-bubble__text">{msg.text}</p>

@@ -696,260 +696,260 @@ function Home() {
         message={contactAlert.message}
         onClose={() => setContactAlert({ type: '', message: '' })}
       />
-    <main>
-      <div className="hero-slider-wrap">
-        <HeroSlider />
-      </div>
-      <div className="home-content-body">
-        <section className="home-indicators-section" ref={stripRef} aria-label="Key company indicators">
-          <div className="home-indicators-inner">
-            <div className="home-indicators-grid">
-              {highlights.map((item) => (
-                <div className="home-indicator-item" key={item.label}>
-                  <strong
-                    className="home-indicator-item__number"
-                    {...(item.type === 'number'
-                      ? {
-                        'data-count': true,
-                        'data-start': item.start,
-                        'data-end': item.value,
-                        'data-suffix': item.suffix,
-                      }
-                      : {})}
-                  >
-                    {item.type === 'number' ? `${item.start}${item.suffix}` : item.value}
-                  </strong>
-                  <span className="home-indicator-item__label">{item.label}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </section>
-        <div className="home-indicators-wave" aria-hidden="true">
-          <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-            <path d="M 0,32 C 380,82 820,86 1440,8 L 1440,80 L 0,80 Z" fill="#faf8f3" />
-          </svg>
+      <main>
+        <div className="hero-slider-wrap">
+          <HeroSlider />
         </div>
-        <section
-          className="home-context-section"
-          ref={contextSectionRef}
-          aria-label="Our services and capabilities"
-        >
-          <div className="home-services-header">
-            <h2 className="home-services-heading" ref={servicesTitleRef}>
-              OUR SERVICES
-            </h2>
-          </div>
-
-          {/* Services Grid: 4 Clean Feature Cards matching user reference */}
-          <div className="services-grid-wrapper" ref={contextCardRef}>
-            <div className="services-feature-grid">
-              {servicesData.map((service) => (
-                <Link
-                  to={service.link}
-                  className="service-feature-card"
-                  key={service.title}
-                >
-                  <div className="service-feature-card__icon-wrap" aria-hidden="true">
-                    {service.icon}
+        <div className="home-content-body">
+          <section className="home-indicators-section" ref={stripRef} aria-label="Key company indicators">
+            <div className="home-indicators-inner">
+              <div className="home-indicators-grid">
+                {highlights.map((item) => (
+                  <div className="home-indicator-item" key={item.label}>
+                    <strong
+                      className="home-indicator-item__number"
+                      {...(item.type === 'number'
+                        ? {
+                          'data-count': true,
+                          'data-start': item.start,
+                          'data-end': item.value,
+                          'data-suffix': item.suffix,
+                        }
+                        : {})}
+                    >
+                      {item.type === 'number' ? `${item.start}${item.suffix}` : item.value}
+                    </strong>
+                    <span className="home-indicator-item__label">{item.label}</span>
                   </div>
-                  <div className="service-feature-card__body">
-                    <h3 className="service-feature-card__title">{service.title}</h3>
-                    <p className="service-feature-card__desc">{service.description}</p>
-                    <div className="service-feature-card__action">
-                      <span className="service-feature-card__btn">
-                        <span>View More</span>
-                        <ArrowRight size={16} aria-hidden="true" />
-                      </span>
-                    </div>
-                  </div>
-                </Link>
-              ))}
-            </div>
-          </div>
-        </section>
-        <section className="partners-section" ref={partnersSectionRef} aria-label="Clients and partners">
-          <div className="partners-section__wave" aria-hidden="true">
-            <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-              <path
-                d="M 0,32 C 380,82 820,86 1440,8 L 1440,80 L 0,80 Z"
-                fill="#ffffff"
-              />
-            </svg>
-          </div>
-          <div className="partners-section__inner">
-            <h2 className="sr-only">Our Clients, Relations and Partnership</h2>
-            <div className="partners-marquee" aria-hidden="true">
-              <div className="partners-marquee__track">
-                {Array.from({ length: 4 }).map((_, index) => (
-                  <span key={index}>Our Clients + Relations + Partnership +</span>
                 ))}
               </div>
             </div>
-            <div className="partners-grid">
-              {partners.map((partner, index) => (
+          </section>
+          <div className="home-indicators-wave" aria-hidden="true">
+            <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
+              <path d="M 0,32 C 380,82 820,86 1440,8 L 1440,80 L 0,80 Z" fill="#faf8f3" />
+            </svg>
+          </div>
+          <section
+            className="home-context-section"
+            ref={contextSectionRef}
+            aria-label="Our services and capabilities"
+          >
+            <div className="home-services-header">
+              <h2 className="home-services-heading" ref={servicesTitleRef}>
+                OUR SERVICES
+              </h2>
+            </div>
+
+            {/* Services Grid: 4 Clean Feature Cards matching user reference */}
+            <div className="services-grid-wrapper" ref={contextCardRef}>
+              <div className="services-feature-grid">
+                {servicesData.map((service) => (
+                  <Link
+                    to={service.link}
+                    className="service-feature-card"
+                    key={service.title}
+                  >
+                    <div className="service-feature-card__icon-wrap" aria-hidden="true">
+                      {service.icon}
+                    </div>
+                    <div className="service-feature-card__body">
+                      <h3 className="service-feature-card__title">{service.title}</h3>
+                      <p className="service-feature-card__desc">{service.description}</p>
+                      <div className="service-feature-card__action">
+                        <span className="service-feature-card__btn">
+                          <span>View More</span>
+                          <ArrowRight size={16} aria-hidden="true" />
+                        </span>
+                      </div>
+                    </div>
+                  </Link>
+                ))}
+              </div>
+            </div>
+          </section>
+          <section className="partners-section" ref={partnersSectionRef} aria-label="Clients and partners">
+            <div className="partners-section__wave" aria-hidden="true">
+              <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
+                <path
+                  d="M 0,32 C 380,82 820,86 1440,8 L 1440,80 L 0,80 Z"
+                  fill="#ffffff"
+                />
+              </svg>
+            </div>
+            <div className="partners-section__inner">
+              <h2 className="sr-only">Our Clients, Relations and Partnership</h2>
+              <div className="partners-marquee" aria-hidden="true">
+                <div className="partners-marquee__track">
+                  {Array.from({ length: 4 }).map((_, index) => (
+                    <span key={index}>Our Clients + Relations + Partnership +</span>
+                  ))}
+                </div>
+              </div>
+              <div className="partners-grid">
+                {partners.map((partner, index) => (
+                  <Link
+                    to={`/catalog?search=${encodeURIComponent(partner.name)}`}
+                    className="partner-card"
+                    key={partner.name}
+                    data-tooltip-prefix="Explore Fleet"
+                    data-tooltip-brand={partner.brand}
+                    data-tooltip-color={partner.color}
+                    aria-label={`Explore fleet parts for ${partner.name}`}
+                  >
+                    <span>{String(index + 1).padStart(2, '0')}</span>
+                    <img src={partner.logo} alt={partner.name} />
+                  </Link>
+                ))}
+              </div>
+            </div>
+            {/* Bottom wave cutting from white back to paper background */}
+            <div className="partners-section__wave partners-section__wave--bottom" aria-hidden="true">
+              <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
+                <path
+                  d="M 0,0 C 440,64 1000,64 1440,0 L 1440,80 L 0,80 Z"
+                  fill="#faf8f3"
+                />
+              </svg>
+            </div>
+          </section>
+          {/* Featured Parts Inventory Categories */}
+          <section
+            className="categories-section"
+            ref={categoriesSectionRef}
+            aria-label="Featured aircraft parts inventory"
+          >
+            <div className="categories-header">
+              <h2 className="categories-header__title" ref={partsTitleRef}>
+                PARTS INVENTORY
+              </h2>
+            </div>
+            <div className="service-strip">
+              {serviceTiles.map((item) => (
                 <Link
-                  to={`/catalog?search=${encodeURIComponent(partner.name)}`}
-                  className="partner-card"
-                  key={partner.name}
-                  data-tooltip-prefix="Explore Fleet"
-                  data-tooltip-brand={partner.brand}
-                  data-tooltip-color={partner.color}
-                  aria-label={`Explore fleet parts for ${partner.name}`}
+                  to={item.link}
+                  className="service-strip__item"
+                  key={item.title}
+                  data-tooltip-prefix="Explore Parts"
+                  data-tooltip-brand={item.brand}
+                  data-tooltip-color={item.color}
+                  aria-label={`Explore ${item.title} inventory`}
                 >
-                  <span>{String(index + 1).padStart(2, '0')}</span>
-                  <img src={partner.logo} alt={partner.name} />
+                  <img src={item.image} alt="" aria-hidden="true" />
+                  <div className="service-strip__overlay" />
+                  <h2 className="service-strip__title">{item.title}</h2>
                 </Link>
               ))}
             </div>
-          </div>
-          {/* Bottom wave cutting from white back to paper background */}
-          <div className="partners-section__wave partners-section__wave--bottom" aria-hidden="true">
-            <svg viewBox="0 0 1440 80" fill="none" preserveAspectRatio="none">
-              <path
-                d="M 0,0 C 440,64 1000,64 1440,0 L 1440,80 L 0,80 Z"
-                fill="#faf8f3"
-              />
-            </svg>
-          </div>
-        </section>
-        {/* Featured Parts Inventory Categories */}
-        <section
-          className="categories-section"
-          ref={categoriesSectionRef}
-          aria-label="Featured aircraft parts inventory"
-        >
-          <div className="categories-header">
-            <h2 className="categories-header__title" ref={partsTitleRef}>
-              PARTS INVENTORY
-            </h2>
-          </div>
-          <div className="service-strip">
-            {serviceTiles.map((item) => (
+            <div className="categories-cta-wrap">
               <Link
-                to={item.link}
-                className="service-strip__item"
-                key={item.title}
-                data-tooltip-prefix="Explore Parts"
-                data-tooltip-brand={item.brand}
-                data-tooltip-color={item.color}
-                aria-label={`Explore ${item.title} inventory`}
+                to="/catalog"
+                className="categories-catalog-btn"
               >
-                <img src={item.image} alt="" aria-hidden="true" />
-                <div className="service-strip__overlay" />
-                <h2 className="service-strip__title">{item.title}</h2>
+                <span>Explore Full Catalog (23 parts in stock)</span>
+                <ArrowUpRight size={18} aria-hidden="true" />
               </Link>
-            ))}
-          </div>
-          <div className="categories-cta-wrap">
-            <Link
-              to="/catalog"
-              className="categories-catalog-btn"
-            >
-              <span>Explore Full Catalog (23 parts in stock)</span>
-              <ArrowUpRight size={18} aria-hidden="true" />
-            </Link>
-          </div>
-          {/* Wave cut transitioning from paper to white quote band */}
-          <div className="categories-section__wave" aria-hidden="true">
-            <svg viewBox="0 0 1440 96" fill="none" preserveAspectRatio="none">
-              <path
-                d="M 0,32 C 320,78 680,14 1040,58 C 1220,78 1360,48 1440,42 L 1440,96 L 0,96 Z"
-                fill="#ffffff"
-              />
-              <path
-                d="M 0,44 C 340,90 710,26 1060,68 C 1230,86 1360,58 1440,50 L 1440,96 L 0,96 Z"
-                fill="#ffffff"
-              />
-            </svg>
-          </div>
-        </section>
-        <section className="quote-band" ref={quoteBandRef} aria-label="Frequently asked quote questions">
-          <div className="quote-plane" aria-hidden="true">
-            <span className="quote-plane__wind">
-              <span />
-              <span />
-              <span />
-            </span>
-            <img src={planeVector} alt="" />
-          </div>
-          <div className="quote-band__copy">
-
-            <div className="quote-band__intro">
-              <h2>Everything you need to know</h2>
-              <p>We are ready for your questions. Send us your request and we will help you move faster.</p>
             </div>
-            <div className="quote-band__commitment">
-              <p className="quote-band__statement">
-                “Every quote we send is a commitment to performance, safety, and reliability to our customers.”
-              </p>
+            {/* Wave cut transitioning from paper to white quote band */}
+            <div className="categories-section__wave" aria-hidden="true">
+              <svg viewBox="0 0 1440 96" fill="none" preserveAspectRatio="none">
+                <path
+                  d="M 0,32 C 320,78 680,14 1040,58 C 1220,78 1360,48 1440,42 L 1440,96 L 0,96 Z"
+                  fill="#ffffff"
+                />
+                <path
+                  d="M 0,44 C 340,90 710,26 1060,68 C 1230,86 1360,58 1440,50 L 1440,96 L 0,96 Z"
+                  fill="#ffffff"
+                />
+              </svg>
             </div>
-          </div>
-          <div className="quote-band__questions">
-            {faqs.map((item, index) => (
-              <button
-                className={`quote-question${activeFaq === index ? ' is-open' : ''}`}
-                key={item.question}
-                type="button"
-                onClick={() => setActiveFaq(activeFaq === index ? -1 : index)}
-                aria-expanded={activeFaq === index}
-              >
-                <div>
-                  <h3>{item.question}</h3>
-                  <p>{item.answer}</p>
-                </div>
-                <ArrowUpRight size={22} aria-hidden="true" />
-              </button>
-            ))}
-          </div>
-        </section>
-        <div className="home-contact-wrap">
-          <section className="home-contact" ref={contactRef} aria-label="Contact Golden Wings">
-            <img className="home-contact__seal" src={eagleLogo} alt="" aria-hidden="true" />
-            <div className="home-contact__copy">
-              <p>Ready for a faster quote?</p>
-              <h2>Send your aircraft parts request.</h2>
-              <span>Doral, Florida</span>
-            </div>
-            <form className="home-contact__form" onSubmit={handleHomeContactSubmit}>
-              <label>
-                Name
-                <input type="text" name="name" autoComplete="name" value={contactForm.name} onChange={handleHomeContactChange} required />
-              </label>
-              <label>
-                Email
-                <input type="email" name="email" autoComplete="email" value={contactForm.email} onChange={handleHomeContactChange} required />
-              </label>
-              <label>
-                Part number
-                <input type="text" name="partNumber" value={contactForm.partNumber} onChange={handleHomeContactChange} />
-              </label>
-              <label>
-                Request
-                <textarea name="request" rows="3" value={contactForm.request} onChange={handleHomeContactChange} required />
-              </label>
-              <button className="button button--light" type="submit" disabled={contactStatus === 'sending'}>
-                {contactStatus === 'sending' ? 'Sending...' : 'Send RFQ'}
-                <ArrowRight size={18} aria-hidden="true" />
-              </button>
-            </form>
           </section>
+          <section className="quote-band" ref={quoteBandRef} aria-label="Frequently asked quote questions">
+            <div className="quote-plane" aria-hidden="true">
+              <span className="quote-plane__wind">
+                <span />
+                <span />
+                <span />
+              </span>
+              <img src={planeVector} alt="" />
+            </div>
+            <div className="quote-band__copy">
+
+              <div className="quote-band__intro">
+                <h2>Everything you need to know</h2>
+                <p>We are ready for your questions. Send us your request and we will help you move faster.</p>
+              </div>
+              <div className="quote-band__commitment">
+                <p className="quote-band__statement">
+                  “Every quote we send is a commitment to performance, safety, and reliability to our customers.”
+                </p>
+              </div>
+            </div>
+            <div className="quote-band__questions">
+              {faqs.map((item, index) => (
+                <button
+                  className={`quote-question${activeFaq === index ? ' is-open' : ''}`}
+                  key={item.question}
+                  type="button"
+                  onClick={() => setActiveFaq(activeFaq === index ? -1 : index)}
+                  aria-expanded={activeFaq === index}
+                >
+                  <div>
+                    <h3>{item.question}</h3>
+                    <p>{item.answer}</p>
+                  </div>
+                  <ArrowUpRight size={22} aria-hidden="true" />
+                </button>
+              ))}
+            </div>
+          </section>
+          <div className="home-contact-wrap">
+            <section className="home-contact" ref={contactRef} aria-label="Contact Golden Wings">
+              <img className="home-contact__seal" src={eagleLogo} alt="" aria-hidden="true" />
+              <div className="home-contact__copy">
+                <p>Ready for a faster quote?</p>
+                <h2>Send your aircraft parts request.</h2>
+                <span>Doral, Florida</span>
+              </div>
+              <form className="home-contact__form" onSubmit={handleHomeContactSubmit}>
+                <label>
+                  Name
+                  <input type="text" name="name" autoComplete="name" value={contactForm.name} onChange={handleHomeContactChange} required />
+                </label>
+                <label>
+                  Email
+                  <input type="email" name="email" autoComplete="email" value={contactForm.email} onChange={handleHomeContactChange} required />
+                </label>
+                <label>
+                  Part number
+                  <input type="text" name="partNumber" value={contactForm.partNumber} onChange={handleHomeContactChange} />
+                </label>
+                <label>
+                  Request
+                  <textarea name="request" rows="3" value={contactForm.request} onChange={handleHomeContactChange} required />
+                </label>
+                <button className="button button--light" type="submit" disabled={contactStatus === 'sending'}>
+                  <span>{contactStatus === 'sending' ? 'Sending...' : 'Send RFQ'}</span>
+                  <ArrowRight size={18} aria-hidden="true" />
+                </button>
+              </form>
+            </section>
+          </div>
         </div>
-      </div>
-      {/* Floating cursor tooltip that follows pointer with inertia over partner and parts cards */}
-      <div
-        className="floating-cursor-tooltip"
-        ref={partnerTooltipRef}
-        aria-hidden="true"
-      >
-        <span className="floating-cursor-tooltip__prefix" ref={tooltipPrefixRef}>
-          Explore Fleet
-        </span>
-        <span className="floating-cursor-tooltip__separator" aria-hidden="true">•</span>
-        <span className="floating-cursor-tooltip__brand" ref={tooltipBrandRef} />
-        <ArrowUpRight size={16} className="floating-cursor-tooltip__icon" />
-      </div>
-    </main>
+        {/* Floating cursor tooltip that follows pointer with inertia over partner and parts cards */}
+        <div
+          className="floating-cursor-tooltip"
+          ref={partnerTooltipRef}
+          aria-hidden="true"
+        >
+          <span className="floating-cursor-tooltip__prefix" ref={tooltipPrefixRef}>
+            Explore Fleet
+          </span>
+          <span className="floating-cursor-tooltip__separator" aria-hidden="true">•</span>
+          <span className="floating-cursor-tooltip__brand" ref={tooltipBrandRef} />
+          <ArrowUpRight size={16} className="floating-cursor-tooltip__icon" />
+        </div>
+      </main>
     </>
   )
 }

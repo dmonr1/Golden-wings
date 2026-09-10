@@ -353,11 +353,7 @@ function HeroSlider() {
             key={item.kicker}
             ref={(node) => (mediaRefs.current[index] = node)}
           >
-            {item.mediaType === 'video' ? (
-              <video src={item.media} autoPlay muted loop playsInline aria-label={item.alt} />
-            ) : (
-              <img src={item.media} alt={item.alt} />
-            )}
+            <video src={item.media} autoPlay muted loop playsInline aria-label={item.alt} />
           </div>
         ))}
       </div>
@@ -462,6 +458,7 @@ function HeroSlider() {
 
                         <div className="hero-search-dropdown__info">
                           <div className="hero-search-dropdown__pn-row">
+                            <span className="hero-search-dropdown__pn-title">Part Number:</span>
                             <span className="hero-search-dropdown__pn">{part.partNumber}</span>
                             {part.category && (
                               <span className="hero-search-dropdown__category">{part.category}</span>
