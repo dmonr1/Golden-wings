@@ -18,19 +18,28 @@ export default async (request) => {
       })
     }
 
+    const smtpUser = process.env.SMTP_USER?.trim()
+    // Gmail displays app passwords in groups of four characters. Remove those
+    // presentation spaces so either format works in local and Netlify settings.
+    const smtpPassword = process.env.SMTP_PASSWORD?.replace(/\s/g, '')
+
+    if (!smtpUser || !smtpPassword) {
+      throw new Error('Missing SMTP configuration.')
+    }
+
     const transporter = nodemailer.createTransport({
       host: process.env.SMTP_HOST || 'smtp.gmail.com',
       port: Number(process.env.SMTP_PORT || 465),
       secure: process.env.SMTP_SECURE !== 'false',
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASSWORD,
+        user: smtpUser,
+        pass: smtpPassword,
       },
     })
 
     await transporter.sendMail({
-      from: process.env.SMTP_USER,
-      to: process.env.CONTACT_EMAIL || process.env.SMTP_USER,
+      from: smtpUser,
+      to: process.env.CONTACT_EMAIL?.trim() || smtpUser,
       replyTo: email,
       subject: `RFQ Inquiry: Part #${partNumber || 'General'} - ${name}`,
       text: [
