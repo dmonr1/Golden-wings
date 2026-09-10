@@ -499,7 +499,7 @@ function Catalog() {
                       <table className="catalog-table">
                         <thead>
                           <tr>
-                            <th scope="col">Part</th>
+                            <th scope="col">Product | Part Number</th>
                             <th scope="col">Category</th>
                             <th scope="col">Fleet</th>
                             <th scope="col">Condition</th>

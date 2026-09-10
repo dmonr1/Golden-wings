@@ -11,6 +11,7 @@ import Catalog from './pages/Catalog.jsx'
 import About from './pages/About.jsx'
 import Contact from './pages/Contact.jsx'
 import Legal from './pages/Legal.jsx'
+import NotFound from './pages/NotFound.jsx'
 import CookieBanner from './components/CookieBanner.jsx'
 import BackToTop from './components/BackToTop.jsx'
 import ChatFlyout from './components/ChatFlyout.jsx'
@@ -42,7 +43,9 @@ function ScrollToTop() {
 
 function App() {
   const { pathname } = useLocation()
-  const isLegal = pathname.startsWith('/legal')
+  const cleanPath = pathname.replace(/\/+$/, '') || '/'
+  const isLegal = cleanPath.startsWith('/legal')
+  const isNotFound = !isLegal && !['/', '/catalog', '/about', '/contact'].includes(cleanPath)
 
   useEffect(() => {
     const lenis = new Lenis({
@@ -104,19 +107,20 @@ function App() {
   return (
     <>
       <ScrollToTop />
-      {!isLegal && <PageLoader />}
-      {!isLegal && <Header />}
+      {!isLegal && !isNotFound && <PageLoader />}
+      {!isLegal && !isNotFound && <Header />}
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/catalog" element={<Catalog />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
         <Route path="/legal" element={<Legal />} />
+        <Route path="*" element={<NotFound />} />
       </Routes>
-      {!isLegal && <Footer />}
-      {!isLegal && <BackToTop />}
-      {!isLegal && <ChatFlyout />}
-      <CookieBanner />
+      {!isLegal && !isNotFound && <Footer />}
+      {!isLegal && !isNotFound && <BackToTop />}
+      {!isLegal && !isNotFound && <ChatFlyout />}
+      {!isNotFound && <CookieBanner />}
     </>
   )
 }

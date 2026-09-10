@@ -57,11 +57,14 @@ function Legal() {
       {/* Top minimal header bar */}
       <div className="legal-page__topbar">
         <div className="legal-page__topbar-inner">
-          <Link to="/" className="legal-page__back-link">
-            <ArrowLeft size={16} aria-hidden="true" />
-            <span>Back to main site</span>
+          <Link to="/" className="legal-page__back-link" aria-label="Back to main site">
+            <ArrowLeft size={15} aria-hidden="true" />
+            <span className="legal-page__back-text">Back</span>
           </Link>
-          <span className="legal-page__company-pill">Golden Wings International LLC</span>
+          <span className="legal-page__company-pill">
+            <img src={eagleLogo} alt="" className="legal-page__company-logo" aria-hidden="true" />
+            <span>Golden Wings International LLC</span>
+          </span>
         </div>
       </div>
 
