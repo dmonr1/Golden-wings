@@ -14,6 +14,8 @@ import {
 } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 import { partsInventory } from '../data/partsInventory.js'
+import { useLanguage } from '../context/LanguageContext.jsx'
+import { submitContactForm } from '../services/contactForm.js'
 
 const INITIAL_MESSAGES = [
   {
@@ -30,69 +32,69 @@ const INITIAL_MESSAGES = [
   },
 ]
 
-const QUICK_ACTIONS = [
-  { icon: Search, label: 'Search P/N (e.g. 212-040)', query: '212-040' },
-  { icon: Zap, label: 'Urgent AOG Support', query: 'I have an AOG emergency' },
-  { icon: ClipboardList, label: 'Request a Quote (RFQ)', query: 'How do I request an RFQ?' },
-  { icon: ShieldCheck, label: 'FAA / EASA Certifications', query: 'What certifications come with the parts?' },
-]
-
 function getFormattedTime() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
 const isPricingQuestion = (query) => /\b(price|pricing|cost|quote|quotation|rfq|precio|cotiz)/.test(query)
 
-const buildRfqAction = (part) => ({
+const buildRfqAction = (part, isSpanish = false) => ({
   type: 'rfq',
-  label: `Request RFQ for ${part.partNumber}`,
-  link: `/contact?partNumber=${encodeURIComponent(part.partNumber)}`,
+  label: isSpanish ? `Iniciar RFQ para ${part.partNumber}` : `Start RFQ for ${part.partNumber}`,
 })
 
 // Smart assistant matching engine (pure logic outside component)
-function generateBotReply(userText, activePart = null) {
+function generateBotReply(userText, activePart = null, isSpanish = false) {
   const query = userText.trim().toLowerCase()
   const now = getFormattedTime()
   const idSuffix = `${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
   // 0. Common conversational intents
-  if (/^(hi|hello|hey|good morning|good afternoon|good evening)\b/.test(query)) {
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening|hola|buenos dias|buenas tardes|buenas noches)\b/.test(query)) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'Hello! How can I help you today? You can ask me to search for a part, check availability, request an RFQ, or contact our sales team.',
+      text: isSpanish
+        ? '¡Hola! ¿Como puedo ayudarle hoy? Puede pedirme buscar un repuesto, verificar disponibilidad, solicitar una cotizacion (RFQ) o contactar a ventas.'
+        : 'Hello! How can I help you today? You can ask me to search for a part, check availability, request an RFQ, or contact our sales team.',
       time: now,
     }
   }
 
-  if (query.includes('thank') || query.includes('thanks')) {
+  if (query.includes('thank') || query.includes('thanks') || query.includes('gracias')) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'You are welcome! Let me know if you need help finding another part or preparing a quotation request.',
+      text: isSpanish
+        ? '¡Con gusto! Dejeme saber si necesita ayuda buscando otro repuesto o preparando una cotizacion.'
+        : 'You are welcome! Let me know if you need help finding another part or preparing a quotation request.',
       time: now,
     }
   }
 
-  if (query.includes('help') || query.includes('what can you do') || query.includes('how can you help')) {
+  if (query.includes('help') || query.includes('what can you do') || query.includes('how can you help') || query.includes('ayuda') || query.includes('que puedes hacer')) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'I can search our aircraft parts catalog, provide basic availability and condition details, guide you through an RFQ, explain certifications, and connect you with our sales team.',
+      text: isSpanish
+        ? 'Puedo buscar en nuestro catalogo de piezas, indicarle disponibilidad y condicion, guiarle en una cotizacion RFQ, explicar certificaciones y conectarlo con nuestro equipo de ventas.'
+        : 'I can search our aircraft parts catalog, provide basic availability and condition details, guide you through an RFQ, explain certifications, and connect you with our sales team.',
       action: {
         type: 'catalog',
-        label: 'Explore Catalog',
+        label: isSpanish ? 'Explorar Catalogo' : 'Explore Catalog',
         link: '/catalog',
       },
       time: now,
     }
   }
 
-  if (/^(bye|goodbye|see you|that is all|that\\'s all)\b/.test(query)) {
+  if (/^(bye|goodbye|see you|that is all|that\\'s all|adios|chao|hasta luego)\b/.test(query)) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'Thank you for contacting Golden Wings International. We are here whenever you need aviation parts support.',
+      text: isSpanish
+        ? 'Gracias por contactar a Golden Wings International. Estamos a su disposicion siempre que requiera soporte aeronautico.'
+        : 'Thank you for contacting Golden Wings International. We are here whenever you need aviation parts support.',
       time: now,
     }
   }
@@ -102,8 +104,10 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: `${activePart.partNumber} — ${activePart.description} is currently listed at ${activePart.price}. Available condition: ${activePart.conditionLabel || activePart.condition}. Quantity shown: ${activePart.quantity}.`,
-      action: buildRfqAction(activePart),
+      text: isSpanish
+        ? `${activePart.partNumber} — ${activePart.description} esta listado en ${activePart.price}. Condicion disponible: ${activePart.conditionLabel || activePart.condition}. Cantidad mostrada: ${activePart.quantity}.`
+        : `${activePart.partNumber} — ${activePart.description} is currently listed at ${activePart.price}. Available condition: ${activePart.conditionLabel || activePart.condition}. Quantity shown: ${activePart.quantity}.`,
+      action: buildRfqAction(activePart, isSpanish),
       time: now,
     }
   }
@@ -128,7 +132,9 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: `I found ${matchedParts.length} available component(s) in our inventory. Here are the related options:`,
+      text: isSpanish
+        ? `Encontre ${matchedParts.length} componente(s) disponible(s) en nuestro inventario. Aqui tiene las opciones relacionadas:`
+        : `I found ${matchedParts.length} available component(s) in our inventory. Here are the related options:`,
       parts: matchedParts.slice(0, 3),
       time: now,
     }
@@ -139,17 +145,19 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'Priority AOG support activated. Our aircraft-on-ground response team operates 24/7/365 for immediate dispatch from our logistics centers.',
+      text: isSpanish
+        ? 'Soporte prioritario AOG activado. Nuestro equipo de respuesta para aeronaves en tierra opera 24/7/365 para despacho inmediato desde nuestros centros logisticos.'
+        : 'Priority AOG support activated. Our aircraft-on-ground response team operates 24/7/365 for immediate dispatch from our logistics centers.',
       action: {
         type: 'contact',
-        label: 'Contact the 24/7 AOG Desk',
+        label: isSpanish ? 'Contactar Mesa AOG 24/7' : 'Contact the 24/7 AOG Desk',
         link: '/contact',
       },
       time: now,
     }
   }
 
-  // 3. RFQ / Cotización detection
+  // 3. RFQ / Cotizacion detection
   if (
     query.includes('cotiz') ||
     query.includes('rfq') ||
@@ -161,11 +169,12 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'You can request a formal quotation (RFQ) in just a few seconds. Please provide the part number (P/N), required quantity, and desired condition (NS, OH, SV, or AR).',
+      text: isSpanish
+        ? 'Puede solicitar una cotizacion formal (RFQ) en pocos segundos. Por favor indique el numero de parte (P/N), cantidad requerida y condicion deseada (NS, OH, SV o AR).'
+        : 'You can request a formal quotation (RFQ) in just a few seconds. Please provide the part number (P/N), required quantity, and desired condition (NS, OH, SV, or AR).',
       action: {
         type: 'rfq',
-        label: 'Open the RFQ form',
-        link: '/contact',
+        label: isSpanish ? 'Iniciar RFQ en el chat' : 'Start RFQ in chat',
       },
       time: now,
     }
@@ -183,10 +192,12 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'Our components may be supplied with complete aviation documentation, including FAA Form 8130-3, EASA Form 1, and a Certificate of Conformity (CoC), depending on the part and availability.',
+      text: isSpanish
+        ? 'Nuestros componentes pueden suministrarse con documentacion aeronautica completa, incluyendo FAA Form 8130-3, EASA Form 1 y Certificado de Conformidad (CoC), segun la pieza y disponibilidad.'
+        : 'Our components may be supplied with complete aviation documentation, including FAA Form 8130-3, EASA Form 1, and a Certificate of Conformity (CoC), depending on the part and availability.',
       action: {
         type: 'catalog',
-        label: 'Explore Catalog',
+        label: isSpanish ? 'Explorar Catalogo' : 'Explore Catalog',
         link: '/catalog',
       },
       time: now,
@@ -198,10 +209,12 @@ function generateBotReply(userText, activePart = null) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',
-      text: 'You can contact our sales team at sales@goldenwingsinternational.net or complete our online contact form.',
+      text: isSpanish
+        ? 'Puede contactar a nuestro equipo de ventas en sales@goldenwingsinternational.net o completar nuestro formulario de contacto en linea.'
+        : 'You can contact our sales team at sales@goldenwingsinternational.net or complete our online contact form.',
       action: {
         type: 'contact',
-        label: 'Go to Contact',
+        label: isSpanish ? 'Ir a Contacto' : 'Go to Contact',
         link: '/contact',
       },
       time: now,
@@ -212,10 +225,12 @@ function generateBotReply(userText, activePart = null) {
   return {
     id: `bot-${idSuffix}`,
     sender: 'bot',
-    text: 'Understood. If you are looking for a specific part, please provide its P/N or aircraft model, such as Bell 204, Bell 212, PW100, or turbine. I can also help you send a direct request to our sales team.',
+    text: isSpanish
+      ? 'Entendido. Si busca una pieza especifica, faciliteme su P/N o modelo de aeronave como Bell 204, Bell 212, PW100 o turbinas. Tambien puedo ayudarle a enviar una solicitud directa al equipo de ventas.'
+      : 'Understood. If you are looking for a specific part, please provide its P/N or aircraft model, such as Bell 204, Bell 212, PW100, or turbine. I can also help you send a direct request to our sales team.',
     action: {
       type: 'contact',
-      label: 'Send a Request to Sales',
+      label: isSpanish ? 'Enviar Solicitud a Ventas' : 'Send a Request to Sales',
       link: '/contact',
     },
     time: now,
@@ -223,17 +238,48 @@ function generateBotReply(userText, activePart = null) {
 }
 
 export default function ChatFlyout() {
+  const { language, isSpanish, t } = useLanguage()
   const [isOpen, setIsOpen] = useState(false)
   const [isClosing, setIsClosing] = useState(false)
   const [messages, setMessages] = useState(INITIAL_MESSAGES)
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
   const [activePart, setActivePart] = useState(null)
+  const [rfqFlow, setRfqFlow] = useState(null)
 
   const flyoutRef = useRef(null)
   const messagesEndRef = useRef(null)
   const inputRef = useRef(null)
   const fabRef = useRef(null)
+
+  useEffect(() => {
+    setMessages((prev) => {
+      if (prev.length <= 2 && prev.every((m) => m.sender === 'bot')) {
+        return [
+          {
+            id: 'msg-welcome-1',
+            sender: 'bot',
+            text: t('chat.welcome1'),
+            time: 'Now',
+          },
+          {
+            id: 'msg-welcome-2',
+            sender: 'bot',
+            text: t('chat.welcome2'),
+            time: 'Now',
+          },
+        ]
+      }
+      return prev
+    })
+  }, [language, t])
+
+  const quickActions = [
+    { icon: Search, label: t('chat.quickActions.search'), query: '212-040' },
+    { icon: Zap, label: t('chat.quickActions.aog'), query: isSpanish ? 'Tengo una emergencia AOG' : 'I have an AOG emergency' },
+    { icon: ClipboardList, label: t('chat.quickActions.rfq'), rfqFlow: true },
+    { icon: ShieldCheck, label: t('chat.quickActions.certs'), query: isSpanish ? '¿Que certificaciones acompañan a las piezas?' : 'What certifications come with the parts?' },
+  ]
 
   const handleOpen = useCallback(() => {
     setIsClosing(false)
@@ -310,10 +356,136 @@ export default function ChatFlyout() {
   const msgIdCounter = useRef(0)
 
   const handleReset = useCallback(() => {
-    setMessages(INITIAL_MESSAGES)
+    setMessages([
+      {
+        id: 'msg-welcome-1',
+        sender: 'bot',
+        text: t('chat.welcome1'),
+        time: 'Now',
+      },
+      {
+        id: 'msg-welcome-2',
+        sender: 'bot',
+        text: t('chat.welcome2'),
+        time: 'Now',
+      },
+    ])
     setIsTyping(false)
     setActivePart(null)
+    setRfqFlow(null)
+  }, [t])
+
+  const appendBotMessage = useCallback((text) => {
+    setMessages((previous) => [
+      ...previous,
+      {
+        id: `bot-${Date.now()}-${Math.floor(Math.random() * 1000)}`,
+        sender: 'bot',
+        text,
+        time: getFormattedTime(),
+      },
+    ])
   }, [])
+
+  const getRfqQuestion = useCallback((step, draft) => {
+    const partNote = draft.partNumber
+      ? (isSpanish ? ` Ya tengo seleccionada la pieza ${draft.partNumber}.` : ` I already have ${draft.partNumber} selected.`)
+      : ''
+
+    const questions = {
+      name: isSpanish ? `Perfecto, prepararemos su RFQ dentro del chat.${partNote} Primero, ¿cual es su nombre completo?` : `Great, I will prepare your RFQ right here in the chat.${partNote} First, what is your full name?`,
+      email: isSpanish ? 'Gracias. ¿Cual es su correo electronico de contacto?' : 'Thank you. What is your contact email address?',
+      partNumber: isSpanish ? '¿Cual es el numero de parte (P/N) que necesita?' : 'What part number (P/N) do you need?',
+      quantity: isSpanish ? '¿Que cantidad necesita?' : 'What quantity do you need?',
+      condition: isSpanish ? '¿Que condicion requiere? Por ejemplo: NS, OH, SV o AR.' : 'What condition do you require? For example: NS, OH, SV, or AR.',
+      request: isSpanish ? 'Por ultimo, indique detalles adicionales: aeronave, urgencia, certificaciones o fecha requerida.' : 'Lastly, share any additional details: aircraft, urgency, certifications, or required date.',
+      confirm: isSpanish ? '¿Desea enviar esta RFQ ahora? Responda “yes” o “no”.' : 'Would you like to send this RFQ now? Reply “yes” or “no”.',
+    }
+
+    return questions[step]
+  }, [isSpanish])
+
+  const startRfqFlow = useCallback(() => {
+    if (rfqFlow) return
+
+    const draft = {
+      name: '',
+      email: '',
+      partNumber: activePart?.partNumber || '',
+      quantity: '',
+      condition: '',
+      request: '',
+    }
+    setRfqFlow({ step: 'name', draft })
+    appendBotMessage(getRfqQuestion('name', draft))
+  }, [activePart, appendBotMessage, getRfqQuestion, rfqFlow])
+
+  const advanceRfqFlow = useCallback(async (answer) => {
+    if (!rfqFlow) return false
+
+    const normalizedAnswer = answer.trim()
+    if (/^(cancel|stop|cancelar|salir)$/i.test(normalizedAnswer)) {
+      setRfqFlow(null)
+      appendBotMessage(isSpanish ? 'RFQ cancelada. Puede iniciarla nuevamente cuando guste.' : 'The RFQ was cancelled. You can start a new one whenever you are ready.')
+      return true
+    }
+
+    const { step, draft } = rfqFlow
+    if (step === 'confirm') {
+      if (/^(no|n)$/i.test(normalizedAnswer)) {
+        setRfqFlow(null)
+        appendBotMessage(isSpanish ? 'No se envio la RFQ. Puede iniciar una nueva cuando guste.' : 'The RFQ was not sent. You can start a new one whenever you are ready.')
+        return true
+      }
+      if (!/^(yes|y|si|sí)$/i.test(normalizedAnswer)) {
+        appendBotMessage(isSpanish ? 'Por favor responda “yes” para enviar o “no” para cancelar.' : 'Please reply “yes” to send it or “no” to cancel.')
+        return true
+      }
+
+      setIsTyping(true)
+      try {
+        await submitContactForm({
+          name: draft.name,
+          email: draft.email,
+          partNumber: draft.partNumber,
+          request: `${draft.request}\n\nRFQ details:\nQuantity: ${draft.quantity}\nRequired condition: ${draft.condition}`,
+        })
+        appendBotMessage(isSpanish ? 'Su RFQ fue enviada correctamente. Nuestro equipo le respondera por correo.' : 'Your RFQ was sent successfully. Our team will reply by email.')
+        setRfqFlow(null)
+      } catch {
+        appendBotMessage(isSpanish ? 'No pude enviar la RFQ en este momento. Intente de nuevo en unos minutos.' : 'I could not send the RFQ right now. Please try again in a few minutes.')
+      } finally {
+        setIsTyping(false)
+      }
+      return true
+    }
+
+    if (step === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(normalizedAnswer)) {
+      appendBotMessage(isSpanish ? 'Ese correo no parece valido. Por favor escribalo nuevamente.' : 'That email address does not look valid. Please enter it again.')
+      return true
+    }
+
+    const nextDraft = { ...draft, [step]: normalizedAnswer }
+    const nextStep = {
+      name: 'email',
+      email: draft.partNumber ? 'quantity' : 'partNumber',
+      partNumber: 'quantity',
+      quantity: 'condition',
+      condition: 'request',
+      request: 'confirm',
+    }[step]
+
+    setRfqFlow({ step: nextStep, draft: nextDraft })
+    if (nextStep === 'confirm') {
+      const summary = isSpanish
+        ? `Resumen RFQ:\nNombre: ${nextDraft.name}\nP/N: ${nextDraft.partNumber}\nCantidad: ${nextDraft.quantity}\nCondicion: ${nextDraft.condition}\n\n${getRfqQuestion('confirm', nextDraft)}`
+        : `RFQ summary:\nName: ${nextDraft.name}\nP/N: ${nextDraft.partNumber}\nQuantity: ${nextDraft.quantity}\nCondition: ${nextDraft.condition}\n\n${getRfqQuestion('confirm', nextDraft)}`
+      appendBotMessage(summary)
+    } else {
+      appendBotMessage(getRfqQuestion(nextStep, nextDraft))
+    }
+    return true
+  }, [appendBotMessage, getRfqQuestion, isSpanish, rfqFlow])
 
   const handleSendMessage = useCallback(async (textToSend) => {
     const query = (textToSend || inputValue).trim()
@@ -331,13 +503,19 @@ export default function ChatFlyout() {
 
     setMessages((prev) => [...prev, userMsg])
     setInputValue('')
+
+    if (rfqFlow) {
+      await advanceRfqFlow(query)
+      return
+    }
+
     setIsTyping(true)
 
     try {
       const response = await fetch('/.netlify/functions/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query, activePartNumber: activePart?.partNumber || '' }),
+        body: JSON.stringify({ message: query, activePartNumber: activePart?.partNumber || '', language }),
       })
 
       if (!response.ok) throw new Error('Chat API unavailable')
@@ -356,20 +534,20 @@ export default function ChatFlyout() {
           action: data.action,
           time: getFormattedTime(),
         }
-        : generateBotReply(query, activePart)
+        : generateBotReply(query, activePart, isSpanish)
 
       if (displayedParts?.length) setActivePart(displayedParts[0])
 
       setMessages((prev) => [...prev, botMsg])
     } catch {
       // Keep the current local assistant available during local development.
-      const botMsg = generateBotReply(query, activePart)
+      const botMsg = generateBotReply(query, activePart, isSpanish)
       if (botMsg.parts?.length) setActivePart(botMsg.parts[0])
       setMessages((prev) => [...prev, botMsg])
     } finally {
       setIsTyping(false)
     }
-  }, [inputValue, activePart])
+  }, [inputValue, activePart, advanceRfqFlow, isSpanish, language, rfqFlow])
 
   const handleFormSubmit = useCallback((e) => {
     e.preventDefault()
@@ -458,7 +636,7 @@ export default function ChatFlyout() {
           >
             <div className="chat-flyout__security-badge">
               <Plane size={13} className="chat-flyout__security-icon" />
-              <span>FAA & EASA Certified Aerospace Support</span>
+              <span>{t('chat.securityBadge')}</span>
             </div>
 
             {messages.map((msg, index) => {
@@ -502,7 +680,7 @@ export default function ChatFlyout() {
                               to={`/catalog?search=${encodeURIComponent(part.partNumber)}`}
                               className="chat-part-card__link"
                               onClick={handleClose}
-                              title="Ver en catálogo"
+                              title={t('chat.viewInCatalog', 'View in catalog')}
                             >
                               <ArrowRight size={14} />
                             </Link>
@@ -514,14 +692,21 @@ export default function ChatFlyout() {
                     {/* Action button */}
                     {msg.action && (
                       <div className="chat-bubble__action-wrap">
-                        <Link
-                          to={msg.action.link}
-                          className="chat-bubble__action-btn"
-                          onClick={handleClose}
-                        >
-                          <span>{msg.action.label}</span>
-                          <ArrowRight size={14} />
-                        </Link>
+                        {msg.action.type === 'rfq' ? (
+                          <button type="button" className="chat-bubble__action-btn" onClick={startRfqFlow}>
+                            <span>{msg.action.label}</span>
+                            <ArrowRight size={14} />
+                          </button>
+                        ) : (
+                          <Link
+                            to={msg.action.link}
+                            className="chat-bubble__action-btn"
+                            onClick={handleClose}
+                          >
+                            <span>{msg.action.label}</span>
+                            <ArrowRight size={14} />
+                          </Link>
+                        )}
                       </div>
                     )}
 
@@ -549,12 +734,12 @@ export default function ChatFlyout() {
 
           {/* Quick Suggestions Chips */}
           <div className="chat-flyout__quick-actions">
-            {QUICK_ACTIONS.map((item) => (
+            {quickActions.map((item) => (
               <button
                 key={item.label}
                 type="button"
                 className="chat-quick-chip"
-                onClick={() => handleSendMessage(item.query)}
+                onClick={() => (item.rfqFlow ? startRfqFlow() : handleSendMessage(item.query))}
               >
                 <item.icon size={14} aria-hidden="true" />
                 <span>{item.label}</span>
@@ -570,15 +755,15 @@ export default function ChatFlyout() {
               className="chat-flyout__input"
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Type your inquiry here..."
-              aria-label="Type your message or part number"
+              placeholder={t('chat.placeholder')}
+              aria-label={t('chat.placeholder')}
             />
             <button
               type="submit"
               className={`chat-flyout__send-btn ${inputValue.trim() ? 'chat-flyout__send-btn--active' : ''}`}
               disabled={!inputValue.trim() || isTyping}
-              aria-label="Enviar mensaje"
-              title="Enviar"
+              aria-label={t('chat.sendAria')}
+              title={t('chat.sendAria')}
             >
               <Send size={16} />
             </button>
