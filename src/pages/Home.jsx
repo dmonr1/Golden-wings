@@ -1,13 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { Link } from 'react-router-dom'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from 'lucide-react'
+import { ArrowRight, ArrowUpRight } from 'lucide-react'
 import HeroSlider from '../components/HeroSlider.jsx'
-import propellerImg from '../assets/propeller.jpg'
-import toolingImg from '../assets/tooling.jpg'
-import supportingImg from '../assets/supporting.jpg'
-import cockpitImg from '../assets/cockpit.jpg'
 import avionicsImage from '../assets/avionics.jpg'
 import hotPartsImage from '../assets/hot parts.webp'
 import lostDealsImage from '../assets/lost deals.jpg'
@@ -23,34 +19,48 @@ import planeVector from '../assets/svgs/avion-vector.svg'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 import { submitContactForm } from '../services/contactForm.js'
 import FeedbackModal from '../components/FeedbackModal.jsx'
+import { useLanguage } from '../context/LanguageContext.jsx'
+import { partsInventory } from '../data/partsInventory.js'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const highlights = [
-  {
-    value: 'FAA/EASA',
-    label: 'Traceable Components',
-    type: 'text',
-  },
-  {
-    value: 25,
-    start: 8,
-    suffix: '+',
-    label: 'Years Experience',
-    type: 'number',
-  },
-  {
-    value: 100,
-    start: 72,
-    suffix: 'k+',
-    label: 'Parts Managed',
-    type: 'number',
-  },
-  {
-    value: '24/7',
-    label: 'AOG Rapid Support',
-    type: 'text',
-  },
+const servicesIcons = [
+  (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M6 38H42M12 38V42M24 38V42M36 38V42" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
+      <path d="M9 18L24 9L39 18V34H9V18Z" fill="#eef2f7" stroke="#18365d" strokeWidth="2.8" strokeLinejoin="round" />
+      <path d="M24 9V34M9 18L24 26L39 18" stroke="#18365d" strokeWidth="2.2" strokeLinejoin="round" />
+      <circle cx="33" cy="27" r="8" fill="#8f6b2d" stroke="#ffffff" strokeWidth="2" />
+      <path d="M29.5 27L32 29.5L36.5 24.5" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
+  ),
+  (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="24" cy="24" r="19" stroke="#cbd5e1" strokeWidth="2.2" strokeDasharray="4 3" />
+      <circle cx="24" cy="24" r="8" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.8" />
+      <circle cx="24" cy="24" r="3" fill="#fef08a" />
+      <path d="M24 16V5M24 32V43M16 24H5M32 24H43" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
+      <path d="M18.3 18.3L10.5 10.5M29.7 29.7L37.5 37.5M29.7 18.3L37.5 10.5M18.3 29.7L10.5 37.5" stroke="#8f6b2d" strokeWidth="2.8" strokeLinecap="round" />
+      <path d="M39 15C42 19 42 22 42 24M6 24C6 20 8 17 10 15" stroke="#0284c7" strokeWidth="2.8" strokeLinecap="round" />
+    </svg>
+  ),
+  (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="20" cy="28" r="10" fill="#eef2f7" stroke="#64748b" strokeWidth="2.4" />
+      <path d="M20 15V18M20 38V41M7 28H10M30 28H33M11 19L13.5 21.5M26.5 34.5L29 37M11 37L13.5 34.5M26.5 21.5L29 19" stroke="#64748b" strokeWidth="2.4" strokeLinecap="round" />
+      <circle cx="20" cy="28" r="4.5" fill="#ffffff" stroke="#18365d" strokeWidth="2.2" />
+      <path d="M38.5 7.5C40.5 9.5 41 12.5 39.5 15L35 19.5L29.5 14L34 9.5C35.5 8 37.5 7 38.5 7.5Z" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.4" strokeLinejoin="round" />
+      <path d="M29.5 14L15.5 28" stroke="#18365d" strokeWidth="4" strokeLinecap="round" />
+      <path d="M15.5 28L12 31.5L16.5 36L20 32.5" stroke="#8f6b2d" strokeWidth="2.4" strokeLinejoin="round" />
+    </svg>
+  ),
+  (
+    <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M5 17H16M3 24H13M7 31H18" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
+      <path d="M15 22L28 17L38 6H44L36 21L45 23L38 26L34 38H29L29 26L19 25L15 31H11L15 22Z" fill="#18365d" stroke="#18365d" strokeWidth="1.6" strokeLinejoin="round" />
+      <path d="M29 28L24 37H30L27 44L37 34H30L33 28H29Z" fill="#eab308" stroke="#8f6b2d" strokeWidth="1.6" strokeLinejoin="round" />
+    </svg>
+  ),
 ]
 
 const partners = [
@@ -64,104 +74,103 @@ const partners = [
   { name: 'ATR', brand: 'ATR', color: '#f97316', logo: atrLogo },
 ]
 
-const servicesData = [
-  {
-    title: 'Inventory Acquisition',
-    description:
-      'We specialize in locating, evaluating, and acquiring complete aircraft inventories for airlines, operators, and MROs under strict quality and traceability criteria.',
-    link: '/contact?subject=Inventory+Acquisition',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M6 38H42M12 38V42M24 38V42M36 38V42" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
-        <path d="M9 18L24 9L39 18V34H9V18Z" fill="#eef2f7" stroke="#18365d" strokeWidth="2.8" strokeLinejoin="round" />
-        <path d="M24 9V34M9 18L24 26L39 18" stroke="#18365d" strokeWidth="2.2" strokeLinejoin="round" />
-        <circle cx="33" cy="27" r="8" fill="#8f6b2d" stroke="#ffffff" strokeWidth="2" />
-        <path d="M29.5 27L32 29.5L36.5 24.5" stroke="#ffffff" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Rotables & Expendables',
-    description:
-      'We offer an extensive pool of aeronautical spare parts, including rotables and expendables, ready for immediate dispatch with complete airworthiness documentation.',
-    link: '/catalog?category=Rotables',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="24" cy="24" r="19" stroke="#cbd5e1" strokeWidth="2.2" strokeDasharray="4 3" />
-        <circle cx="24" cy="24" r="8" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.8" />
-        <circle cx="24" cy="24" r="3" fill="#fef08a" />
-        <path d="M24 16V5M24 32V43M16 24H5M32 24H43" stroke="#18365d" strokeWidth="2.8" strokeLinecap="round" />
-        <path d="M18.3 18.3L10.5 10.5M29.7 29.7L37.5 37.5M29.7 18.3L37.5 10.5M18.3 29.7L10.5 37.5" stroke="#8f6b2d" strokeWidth="2.8" strokeLinecap="round" />
-        <path d="M39 15C42 19 42 22 42 24M6 24C6 20 8 17 10 15" stroke="#0284c7" strokeWidth="2.8" strokeLinecap="round" />
-      </svg>
-    ),
-  },
-  {
-    title: 'Tooling & Ground Support',
-    description:
-      'Precision aircraft maintenance tooling, hydraulic tripod jacks, APU tooling, and heavy ground support equipment engineered for active commercial and corporate fleets.',
-    link: '/catalog?category=Tooling',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <circle cx="20" cy="28" r="10" fill="#eef2f7" stroke="#64748b" strokeWidth="2.4" />
-        <path d="M20 15V18M20 38V41M7 28H10M30 28H33M11 19L13.5 21.5M26.5 34.5L29 37M11 37L13.5 34.5M26.5 21.5L29 19" stroke="#64748b" strokeWidth="2.4" strokeLinecap="round" />
-        <circle cx="20" cy="28" r="4.5" fill="#ffffff" stroke="#18365d" strokeWidth="2.2" />
-        <path d="M38.5 7.5C40.5 9.5 41 12.5 39.5 15L35 19.5L29.5 14L34 9.5C35.5 8 37.5 7 38.5 7.5Z" fill="#8f6b2d" stroke="#18365d" strokeWidth="2.4" strokeLinejoin="round" />
-        <path d="M29.5 14L15.5 28" stroke="#18365d" strokeWidth="4" strokeLinecap="round" />
-        <path d="M15.5 28L12 31.5L16.5 36L20 32.5" stroke="#8f6b2d" strokeWidth="2.4" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-  {
-    title: 'AOG Critical Logistics',
-    description:
-      'Urgent 24/7 aircraft-on-ground logistics protocol with immediate quoting, expedited warehouse retrieval, and fast express dispatch worldwide.',
-    link: '/contact?subject=AOG+Emergency+Support',
-    icon: (
-      <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <path d="M5 17H16M3 24H13M7 31H18" stroke="#cbd5e1" strokeWidth="2.5" strokeLinecap="round" />
-        <path d="M15 22L28 17L38 6H44L36 21L45 23L38 26L34 38H29L29 26L19 25L15 31H11L15 22Z" fill="#18365d" stroke="#18365d" strokeWidth="1.6" strokeLinejoin="round" />
-        <path d="M29 28L24 37H30L27 44L37 34H30L33 28H29Z" fill="#eab308" stroke="#8f6b2d" strokeWidth="1.6" strokeLinejoin="round" />
-      </svg>
-    ),
-  },
-]
-
-const serviceTiles = [
-  { title: 'Avionics', brand: 'Avionics', color: '#0284c7', image: avionicsImage, link: '/catalog?category=Avionics' },
-  { title: 'Hot Parts', brand: 'Hot Parts', color: '#ea580c', image: hotPartsImage, link: '/catalog?category=Rotables' },
-  { title: 'Last Deals', brand: 'Last Deals', color: '#8f6b2d', image: lostDealsImage, link: '/catalog' },
-]
-
-const faqs = [
-  {
-    question: 'How fast can you quote aircraft parts?',
-    answer:
-      'Share the part number, condition, quantity and traceability requirements. Our team reviews availability and responds with a clear quote as quickly as possible.',
-  },
-  {
-    question: 'Do you support FAA/EASA traceability?',
-    answer:
-      'Yes. We prioritize traceable components and documentation so every request can move with confidence, compliance and operational reliability.',
-  },
-  {
-    question: 'Can you help with hard-to-find spares?',
-    answer:
-      'Yes. Our sourcing network helps locate urgent, rare and aftermarket spares when standard inventory channels are limited or time-sensitive.',
-  },
-  {
-    question: 'Where are you located?',
-    answer:
-      'Golden Wings International operates from Doral, Florida, with access to a global aviation supply network and responsive aftermarket support.',
-  },
-  {
-    question: 'Which aircraft do you support?',
-    answer:
-      'We support Boeing, Airbus and regional jet operators with aircraft spares, aftermarket solutions and procurement support for active fleets.',
-  },
-]
-
 function Home() {
+  const { t } = useLanguage()
+
+  const highlights = useMemo(
+    () => [
+      {
+        value: 'FAA/EASA',
+        label: t('home.highlights.traceable'),
+        type: 'text',
+      },
+      {
+        value: 25,
+        start: 8,
+        suffix: '+',
+        label: t('home.highlights.experience'),
+        type: 'number',
+      },
+      {
+        value: 100,
+        start: 72,
+        suffix: 'k+',
+        label: t('home.highlights.partsManaged'),
+        type: 'number',
+      },
+      {
+        value: '24/7',
+        label: t('home.highlights.aogSupport'),
+        type: 'text',
+      },
+    ],
+    [t],
+  )
+
+  const servicesData = useMemo(
+    () => [
+      {
+        title: t('home.services.items.0.title'),
+        description: t('home.services.items.0.description'),
+        link: '/contact?subject=Inventory+Acquisition',
+        icon: servicesIcons[0],
+      },
+      {
+        title: t('home.services.items.1.title'),
+        description: t('home.services.items.1.description'),
+        link: '/catalog?category=Rotables',
+        icon: servicesIcons[1],
+      },
+      {
+        title: t('home.services.items.2.title'),
+        description: t('home.services.items.2.description'),
+        link: '/catalog?category=Tooling',
+        icon: servicesIcons[2],
+      },
+      {
+        title: t('home.services.items.3.title'),
+        description: t('home.services.items.3.description'),
+        link: '/contact?subject=AOG+Emergency+Support',
+        icon: servicesIcons[3],
+      },
+    ],
+    [t],
+  )
+
+  const serviceTiles = useMemo(
+    () => [
+      { title: t('home.serviceTiles.avionics'), brand: 'Avionics', color: '#0284c7', image: avionicsImage, link: '/catalog?category=Avionics' },
+      { title: t('home.serviceTiles.hotParts'), brand: 'Hot Parts', color: '#ea580c', image: hotPartsImage, link: '/catalog?category=Rotables' },
+      { title: t('home.serviceTiles.lastDeals'), brand: 'Last Deals', color: '#8f6b2d', image: lostDealsImage, link: '/catalog' },
+    ],
+    [t],
+  )
+
+  const faqs = useMemo(
+    () => [
+      {
+        question: t('home.faqs.items.0.question'),
+        answer: t('home.faqs.items.0.answer'),
+      },
+      {
+        question: t('home.faqs.items.1.question'),
+        answer: t('home.faqs.items.1.answer'),
+      },
+      {
+        question: t('home.faqs.items.2.question'),
+        answer: t('home.faqs.items.2.answer'),
+      },
+      {
+        question: t('home.faqs.items.3.question'),
+        answer: t('home.faqs.items.3.answer'),
+      },
+      {
+        question: t('home.faqs.items.4.question'),
+        answer: t('home.faqs.items.4.answer'),
+      },
+    ],
+    [t],
+  )
   const stripRef = useRef(null)
   const contextSectionRef = useRef(null)
   const contextCardRef = useRef(null)
@@ -178,7 +187,6 @@ function Home() {
   const [activeFaq, setActiveFaq] = useState(0)
   const [contactForm, setContactForm] = useState({ name: '', email: '', partNumber: '', request: '' })
   const [contactStatus, setContactStatus] = useState('idle')
-  const [contactError, setContactError] = useState('')
   const [contactAlert, setContactAlert] = useState({ type: '', message: '' })
 
   const handleHomeContactChange = (event) => {
@@ -189,17 +197,15 @@ function Home() {
   const handleHomeContactSubmit = async (event) => {
     event.preventDefault()
     setContactStatus('sending')
-    setContactError('')
 
     try {
       await submitContactForm(contactForm)
       setContactStatus('sent')
-      setContactAlert({ type: 'success', message: 'Your RFQ request was sent successfully.' })
+      setContactAlert({ type: 'success', message: t('contact.alerts.success') })
       setContactForm({ name: '', email: '', partNumber: '', request: '' })
     } catch (error) {
       setContactStatus('error')
-      setContactError(error.message)
-      setContactAlert({ type: 'error', message: error.message })
+      setContactAlert({ type: 'error', message: error.message || t('contact.alerts.error') })
     }
   }
 
@@ -737,7 +743,7 @@ function Home() {
           >
             <div className="home-services-header">
               <h2 className="home-services-heading" ref={servicesTitleRef}>
-                OUR SERVICES
+                {t('home.servicesHeading', 'OUR SERVICES')}
               </h2>
             </div>
 
@@ -758,7 +764,7 @@ function Home() {
                       <p className="service-feature-card__desc">{service.description}</p>
                       <div className="service-feature-card__action">
                         <span className="service-feature-card__btn">
-                          <span>View More</span>
+                          <span>{t('home.viewMore', 'View More')}</span>
                           <ArrowRight size={16} aria-hidden="true" />
                         </span>
                       </div>
@@ -778,11 +784,11 @@ function Home() {
               </svg>
             </div>
             <div className="partners-section__inner">
-              <h2 className="sr-only">Our Clients, Relations and Partnership</h2>
+              <h2 className="sr-only">{t('home.partners.title', 'Our Clients, Relations and Partnership')}</h2>
               <div className="partners-marquee" aria-hidden="true">
                 <div className="partners-marquee__track">
                   {Array.from({ length: 4 }).map((_, index) => (
-                    <span key={index}>Our Clients + Relations + Partnership +</span>
+                    <span key={index}>{t('home.partnersMarquee', 'Our Clients + Relations + Partnership +')}</span>
                   ))}
                 </div>
               </div>
@@ -792,10 +798,10 @@ function Home() {
                     to={`/catalog?search=${encodeURIComponent(partner.name)}`}
                     className="partner-card"
                     key={partner.name}
-                    data-tooltip-prefix="Explore Fleet"
+                    data-tooltip-prefix={t('home.exploreFleet', 'Explore Fleet')}
                     data-tooltip-brand={partner.brand}
                     data-tooltip-color={partner.color}
-                    aria-label={`Explore fleet parts for ${partner.name}`}
+                    aria-label={`${t('home.exploreFleet', 'Explore Fleet')} ${partner.name}`}
                   >
                     <span>{String(index + 1).padStart(2, '0')}</span>
                     <img src={partner.logo} alt={partner.name} />
@@ -821,7 +827,7 @@ function Home() {
           >
             <div className="categories-header">
               <h2 className="categories-header__title" ref={partsTitleRef}>
-                PARTS INVENTORY
+                {t('home.partsHeading', 'PARTS INVENTORY')}
               </h2>
             </div>
             <div className="service-strip">
@@ -830,7 +836,7 @@ function Home() {
                   to={item.link}
                   className="service-strip__item"
                   key={item.title}
-                  data-tooltip-prefix="Explore Parts"
+                  data-tooltip-prefix={t('home.exploreParts', 'Explore Parts')}
                   data-tooltip-brand={item.brand}
                   data-tooltip-color={item.color}
                   aria-label={`Explore ${item.title} inventory`}
@@ -846,7 +852,7 @@ function Home() {
                 to="/catalog"
                 className="categories-catalog-btn"
               >
-                <span>Explore Full Catalog (23 parts in stock)</span>
+                <span>{t('home.exploreFullCatalog', `Explore Full Catalog (${partsInventory.length} parts in stock)`, { count: partsInventory.length })}</span>
                 <ArrowUpRight size={18} aria-hidden="true" />
               </Link>
             </div>
@@ -876,12 +882,12 @@ function Home() {
             <div className="quote-band__copy">
 
               <div className="quote-band__intro">
-                <h2>Everything you need to know</h2>
-                <p>We are ready for your questions. Send us your request and we will help you move faster.</p>
+                <h2>{t('home.quoteBand.title', 'Everything you need to know')}</h2>
+                <p>{t('home.quoteBand.desc', 'We are ready for your questions. Send us your request and we will help you move faster.')}</p>
               </div>
               <div className="quote-band__commitment">
                 <p className="quote-band__statement">
-                  “Every quote we send is a commitment to performance, safety, and reliability to our customers.”
+                  {t('home.quoteBand.statement', '“Every quote we send is a commitment to performance, safety, and reliability to our customers.”')}
                 </p>
               </div>
             </div>
@@ -907,29 +913,29 @@ function Home() {
             <section className="home-contact" ref={contactRef} aria-label="Contact Golden Wings">
               <img className="home-contact__seal" src={eagleLogo} alt="" aria-hidden="true" />
               <div className="home-contact__copy">
-                <p>Ready for a faster quote?</p>
-                <h2>Send your aircraft parts request.</h2>
-                <span>Doral, Florida</span>
+                <p>{t('home.contact.kicker', 'Ready for a faster quote?')}</p>
+                <h2>{t('home.contact.title', 'Send your aircraft parts request.')}</h2>
+                <span>{t('home.contact.location', 'Doral, Florida')}</span>
               </div>
               <form className="home-contact__form" onSubmit={handleHomeContactSubmit}>
                 <label>
-                  Name
+                  {t('contact.fields.name', 'Name')}
                   <input type="text" name="name" autoComplete="name" value={contactForm.name} onChange={handleHomeContactChange} required />
                 </label>
                 <label>
-                  Email
+                  {t('contact.fields.email', 'Email')}
                   <input type="email" name="email" autoComplete="email" value={contactForm.email} onChange={handleHomeContactChange} required />
                 </label>
                 <label>
-                  Part number
+                  {t('contact.fields.partNumber', 'Part number')}
                   <input type="text" name="partNumber" value={contactForm.partNumber} onChange={handleHomeContactChange} />
                 </label>
                 <label>
-                  Request
+                  {t('contact.fields.request', 'Request')}
                   <textarea name="request" rows="3" value={contactForm.request} onChange={handleHomeContactChange} required />
                 </label>
                 <button className="button button--light" type="submit" disabled={contactStatus === 'sending'}>
-                  <span>{contactStatus === 'sending' ? 'Sending...' : 'Send RFQ'}</span>
+                  <span>{contactStatus === 'sending' ? t('contact.fields.submitting', 'Sending...') : t('contact.fields.submit', 'Send RFQ')}</span>
                   <ArrowRight size={18} aria-hidden="true" />
                 </button>
               </form>
@@ -943,7 +949,7 @@ function Home() {
           aria-hidden="true"
         >
           <span className="floating-cursor-tooltip__prefix" ref={tooltipPrefixRef}>
-            Explore Fleet
+            {t('home.exploreFleet', 'Explore Fleet')}
           </span>
           <span className="floating-cursor-tooltip__separator" aria-hidden="true">•</span>
           <span className="floating-cursor-tooltip__brand" ref={tooltipBrandRef} />

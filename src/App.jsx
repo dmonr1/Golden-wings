@@ -15,6 +15,7 @@ import NotFound from './pages/NotFound.jsx'
 import CookieBanner from './components/CookieBanner.jsx'
 import BackToTop from './components/BackToTop.jsx'
 import ChatFlyout from './components/ChatFlyout.jsx'
+import { LanguageProvider } from './context/LanguageContext.jsx'
 import './App.css'
 
 gsap.registerPlugin(ScrollTrigger)
@@ -105,7 +106,7 @@ function App() {
   }, [])
 
   return (
-    <>
+    <LanguageProvider>
       <ScrollToTop />
       {!isLegal && !isNotFound && <PageLoader />}
       {!isLegal && !isNotFound && <Header />}
@@ -121,7 +122,7 @@ function App() {
       {!isLegal && !isNotFound && <BackToTop />}
       {!isLegal && !isNotFound && <ChatFlyout />}
       {!isNotFound && <CookieBanner />}
-    </>
+    </LanguageProvider>
   )
 }
 

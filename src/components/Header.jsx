@@ -1,15 +1,9 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useMemo } from 'react'
 import { X, ChevronDown, Mail, Menu } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
 import { partsInventory } from '../data/partsInventory.js'
-
-const links = [
-  ['Home', '/'],
-  ['Catalog', '/catalog'],
-  ['About us', '/about'],
-  ['Contact', '/contact'],
-]
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 function LanguageFlag({ language }) {
   if (language === 'es') {
@@ -31,13 +25,10 @@ function LanguageFlag({ language }) {
 }
 
 function Header({ hideTopBar = false }) {
+  const { language, setLanguage, t } = useLanguage()
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
   const [isVisible, setIsVisible] = useState(true)
   const [isLanguageMenuOpen, setIsLanguageMenuOpen] = useState(false)
-  const [language, setLanguage] = useState(() => {
-    if (typeof window === 'undefined') return 'en'
-    return window.localStorage.getItem('golden-wings-language') === 'es' ? 'es' : 'en'
-  })
   const [isLoaderFinished, setIsLoaderFinished] = useState(() => {
     if (typeof document === 'undefined') return true
     return !document.querySelector('.page-loader') && document.body.style.position !== 'fixed'
@@ -46,10 +37,15 @@ function Header({ hideTopBar = false }) {
   const lastScrollYRef = useRef(0)
   const languagePickerRef = useRef(null)
 
-  useEffect(() => {
-    document.documentElement.lang = language
-    window.localStorage.setItem('golden-wings-language', language)
-  }, [language])
+  const links = useMemo(
+    () => [
+      [t('header.nav.home'), '/'],
+      [t('header.nav.catalog'), '/catalog'],
+      [t('header.nav.about'), '/about'],
+      [t('header.nav.contact'), '/contact'],
+    ],
+    [t],
+  )
 
   useEffect(() => {
     if (!isLanguageMenuOpen) return undefined
@@ -178,7 +174,7 @@ function Header({ hideTopBar = false }) {
                 onClick={() => setIsMobileMenuOpen(false)}
               >
                 <span className="site-header__mobile-link-text">{label}</span>
-                {label === 'Catalog' && (
+                {to === '/catalog' && (
                   <span className="site-header__mobile-badge">
                     <a>{partsInventory.length}</a>
                   </span>
@@ -194,8 +190,27 @@ function Header({ hideTopBar = false }) {
               onClick={() => setIsMobileMenuOpen(false)}
             >
               <Mail size={15} strokeWidth={2} aria-hidden="true" />
-              <span>Request RFQ</span>
+              <span>{t('header.requestRfq')}</span>
             </NavLink>
+
+            <div className="site-header__mobile-lang" role="group" aria-label={t('header.languageLabel')}>
+              <button
+                type="button"
+                className={`site-header__mobile-lang-btn ${language === 'en' ? 'is-active' : ''}`}
+                onClick={() => setLanguage('en')}
+              >
+                <LanguageFlag language="en" />
+                <span>English</span>
+              </button>
+              <button
+                type="button"
+                className={`site-header__mobile-lang-btn ${language === 'es' ? 'is-active' : ''}`}
+                onClick={() => setLanguage('es')}
+              >
+                <LanguageFlag language="es" />
+                <span>Español</span>
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -207,7 +222,7 @@ function Header({ hideTopBar = false }) {
             <div className="site-topbar__inner">
               <div className="site-topbar__filler" />
               <div className="site-topbar__promo">
-                <span>WE HAVE THE PART YOU ARE LOOKING FOR</span>
+                <span>{t('header.promo')}</span>
               </div>
               <div className="site-topbar__actions">
                 <div className="site-topbar__socials" aria-label="Social links">
@@ -308,7 +323,7 @@ function Header({ hideTopBar = false }) {
             <div className="site-header__right">
               <NavLink to="/contact" className="site-header__quote-btn">
                 <Mail size={15} strokeWidth={2} aria-hidden="true" />
-                <span>Request RFQ</span>
+                <span>{t('header.requestRfq')}</span>
               </NavLink>
 
               <button

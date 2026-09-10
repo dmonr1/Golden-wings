@@ -515,9 +515,43 @@ select {
 /* Bottom Actions Row */
 .site-header__mobile-bottom {
   display: flex;
+  flex-direction: column;
   align-items: center;
   margin-top: 18px;
   padding-top: 4px;
+  gap: 12px;
+}
+
+.site-header__mobile-lang {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding-top: 12px;
+  border-top: 1px solid #edf2f7;
+}
+
+.site-header__mobile-lang-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 16px;
+  border-radius: 9999px;
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.site-header__mobile-lang-btn.is-active {
+  background: #144485;
+  color: #ffffff;
+  border-color: #144485;
+  box-shadow: 0 2px 8px rgba(20, 68, 133, 0.2);
 }
 
 /* Same Request RFQ / Send Request button styled from header (full-width) */

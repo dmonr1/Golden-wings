@@ -7,7 +7,6 @@ import {
   Clock,
   User,
   Hash,
-  FileText,
   CheckCircle2,
   Search,
   ArrowRight,
@@ -18,14 +17,15 @@ import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
 import { submitContactForm } from '../services/contactForm.js'
 import FeedbackModal from '../components/FeedbackModal.jsx'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 function Contact() {
+  const { t } = useLanguage()
   const [searchParams] = useSearchParams()
   const layoutRef = useRef(null)
   const entitiesRef = useRef(null)
   const [submitted, setSubmitted] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [submitError, setSubmitError] = useState('')
   const [alert, setAlert] = useState({ type: '', message: '' })
   const [formData, setFormData] = useState({
     name: '',
@@ -53,15 +53,13 @@ function Contact() {
   const handleSubmit = async (e) => {
     e.preventDefault()
     setIsSubmitting(true)
-    setSubmitError('')
 
     try {
       await submitContactForm(formData)
       setSubmitted(true)
-      setAlert({ type: 'success', message: 'Your RFQ request was sent successfully.' })
+      setAlert({ type: 'success', message: t('contact.alerts.success', 'Your RFQ request was sent successfully.') })
     } catch (error) {
-      setSubmitError(error.message)
-      setAlert({ type: 'error', message: error.message })
+      setAlert({ type: 'error', message: error.message || t('contact.alerts.error', 'Unable to send your request.') })
     } finally {
       setIsSubmitting(false)
     }
@@ -142,7 +140,7 @@ function Contact() {
         onClose={() => setAlert({ type: '', message: '' })}
       />
       <PageIntro
-        title="Contact Us"
+        title={t('contact.pageTitle', 'Contact Us')}
         theme="contact-hero"
         hideWave={true}
       />
@@ -153,9 +151,9 @@ function Contact() {
           <div className="contact-grid">
             {/* LEFT COLUMN: Contact Information */}
             <div className="contact-info-col">
-              <h2 className="contact-col-title">Contact information</h2>
+              <h2 className="contact-col-title">{t('contact.infoTitle', 'Contact information')}</h2>
               <p className="contact-col-desc">
-                We help you find direction, eliminate supply chain friction, and keep your fleet operations moving forward—reliably and compliantly.
+                {t('contact.infoDesc', 'We help you find direction, eliminate supply chain friction, and keep your fleet operations moving forward—reliably and compliantly.')}
               </p>
 
               <div className="contact-channel-list">
@@ -184,7 +182,7 @@ function Contact() {
                   <div className="contact-channel-icon">
                     <Clock size={20} aria-hidden="true" />
                   </div>
-                  <span className="contact-channel-text">Monday – Friday, 8:30 AM – 6:00 PM (EST) • 24/7 AOG Support</span>
+                  <span className="contact-channel-text">{t('contact.hours', 'Monday – Friday, 8:30 AM – 6:00 PM (EST) • 24/7 AOG Support')}</span>
                 </div>
               </div>
 
@@ -203,40 +201,39 @@ function Contact() {
             {/* RIGHT COLUMN: Send Us a Message */}
             <div className="contact-form-col">
               <div className="contact-form-card">
-                <h2 className="contact-col-title">Send Us a Message</h2>
+                <h2 className="contact-col-title">{t('contact.formTitle', 'Send Us a Message')}</h2>
                 <p className="contact-col-desc">
-                  Fill up the form and our specialized aviation sourcing team will get back to you within 24 hours.
+                  {t('contact.formDesc', 'Fill up the form and our specialized aviation sourcing team will get back to you within 24 hours.')}
                 </p>
 
                 {submitted ? (
                   <div className="contact-form-success">
                     <CheckCircle2 size={42} className="text-emerald-600" />
-                    <h3>RFQ Inquiry Sent!</h3>
-                    <p>Thank you for reaching out. Our parts specialist has received your requirements and will reply shortly.</p>
+                    <h3>{t('contact.successTitle', 'RFQ Inquiry Sent!')}</h3>
+                    <p>{t('contact.successDesc', 'Thank you for reaching out. Our parts specialist has received your requirements and will reply shortly.')}</p>
                     <button
                       type="button"
                       className="contact-submit-btn contact-submit-btn--reset"
                       onClick={() => {
                         setSubmitted(false)
-                        setSubmitError('')
                         setFormData({ name: '', email: '', partNumber: '', request: '' })
                       }}
                     >
-                      Send another request
+                      {t('contact.sendAnother', 'Send another request')}
                     </button>
                   </div>
                 ) : (
                   <form className="contact-inquiry-form" onSubmit={handleSubmit}>
                     <div className="contact-input-row">
                       <div className="contact-input-field">
-                        <label htmlFor="name">Name</label>
+                        <label htmlFor="name">{t('contact.fields.name', 'Name')}</label>
                         <div className="contact-input-wrapper">
                           <User size={18} className="contact-field-icon" aria-hidden="true" />
                           <input
                             id="name"
                             name="name"
                             type="text"
-                            placeholder="Enter your name"
+                            placeholder={t('contact.fields.namePlaceholder', 'Enter your name')}
                             value={formData.name}
                             onChange={handleChange}
                             required
@@ -245,14 +242,14 @@ function Contact() {
                       </div>
 
                       <div className="contact-input-field">
-                        <label htmlFor="email">Email</label>
+                        <label htmlFor="email">{t('contact.fields.email', 'Email')}</label>
                         <div className="contact-input-wrapper">
                           <Mail size={18} className="contact-field-icon" aria-hidden="true" />
                           <input
                             id="email"
                             name="email"
                             type="email"
-                            placeholder="Enter your email"
+                            placeholder={t('contact.fields.emailPlaceholder', 'Enter your email')}
                             value={formData.email}
                             onChange={handleChange}
                             required
@@ -262,14 +259,14 @@ function Contact() {
                     </div>
 
                     <div className="contact-input-field contact-input-field--full">
-                      <label htmlFor="partNumber">Part number</label>
+                      <label htmlFor="partNumber">{t('contact.fields.partNumber', 'Part number')}</label>
                       <div className="contact-input-wrapper">
                         <Hash size={18} className="contact-field-icon" aria-hidden="true" />
                         <input
                           id="partNumber"
                           name="partNumber"
                           type="text"
-                          placeholder="Enter part number (e.g. 204-011-179-003, APT-8-1000)"
+                          placeholder={t('contact.fields.partNumberPlaceholder', 'Enter part number (e.g. 204-011-179-003, APT-8-1000)')}
                           value={formData.partNumber}
                           onChange={handleChange}
                         />
@@ -277,12 +274,12 @@ function Contact() {
                     </div>
 
                     <div className="contact-input-field contact-input-field--full">
-                      <label htmlFor="request">Request</label>
+                      <label htmlFor="request">{t('contact.fields.request', 'Request')}</label>
                       <textarea
                         id="request"
                         name="request"
                         rows="4"
-                        placeholder="Describe your aircraft parts request, target condition (NE, OH, SV), quantity, or fleet requirements . . ."
+                        placeholder={t('contact.fields.requestPlaceholder', 'Describe your aircraft parts request, target condition (NE, OH, SV), quantity, or fleet requirements . . .')}
                         value={formData.request}
                         onChange={handleChange}
                         required
@@ -291,7 +288,7 @@ function Contact() {
 
                     <div className="contact-submit-wrap">
                       <button type="submit" className="contact-submit-btn" disabled={isSubmitting}>
-                        <span>{isSubmitting ? 'Sending...' : 'Send RFQ'}</span>
+                        <span>{isSubmitting ? t('contact.fields.submitting', 'Sending...') : t('contact.fields.submit', 'Send RFQ')}</span>
                         <ArrowRight size={18} aria-hidden="true" />
                       </button>
                     </div>
@@ -317,9 +314,9 @@ function Contact() {
       <section className="contact-entities-section" ref={entitiesRef} aria-label="Regional Locations">
         <div className="contact-container contact-container--wide">
           <div className="entities-header">
-            <h2 className="entities-title">Regional Locations</h2>
+            <h2 className="entities-title">{t('contact.entities.title', 'Regional Locations')}</h2>
             <p className="entities-subtitle">
-              Authorized commercial subsidiaries and regional corporate offices across Latin America.
+              {t('contact.entities.subtitle', 'Authorized commercial subsidiaries and regional corporate offices across Latin America.')}
             </p>
           </div>
 
@@ -332,11 +329,11 @@ function Contact() {
                   <div className="entity-showcase-meta-group">
                     <div className="entity-info-row">
                       <Briefcase size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Direct Aviation Sourcing &amp; Customer Support</span>
+                      <span className="entity-address-text">{t('contact.entities.gwPeruRole', 'Direct Aviation Sourcing & Customer Support')}</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Mz. K Lt. 21, Grupo 5, Asent. H. Nuevo Progreso, Villa María del Triunfo, Lima, Perú</span>
+                      <span className="entity-address-text">Mz. K Lt. 21, Grupo 5, Asent. H. Nuevo Progreso, Villa Maria del Triunfo, Lima, Peru</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
@@ -346,12 +343,12 @@ function Contact() {
                 </div>
                 <div className="entity-showcase-action">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Maria+del+Triunfo+Lima+Peru"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="entity-location-btn"
                   >
-                    <span>View on Maps</span>
+                    <span>{t('contact.entities.viewOnMaps', 'View on Maps')}</span>
                     <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>
@@ -360,14 +357,14 @@ function Contact() {
               <div className="entity-map-pane">
                 <div className="entity-map-top-bar" aria-hidden="true">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Maria+del+Triunfo+Lima+Peru"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="entity-map-search-pill"
                     title="Open location in Google Maps"
                   >
                     <Search size={13} className="entity-search-icon" aria-hidden="true" />
-                    <span>Villa María del Triunfo, Lima</span>
+                    <span>Villa Maria del Triunfo, Lima</span>
                     <ArrowUpRight size={12} className="entity-pill-arrow" aria-hidden="true" />
                   </a>
                 </div>
@@ -376,47 +373,47 @@ function Contact() {
                   src="https://maps.google.com/maps?q=Villa+Mar%C3%ADa+del+Triunfo,+Lima,+Peru&t=&z=14&ie=UTF8&iwloc=&output=embed"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  aria-label="Map location of Golden Wings Peru in Villa María del Triunfo, Lima"
+                  aria-label="Map location of Golden Wings Peru in Villa Maria del Triunfo, Lima"
                 />
               </div>
             </article>
 
-            {/* Entity 2: Corporación Alas Doradas EIRL (Inverted) */}
+            {/* Entity 2: Corporacion Alas Doradas EIRL (Inverted) */}
             <article className="entity-card-box entity-card-box--alas entity-card-box--inverted">
               <div className="entity-map-pane">
                 <div className="entity-map-top-bar" aria-hidden="true">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Maria+del+Triunfo+Lima+Peru"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="entity-map-search-pill"
                     title="Open location in Google Maps"
                   >
                     <Search size={13} className="entity-search-icon" aria-hidden="true" />
-                    <span>Distrito Villa María del Triunfo, Lima</span>
+                    <span>Distrito Villa Maria del Triunfo, Lima</span>
                     <ArrowUpRight size={12} className="entity-pill-arrow" aria-hidden="true" />
                   </a>
                 </div>
                 <iframe
-                  title="Corporación Alas Doradas EIRL Map Location"
+                  title="Corporacion Alas Doradas EIRL Map Location"
                   src="https://maps.google.com/maps?q=Villa+Mar%C3%ADa+del+Triunfo,+Lima,+Peru&t=&z=14&ie=UTF8&iwloc=&output=embed"
                   loading="lazy"
                   referrerPolicy="no-referrer-when-downgrade"
-                  aria-label="Map location of Corporación Alas Doradas in Villa María del Triunfo, Lima"
+                  aria-label="Map location of Corporacion Alas Doradas in Villa Maria del Triunfo, Lima"
                 />
               </div>
 
               <div className="entity-details-pane">
                 <div>
-                  <h3 className="entity-showcase-title">Corporación Alas Doradas EIRL</h3>
+                  <h3 className="entity-showcase-title">Corporacion Alas Doradas EIRL</h3>
                   <div className="entity-showcase-meta-group">
                     <div className="entity-info-row">
                       <Briefcase size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Commercial Representation &amp; Fleet Logistics</span>
+                      <span className="entity-address-text">{t('contact.entities.alasRole', 'Commercial Representation & Fleet Logistics')}</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Mz. K Lt. 21, Distrito Villa María del Triunfo, Lima, Perú</span>
+                      <span className="entity-address-text">Mz. K Lt. 21, Distrito Villa Maria del Triunfo, Lima, Peru</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
@@ -426,12 +423,12 @@ function Contact() {
                 </div>
                 <div className="entity-showcase-action">
                   <a
-                    href="https://www.google.com/maps/search/?api=1&query=Villa+Mar%C3%ADa+del+Triunfo+Lima+Peru"
+                    href="https://www.google.com/maps/search/?api=1&query=Villa+Maria+del+Triunfo+Lima+Peru"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="entity-location-btn"
                   >
-                    <span>View on Maps</span>
+                    <span>{t('contact.entities.viewOnMaps', 'View on Maps')}</span>
                     <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>
@@ -446,11 +443,11 @@ function Contact() {
                   <div className="entity-showcase-meta-group">
                     <div className="entity-info-row">
                       <Briefcase size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Technical Services &amp; Sourcing Affiliate</span>
+                      <span className="entity-address-text">{t('contact.entities.avioterraRole', 'Technical Services & Sourcing Affiliate')}</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
-                      <span className="entity-address-text">Calle San Martín de Porres 180, Of. 701, San Miguel, Lima, Perú</span>
+                      <span className="entity-address-text">Calle San Martin de Porres 180, Of. 701, San Miguel, Lima, Peru</span>
                     </div>
                     <div className="entity-info-row">
                       <MapPin size={16} aria-hidden="true" className="entity-icon" />
@@ -465,7 +462,7 @@ function Contact() {
                     rel="noopener noreferrer"
                     className="entity-location-btn"
                   >
-                    <span>View on Maps</span>
+                    <span>{t('contact.entities.viewOnMaps', 'View on Maps')}</span>
                     <ArrowUpRight size={15} aria-hidden="true" />
                   </a>
                 </div>

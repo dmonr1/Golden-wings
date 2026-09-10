@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { ArrowUpRight, Check, Copy } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 function PartCard({ item, onImageClick }) {
+  const { t, isSpanish } = useLanguage()
   const [copied, setCopied] = useState(false)
 
   const handleCopyPart = (e) => {
@@ -43,7 +45,7 @@ function PartCard({ item, onImageClick }) {
           type="button"
           className="part-card__image-button"
           onClick={() => onImageClick?.()}
-          aria-label={`View details for ${item.partNumber}`}
+          aria-label={`${t('partCard.viewDetails')} - ${item.partNumber}`}
         >
           <img
             src={item.image}
@@ -56,7 +58,7 @@ function PartCard({ item, onImageClick }) {
         {/* Floating Condition Badge */}
         <div className="part-card__badges">
           <span className="part-card__badge-condition">
-            {item.condition !== 'N/D' ? item.condition : 'Cert. on Request'}
+            {item.condition !== 'N/D' ? item.condition : t('common.certOnRequest')}
           </span>
         </div>
       </div>
@@ -66,18 +68,18 @@ function PartCard({ item, onImageClick }) {
         {/* Part Number & One-Click Copy */}
         <div className="part-card__pn-row">
           <div className="part-card__pn-block">
-            <span className="part-card__pn-label">Part Number</span>
+            <span className="part-card__pn-label">{t('partCard.pnLabel')}</span>
             <span className="part-card__pn-code">{item.partNumber}</span>
           </div>
           <button
             type="button"
             className={`part-card__copy-btn ${copied ? 'is-copied' : ''}`}
             onClick={handleCopyPart}
-            title="Copy Part Number"
-            aria-label={`Copy Part Number ${item.partNumber}`}
+            title={copied ? t('partCard.copied') : t('partCard.copy')}
+            aria-label={`${t('partCard.copy')} ${item.partNumber}`}
           >
             {copied ? <Check size={13} aria-hidden="true" /> : <Copy size={13} aria-hidden="true" />}
-            <span>{copied ? 'Copied' : 'Copy'}</span>
+            <span>{copied ? t('partCard.copied') : t('partCard.copy')}</span>
           </button>
         </div>
 
@@ -89,34 +91,34 @@ function PartCard({ item, onImageClick }) {
         {/* Specifications: Clean list directly in card body without enclosing box */}
         <div className="part-card__specs-list">
           <div className="part-card__spec-row">
-            <span className="part-card__spec-label">Fleet / Application</span>
+            <span className="part-card__spec-label">{t('partCard.fleetLabel')}</span>
             <span className="part-card__spec-value" title={item.fleet}>
               {item.fleet}
             </span>
           </div>
 
           <div className="part-card__spec-row">
-            <span className="part-card__spec-label">Condition</span>
+            <span className="part-card__spec-label">{t('partCard.conditionLabel')}</span>
             <span className="part-card__spec-value" title={item.conditionLabel || item.condition}>
               {item.conditionLabel || item.condition}
             </span>
           </div>
 
           <div className="part-card__spec-row">
-            <span className="part-card__spec-label">Availability</span>
+            <span className="part-card__spec-label">{t('partCard.qtyLabel')}</span>
             <span className="part-card__spec-value">
               {item.quantity !== 'N/D'
                 ? item.quantity === 'In Stock'
-                  ? 'In Stock'
-                  : `${item.quantity} ${item.quantity === '1' ? 'unit' : 'units'}`
-                : 'Confirm on Request'}
+                  ? t('common.inStock')
+                  : `${item.quantity} ${item.quantity === '1' ? (isSpanish ? 'unidad' : 'unit') : (isSpanish ? 'unidades' : 'units')}`
+                : isSpanish ? 'Confirmar a Solicitud' : 'Confirm on Request'}
             </span>
           </div>
 
           <div className="part-card__spec-row part-card__spec-row--price">
-            <span className="part-card__spec-label">List Price</span>
+            <span className="part-card__spec-label">{t('partCard.priceLabel')}</span>
             <span className={`part-card__price ${isConsultar ? 'is-consult' : 'is-fixed'}`}>
-              {item.price}
+              {isConsultar ? t('common.inquirePrice') : item.price}
             </span>
           </div>
         </div>
@@ -127,7 +129,7 @@ function PartCard({ item, onImageClick }) {
             href={`mailto:${emailTarget}?subject=${quoteSubject}&body=${quoteBody}`}
             className="part-card__cta"
           >
-            <span>Request RFQ</span>
+            <span>{t('partCard.rfqBtn')}</span>
             <ArrowUpRight size={16} aria-hidden="true" />
           </a>
         </div>

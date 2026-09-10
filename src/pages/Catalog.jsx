@@ -1,10 +1,11 @@
 import { useMemo, useState, useEffect, useLayoutEffect, useRef } from 'react'
-import { Search, ArrowUpDown, LayoutGrid, Sparkles, List, Table2, Filter, Trash2, X, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
+import { Search, ArrowUpDown, LayoutGrid, Sparkles, List, Filter, Trash2, X, ChevronDown, ChevronLeft, ChevronRight, ArrowRight } from 'lucide-react'
 import { Link, useSearchParams } from 'react-router-dom'
 import gsap from 'gsap'
 import PageIntro from '../components/PageIntro.jsx'
 import PartCard from '../components/PartCard.jsx'
 import { partsInventory } from '../data/partsInventory.js'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 const ITEMS_PER_PAGE = 12
 
@@ -16,15 +17,19 @@ const categoryFilters = [
   'Electrical',
 ]
 
-const sortOptions = [
-  { value: 'default', label: 'Relevance' },
-  { value: 'pn-asc', label: 'Part Number (A - Z)' },
-  { value: 'pn-desc', label: 'Part Number (Z - A)' },
-  { value: 'price-desc', label: 'Price (High to Low)' },
-]
-
 function Catalog() {
+  const { t, isSpanish } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
+
+  const sortOptions = useMemo(
+    () => [
+      { value: 'default', label: t('catalog.sort.default') },
+      { value: 'pn-asc', label: t('catalog.sort.pnAsc') },
+      { value: 'pn-desc', label: t('catalog.sort.pnDesc') },
+      { value: 'price-desc', label: t('catalog.sort.priceDesc') },
+    ],
+    [t],
+  )
 
   const [searchQuery, setSearchQuery] = useState(() => searchParams.get('search') || '')
   const [selectedCategories, setSelectedCategories] = useState(() => {
@@ -306,8 +311,8 @@ function Catalog() {
   return (
     <main className="catalog-page">
       <PageIntro
-        title="Aircraft Parts Catalog"
-        text="For pricing, availability, and detailed information, please contact our team directly."
+        title={t('catalog.introTitle')}
+        text={t('catalog.introLead')}
         theme="paper"
         graphic="helicopter"
       >
@@ -315,12 +320,12 @@ function Catalog() {
           to="/contact"
           className="page-intro__btn"
         >
-          <span>Contact Us</span>
+          <span>{t('header.nav.contact')}</span>
           <ArrowRight size={15} aria-hidden="true" />
         </Link>
       </PageIntro>
 
-      <section className="catalog-section" ref={sectionRef} aria-label="Aircraft Parts Catalog">
+      <section className="catalog-section" ref={sectionRef} aria-label={t('catalog.introTitle')}>
         <div className="catalog-container">
           {/* Primary Toolbar: Search Bar with dark Search Button */}
           <div className="catalog-toolbar" ref={toolbarRef}>
@@ -344,7 +349,7 @@ function Catalog() {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search by Part Number, description, aircraft platform..."
+                placeholder={t('catalog.searchPlaceholder')}
                 className="catalog-search-input"
               />
               {searchQuery && (
@@ -367,10 +372,10 @@ function Catalog() {
               <button
                 type="submit"
                 className="catalog-search-submit-btn"
-                aria-label="Search"
+                aria-label={t('common.search')}
               >
                 <Search size={15} aria-hidden="true" />
-                <span>Search</span>
+                <span>{t('common.search')}</span>
               </button>
             </form>
 
@@ -380,7 +385,7 @@ function Catalog() {
                 <div className="catalog-subbar__left">
                   <div className="catalog-category-picker">
                     <span className="catalog-filter-label">
-                      <Filter size={14} aria-hidden="true" /> Category:
+                      <Filter size={14} aria-hidden="true" /> {t('catalog.filterToggle')}:
                     </span>
                     <div className="catalog-category-chips" role="group" aria-label="Filter by one or more categories">
                       {categoryFilters.map((category) => {
@@ -395,7 +400,7 @@ function Catalog() {
                             aria-pressed={isSelected}
                             onClick={() => toggleCategory(category)}
                           >
-                            {category}
+                            {t(`catalog.categories.${category}`)}
                           </button>
                         )
                       })}
@@ -408,19 +413,23 @@ function Catalog() {
               {/* Status & Active Filters Bar */}
               <div className="catalog-status-bar" ref={statusBarRef}>
                 <p className="catalog-status-count">
-                  Showing <strong>{sortedItems.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, sortedItems.length)}</strong> of {sortedItems.length} parts in stock {totalPages > 1 && `(Page ${currentPage} of ${totalPages})`}
+                  {isSpanish ? (
+                    <>Mostrando <strong>{sortedItems.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, sortedItems.length)}</strong> de {sortedItems.length} componentes {totalPages > 1 && `(Pagina ${currentPage} de ${totalPages})`}</>
+                  ) : (
+                    <>Showing <strong>{sortedItems.length === 0 ? 0 : (currentPage - 1) * ITEMS_PER_PAGE + 1} - {Math.min(currentPage * ITEMS_PER_PAGE, sortedItems.length)}</strong> of {sortedItems.length} parts in stock {totalPages > 1 && `(Page ${currentPage} of ${totalPages})`}</>
+                  )}
                 </p>
 
                 {hasActiveFilters && (
                   <button type="button" onClick={clearFilters} className="catalog-reset-btn">
-                    <Trash2 size={14} aria-hidden="true" /> <span>Clear all filters</span>
+                    <Trash2 size={14} aria-hidden="true" /> <span>{t('catalog.resetFilters')}</span>
                   </button>
                 )}
               </div>
 
               <div className="catalog-sort-picker" ref={sortPickerRef}>
                 <span className="catalog-sort-label">
-                  <ArrowUpDown size={14} aria-hidden="true" /> Sort:
+                  <ArrowUpDown size={14} aria-hidden="true" /> {t('catalog.sort.label')}
                 </span>
                 <button
                   type="button"
@@ -463,20 +472,20 @@ function Catalog() {
                   className={`catalog-view-switcher__button ${viewMode === 'cards' ? 'is-active' : ''}`}
                   onClick={() => setViewMode('cards')}
                   aria-pressed={viewMode === 'cards'}
-                  aria-label="Card view"
+                  aria-label={t('catalog.viewModes.cards')}
                 >
                   <LayoutGrid size={15} aria-hidden="true" />
-                  <span>Cards</span>
+                  <span>{t('catalog.viewModes.cards')}</span>
                 </button>
                 <button
                   type="button"
                   className={`catalog-view-switcher__button ${viewMode === 'list' ? 'is-active' : ''}`}
                   onClick={() => setViewMode('list')}
                   aria-pressed={viewMode === 'list'}
-                  aria-label="List view"
+                  aria-label={t('catalog.viewModes.list')}
                 >
                   <List size={15} aria-hidden="true" />
-                  <span>List</span>
+                  <span>{t('catalog.viewModes.list')}</span>
                 </button>
               </div>
             </div>
@@ -499,13 +508,13 @@ function Catalog() {
                       <table className="catalog-table">
                         <thead>
                           <tr>
-                            <th scope="col">Product | Part Number</th>
-                            <th scope="col">Category</th>
-                            <th scope="col">Fleet</th>
-                            <th scope="col">Condition</th>
-                            <th scope="col">Qty.</th>
-                            <th scope="col">Price</th>
-                            <th scope="col">RFQ</th>
+                            <th scope="col">{t('catalog.tableHeaders.product')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.category')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.fleet')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.condition')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.qty')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.price')}</th>
+                            <th scope="col">{t('catalog.tableHeaders.rfq')}</th>
                           </tr>
                         </thead>
                         <tbody>
@@ -517,7 +526,7 @@ function Catalog() {
                                     type="button"
                                     className="catalog-table__image-button"
                                     onClick={() => setSelectedPartDetail(item)}
-                                    aria-label={`View details for ${item.partNumber}`}
+                                    aria-label={`${t('partCard.viewDetails')} - ${item.partNumber}`}
                                   >
                                     <img src={item.image} alt="" />
                                   </button>
@@ -537,7 +546,7 @@ function Catalog() {
                                   className="catalog-table__rfq"
                                   href={`mailto:sales@goldenwingsinternational.net?subject=RFQ%20${encodeURIComponent(item.partNumber)}`}
                                 >
-                                  <span> RFQ </span><ArrowRight size={14} aria-hidden="true" />
+                                  <span>{t('catalog.tableHeaders.rfq')}</span><ArrowRight size={14} aria-hidden="true" />
                                 </a>
                               </td>
                             </tr>
@@ -561,7 +570,7 @@ function Catalog() {
                               setSelectedPartDetail(item)
                             }
                           }}
-                          aria-label={`View details for ${item.partNumber}`}
+                          aria-label={`${t('partCard.viewDetails')} - ${item.partNumber}`}
                         >
                           <div className="catalog-list-item__media">
                             <img src={item.image} alt="" loading="lazy" />
@@ -586,7 +595,7 @@ function Catalog() {
                                 onClick={(e) => e.stopPropagation()}
                                 aria-label={`Request quote for ${item.partNumber}`}
                               >
-                                <span>RFQ</span>
+                                <span>{t('catalog.tableHeaders.rfq')}</span>
                                 <ArrowRight size={11} aria-hidden="true" />
                               </a>
                             </div>
@@ -606,10 +615,10 @@ function Catalog() {
                     className="catalog-pagination__btn catalog-pagination__btn--prev"
                     onClick={() => handlePageChange(Math.max(1, currentPage - 1))}
                     disabled={currentPage === 1}
-                    aria-label="Previous page"
+                    aria-label={t('catalog.pagination.prev')}
                   >
                     <ChevronLeft size={16} aria-hidden="true" />
-                    <span>Previous</span>
+                    <span>{t('catalog.pagination.prev')}</span>
                   </button>
 
                   <div className="catalog-pagination__pages">
@@ -631,9 +640,9 @@ function Catalog() {
                     className="catalog-pagination__btn catalog-pagination__btn--next"
                     onClick={() => handlePageChange(Math.min(totalPages, currentPage + 1))}
                     disabled={currentPage === totalPages}
-                    aria-label="Next page"
+                    aria-label={t('catalog.pagination.next')}
                   >
-                    <span>Next</span>
+                    <span>{t('catalog.pagination.next')}</span>
                     <ChevronRight size={16} aria-hidden="true" />
                   </button>
                 </nav>
@@ -644,14 +653,11 @@ function Catalog() {
               <div className="catalog-empty-state__icon">
                 <Sparkles size={32} />
               </div>
-              <h3>No components found matching your search criteria</h3>
-              <p>
-                If you cannot find the Part Number you need in this list, send us your request and our
-                sourcing team will locate it for you immediately.
-              </p>
+              <h3>{t('catalog.emptyTitle')}</h3>
+              <p>{t('catalog.emptyDesc')}</p>
               <div className="catalog-empty-state__actions">
                 <button type="button" onClick={clearFilters} className="catalog-empty-btn--secondary">
-                  Reset filters
+                  {t('catalog.resetFilters')}
                 </button>
                 <a
                   href={`mailto:sales@goldenwingsinternational.net?subject=AOG%20Part%20Sourcing%20Request&body=Dear%20Team,%0A%0AI%20require%20an%20urgent%20RFQ%20for%20the%20following%20Part%20Number:%20${encodeURIComponent(
@@ -659,7 +665,7 @@ function Catalog() {
                   )}`}
                   className="catalog-empty-btn--primary"
                 >
-                  Request Direct Sourcing (RFQ)
+                  {t('common.rfq')}
                 </a>
               </div>
             </div>
@@ -671,14 +677,14 @@ function Catalog() {
                 type="button"
                 className="part-detail-modal__backdrop"
                 onClick={() => setSelectedPartDetail(null)}
-                aria-label="Close part details"
+                aria-label={t('catalog.modal.close')}
               />
               <section className="part-detail-modal__card">
                 <button
                   type="button"
                   className="part-detail-modal__close"
                   onClick={() => setSelectedPartDetail(null)}
-                  aria-label="Close part details"
+                  aria-label={t('catalog.modal.close')}
                 >
                   <X size={20} aria-hidden="true" />
                 </button>
@@ -687,20 +693,20 @@ function Catalog() {
                 </div>
                 <div className="part-detail-modal__content">
                   <span className="part-detail-modal__category">{selectedPartDetail.category}</span>
-                  <p className="part-detail-modal__label">Part Number</p>
+                  <p className="part-detail-modal__label">{t('catalog.modal.pn')}</p>
                   <h2 id="part-detail-title">{selectedPartDetail.partNumber}</h2>
                   <p className="part-detail-modal__description">{selectedPartDetail.description}</p>
                   <dl className="part-detail-modal__specs">
-                    <div><dt>Fleet</dt><dd>{selectedPartDetail.fleet}</dd></div>
-                    <div><dt>Condition</dt><dd>{selectedPartDetail.conditionLabel}</dd></div>
-                    <div><dt>Quantity</dt><dd>{selectedPartDetail.quantity}</dd></div>
-                    <div><dt>Price</dt><dd>{selectedPartDetail.price}</dd></div>
+                    <div><dt>{t('catalog.modal.fleet')}</dt><dd>{selectedPartDetail.fleet}</dd></div>
+                    <div><dt>{t('catalog.modal.condition')}</dt><dd>{selectedPartDetail.conditionLabel}</dd></div>
+                    <div><dt>{t('catalog.modal.quantity')}</dt><dd>{selectedPartDetail.quantity}</dd></div>
+                    <div><dt>{t('catalog.modal.price')}</dt><dd>{selectedPartDetail.price}</dd></div>
                   </dl>
                   <a
                     className="part-detail-modal__rfq"
                     href={`mailto:sales@goldenwingsinternational.net?subject=RFQ%20${encodeURIComponent(selectedPartDetail.partNumber)}`}
                   >
-                    Request RFQ <ArrowRight size={16} aria-hidden="true" />
+                    {t('catalog.modal.requestQuote')} <ArrowRight size={16} aria-hidden="true" />
                   </a>
                 </div>
               </section>

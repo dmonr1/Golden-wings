@@ -2,6 +2,7 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react'
 import { Link, useSearchParams } from 'react-router-dom'
 import { ArrowLeft } from 'lucide-react'
 import eagleLogo from '../assets/laoder/golden-wings-aguila-mundo.svg'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 const TABS = [
   { id: 'terms', label: 'Terms of Use' },
@@ -12,6 +13,7 @@ const TABS = [
 ]
 
 function Legal() {
+  const { t } = useLanguage()
   const [searchParams, setSearchParams] = useSearchParams()
   const activeTab = searchParams.get('tab') || 'cookies'
   const tabsNavRef = useRef(null)
@@ -59,7 +61,7 @@ function Legal() {
         <div className="legal-page__topbar-inner">
           <Link to="/" className="legal-page__back-link" aria-label="Back to main site">
             <ArrowLeft size={15} aria-hidden="true" />
-            <span className="legal-page__back-text">Back</span>
+            <span className="legal-page__back-text">{t('legal.back', 'Back')}</span>
           </Link>
           <span className="legal-page__company-pill">
             <img src={eagleLogo} alt="" className="legal-page__company-logo" aria-hidden="true" />
@@ -71,7 +73,7 @@ function Legal() {
       <div className="legal-page__wrapper">
         {/* Hero Header */}
         <header className="legal-page__header">
-          <h1 className="legal-page__main-title">LEGAL</h1>
+          <h1 className="legal-page__main-title">{t('legal.pageTitle', 'LEGAL')}</h1>
           <div className="legal-page__tabs-bar">
             <nav ref={tabsNavRef} className="legal-page__tabs-nav" aria-label="Legal navigation">
               {TABS.map((tab) => (
@@ -84,7 +86,7 @@ function Legal() {
                   className={`legal-page__tab-btn ${activeTab === tab.id ? 'is-active' : ''}`}
                   onClick={() => setTab(tab.id)}
                 >
-                  {tab.label}
+                  {t(`legal.tabs.${tab.id}`, tab.label)}
                 </button>
               ))}
               <span

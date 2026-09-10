@@ -3,42 +3,10 @@ import gsap from 'gsap'
 import { Search, X, ArrowUpRight, ArrowRight, Package } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { partsInventory } from '../data/partsInventory.js'
+import { useLanguage } from '../context/LanguageContext.jsx'
 import videoTwo from '../assets/videos/video2.webm'
 import videoThree from '../assets/videos/video3.webm'
 import videoFour from '../assets/videos/video 4.mp4'
-
-const slides = [
-  {
-    kicker: '01',
-    title: 'Commercial Aviation Fleet',
-    year: '2026',
-    type: 'Aircraft parts',
-    media: videoTwo,
-    mediaType: 'video',
-    alt: 'Commercial aviation operations video',
-    tone: 'dark',
-  },
-  {
-    kicker: '02',
-    title: 'Turbine Flow & Power',
-    year: 'MRO',
-    type: 'Hot parts',
-    media: videoThree,
-    mediaType: 'video',
-    alt: 'Aircraft turbine operations video',
-    tone: 'white',
-  },
-  {
-    kicker: '03',
-    title: 'Mission Ready Rotables',
-    year: 'AOG',
-    type: 'Rotables',
-    media: videoFour,
-    mediaType: 'video',
-    alt: 'Mission-ready aviation video',
-    tone: 'dark',
-  },
-]
 
 const fleetShortcuts = [
   { label: 'Boeing 737 / 777', query: 'Boeing' },
@@ -50,6 +18,44 @@ const fleetShortcuts = [
 ]
 
 function HeroSlider() {
+  const { t } = useLanguage()
+
+  const slides = useMemo(
+    () => [
+      {
+        kicker: t('hero.slides.0.kicker', '01'),
+        title: t('hero.slides.0.title', 'Commercial Aviation Fleet'),
+        year: '2026',
+        type: t('hero.slides.0.type', 'Aircraft parts'),
+        media: videoTwo,
+        mediaType: 'video',
+        alt: 'Commercial aviation operations video',
+        tone: 'dark',
+      },
+      {
+        kicker: t('hero.slides.1.kicker', '02'),
+        title: t('hero.slides.1.title', 'Turbine Flow & Power'),
+        year: 'MRO',
+        type: t('hero.slides.1.type', 'Hot parts'),
+        media: videoThree,
+        mediaType: 'video',
+        alt: 'Aircraft turbine operations video',
+        tone: 'white',
+      },
+      {
+        kicker: t('hero.slides.2.kicker', '03'),
+        title: t('hero.slides.2.title', 'Mission Ready Rotables'),
+        year: 'AOG',
+        type: t('hero.slides.2.type', 'Rotables'),
+        media: videoFour,
+        mediaType: 'video',
+        alt: 'Mission-ready aviation video',
+        tone: 'dark',
+      },
+    ],
+    [t],
+  )
+
   const [{ active, previous }, setSlideState] = useState({
     active: 0,
     previous: null,
@@ -388,8 +394,8 @@ function HeroSlider() {
                 onChange={handleSearchChange}
                 onFocus={handleSearchFocus}
                 onKeyDown={handleKeyDown}
-                placeholder="Search by part number, ATA chapter, or keyword..."
-                aria-label="Search aviation spare parts"
+                placeholder={t('hero.searchPlaceholder')}
+                aria-label={t('hero.searchPlaceholder')}
                 tabIndex={isSearchExpanded ? 0 : -1}
                 autoComplete="off"
               />
@@ -405,11 +411,11 @@ function HeroSlider() {
               )}
               <button
                 type="submit"
-                aria-label="Search products"
+                aria-label={t('hero.searchBtn')}
                 className="hero-slider__search-submit"
               >
                 <Search size={20} aria-hidden="true" />
-                <span className="hero-slider__search-btn-label">Search</span>
+                <span className="hero-slider__search-btn-label">{t('hero.searchBtn')}</span>
               </button>
             </form>
           </div>
@@ -458,7 +464,7 @@ function HeroSlider() {
 
                         <div className="hero-search-dropdown__info">
                           <div className="hero-search-dropdown__pn-row">
-                            <span className="hero-search-dropdown__pn-title">Part Number:</span>
+                            <span className="hero-search-dropdown__pn-title">{t('hero.partNumberLabel')}</span>
                             <span className="hero-search-dropdown__pn">{part.partNumber}</span>
                             {part.category && (
                               <span className="hero-search-dropdown__category">{part.category}</span>
@@ -481,7 +487,7 @@ function HeroSlider() {
                         </div>
 
                         <div className="hero-search-dropdown__action">
-                          <span className="hero-search-dropdown__action-text">View</span>
+                          <span className="hero-search-dropdown__action-text">{t('hero.viewResult')}</span>
                           <ArrowUpRight size={17} aria-hidden="true" />
                         </div>
                       </div>
@@ -494,7 +500,7 @@ function HeroSlider() {
                       className="hero-search-dropdown__footer-btn"
                       onClick={handleViewAllResults}
                     >
-                      <span>View all {filteredParts.length} results in Catalog for "{searchQuery.trim()}"</span>
+                      <span>{t('hero.viewAllResults', '', { count: filteredParts.length, query: searchQuery.trim() })}</span>
                       <ArrowRight size={16} aria-hidden="true" />
                     </button>
                   </div>
@@ -503,17 +509,17 @@ function HeroSlider() {
                 <div className="hero-search-dropdown__empty">
                   <Package size={32} className="hero-search-dropdown__empty-icon" aria-hidden="true" />
                   <p className="hero-search-dropdown__empty-title">
-                    No specific parts found for "<strong>{searchQuery.trim()}</strong>"
+                    {t('hero.emptyTitle', '', { query: searchQuery.trim() })}
                   </p>
                   <p className="hero-search-dropdown__empty-text">
-                    You can search the complete inventory catalog or contact our AOG team.
+                    {t('hero.emptyText')}
                   </p>
                   <button
                     type="button"
                     className="hero-search-dropdown__empty-btn"
                     onClick={handleViewAllResults}
                   >
-                    <span>Search all inventory in Catalog</span>
+                    <span>{t('hero.emptyBtn')}</span>
                     <ArrowRight size={15} aria-hidden="true" />
                   </button>
                 </div>

@@ -191,9 +191,9 @@ function PageLoader() {
       </div>
       */}
 
-      {/* FASE 2: LOGO CON SU ANIMACIÓN ENCIMA Y SLOGAN DEBAJO */}
+      {/* FASE 2: LOGO CON SU ANIMACION ENCIMA Y SLOGAN DEBAJO */}
       <div className="page-loader__phase-two" aria-hidden="true">
-        {/* LOGO CON SU ANIMACIÓN COMO ANTES (Máscara con fotos en silueta + Águila dorada) */}
+        {/* LOGO CON SU ANIMACION COMO ANTES (Mascara con fotos en silueta + Aguila dorada) */}
         <div className="page-loader__logo-lockup">
           <div
             className="page-loader__logo-mask"

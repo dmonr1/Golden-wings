@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react'
 import { X } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 const STORAGE_KEY = 'gw_cookie_consent'
 
 function CookieBanner() {
+  const { t } = useLanguage()
   const [isVisible, setIsVisible] = useState(false)
 
   useEffect(() => {
@@ -32,14 +34,14 @@ function CookieBanner() {
     <aside className="cookie-banner" aria-label="Cookie Consent Notice">
       <div className="cookie-banner__inner">
         <p className="cookie-banner__text">
-          This website uses cookies. By clicking Accept, you agree to their use. For more information, please consult our{' '}
+          {t('cookieBanner.text')}{' '}
           <a
             href="/legal?tab=cookies"
             target="_blank"
             rel="noopener noreferrer"
             className="cookie-banner__link"
           >
-            Cookie Policy
+            {t('cookieBanner.policyLink')}
           </a>
           .
         </p>
@@ -49,13 +51,13 @@ function CookieBanner() {
             className="cookie-banner__btn"
             onClick={handleAccept}
           >
-            Accept
+            {t('cookieBanner.accept')}
           </button>
           <button
             type="button"
             className="cookie-banner__close"
             onClick={handleDismiss}
-            aria-label="Dismiss cookie notice"
+            aria-label={t('cookieBanner.dismissAria')}
           >
             <X size={18} aria-hidden="true" />
           </button>

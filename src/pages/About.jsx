@@ -1,7 +1,6 @@
 import { useLayoutEffect, useRef } from 'react'
 import gsap from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { ShieldCheck, Target, Eye, Award, Zap, Globe, CheckCircle2 } from 'lucide-react'
 import pavelAliagaImg from '../assets/principals/pavel-aliaga.jpg'
 import bislaviaNoriegaImg from '../assets/principals/bislavia-noriega.jpg'
 import cockpitImg from '../assets/cockpit.jpg'
@@ -10,33 +9,12 @@ import avionicsImg from '../assets/avionics.jpg'
 import hotPartsImg from '../assets/hot parts.webp'
 import toolingImg from '../assets/tooling.jpg'
 import supportingImg from '../assets/supporting.jpg'
+import { useLanguage } from '../context/LanguageContext.jsx'
 
 gsap.registerPlugin(ScrollTrigger)
 
-const valuesList = [
-  {
-    icon: ShieldCheck,
-    title: 'Traceability & Compliance',
-    text: 'Every component is delivered with authentic FAA 8130-3 or EASA Form 1 documentation, full trace history, and non-incident statements.',
-  },
-  {
-    icon: Zap,
-    title: 'AOG Velocity',
-    text: 'Time-critical aircraft-on-ground support with immediate response times and rapid dispatch from our strategic Florida hub.',
-  },
-  {
-    icon: Award,
-    title: 'Technical Integrity',
-    text: 'Transparent pricing, dependable lead times, and certified quality assurance across commercial, regional, and corporate platforms.',
-  },
-  {
-    icon: Globe,
-    title: 'Global Sourcing Reach',
-    text: 'Direct access to an extensive global aftermarket supply network, sourcing hard-to-find rotables, avionics, and tooling packages.',
-  },
-]
-
 function About() {
+  const { t } = useLanguage()
   const pageRef = useRef(null)
   const heroRef = useRef(null)
   const missionRef = useRef(null)
@@ -289,19 +267,19 @@ function About() {
         <div className="about-hero__container">
           {/* Top Row: ABOUT headline spanning naturally */}
           <div className="about-hero__header">
-            <h1 className="about-hero__word about-hero__word--about">ABOUT</h1>
+            <h1 className="about-hero__word about-hero__word--about">{t('about.heroAbout', 'ABOUT')}</h1>
           </div>
 
           {/* 3-Column Grid below ABOUT: Left (US + Info), Center (Main Photo), Right (Secondary Photo + Philosophy) */}
           <div className="about-hero__grid">
             {/* Column 1: Left */}
             <div className="about-hero__col about-hero__col--left">
-              <span className="about-hero__word about-hero__word--us">US</span>
+              <span className="about-hero__word about-hero__word--us">{t('about.heroUs', 'US')}</span>
 
               <div className="about-hero__meta">
-                <span className="about-hero__kicker">Aviation Aftermarket &amp; Fleet Sourcing</span>
+                <span className="about-hero__kicker">{t('about.heroKicker', 'Aviation Aftermarket & Fleet Sourcing')}</span>
                 <p className="about-hero__lead">
-                  Modern Excellence: Delivering traceable components, rapid AOG logistics, and trusted procurement partnerships for airlines, MROs, and utility operators worldwide.
+                  {t('about.heroLead', 'Modern Excellence: Delivering traceable components, rapid AOG logistics, and trusted procurement partnerships for airlines, MROs, and utility operators worldwide.')}
                 </p>
               </div>
             </div>
@@ -328,9 +306,9 @@ function About() {
               </figure>
 
               <div className="about-hero__phil-block">
-                <h2 className="about-hero__phil-title">Our Philosophy</h2>
+                <h2 className="about-hero__phil-title">{t('about.philosophyTitle', 'Our Philosophy')}</h2>
                 <p className="about-hero__phil-text">
-                  At Golden Wings International, we believe in providing rapid, fully documented aerospace solutions that keep aircraft flying safely and efficiently. Integrity, traceability, and relentless speed are the foundation of everything we do.
+                  {t('about.philosophyText', 'At Golden Wings International, we believe in providing rapid, fully documented aerospace solutions that keep aircraft flying safely and efficiently. Integrity, traceability, and relentless speed are the foundation of everything we do.')}
                 </p>
               </div>
             </div>
@@ -345,15 +323,15 @@ function About() {
         <div className="about-container">
           <article className="mv-split-row mv-split-row--mission">
             <div className="mv-split-col mv-split-col--title">
-              <h2 className="mv-split-heading">Our Mission</h2>
-              <p className="mv-split-lead">Precision aerospace sourcing without operational downtime.</p>
+              <h2 className="mv-split-heading">{t('about.missionTitle', 'Our Mission')}</h2>
+              <p className="mv-split-lead">{t('about.missionLead', 'Precision aerospace sourcing without operational downtime.')}</p>
             </div>
             <div className="mv-split-col mv-split-col--content">
               <p>
-                Golden Wings International was founded on a simple but powerful principle: commercial and regional fleet operators should never have to compromise between rapid turnaround speed and absolute technical airworthiness.
+                {t('about.missionP1', 'Golden Wings International was founded on a simple but powerful principle: commercial and regional fleet operators should never have to compromise between rapid turnaround speed and absolute technical airworthiness.')}
               </p>
               <p>
-                We eliminate supply chain bottlenecks by pairing rigorous FAA 8130-3 and EASA Form 1 traceability with immediate 24/7 AOG dispatch from our strategic Florida logistics facility. Every piece part, rotable, and specialized tooling package we provide is thoroughly verified to keep your aircraft flying safely and efficiently.
+                {t('about.missionP2', 'We eliminate supply chain bottlenecks by pairing rigorous FAA 8130-3 and EASA Form 1 traceability with immediate 24/7 AOG dispatch from our strategic Florida logistics facility. Every piece part, rotable, and specialized tooling package we provide is thoroughly verified to keep your aircraft flying safely and efficiently.')}
               </p>
             </div>
           </article>
@@ -377,15 +355,15 @@ function About() {
           <article className="mv-split-row mv-split-row--vision mv-split-row--inverted">
             <div className="mv-split-col mv-split-col--content">
               <p>
-                As global aviation infrastructure expands and fleet demands become increasingly dynamic, Golden Wings International is engineering a more connected, responsive aftermarket logistics model.
+                {t('about.visionP1', 'As global aviation infrastructure expands and fleet demands become increasingly dynamic, Golden Wings International is engineering a more connected, responsive aftermarket logistics model.')}
               </p>
               <p>
-                We envision an international supply ecosystem where airlines, cargo carriers, and MRO centers access fully documented aviation inventory on-demand—supported by transparent technical pricing, proactive component pooling, and enduring customer alliances built on unwavering trust.
+                {t('about.visionP2', 'We envision an international supply ecosystem where airlines, cargo carriers, and MRO centers access fully documented aviation inventory on-demand—supported by transparent technical pricing, proactive component pooling, and enduring customer alliances built on unwavering trust.')}
               </p>
             </div>
             <div className="mv-split-col mv-split-col--title">
-              <h2 className="mv-split-heading">Our Vision</h2>
-              <p className="mv-split-lead">The global benchmark in trusted aftermarket aviation logistics.</p>
+              <h2 className="mv-split-heading">{t('about.visionTitle', 'Our Vision')}</h2>
+              <p className="mv-split-lead">{t('about.visionLead', 'The global benchmark in trusted aftermarket aviation logistics.')}</p>
             </div>
           </article>
         </div>
@@ -398,9 +376,9 @@ function About() {
         <div className="about-container">
           <div className="values-showcase">
             <div className="values-header">
-              <h2 className="values-heading">Our Core Values</h2>
+              <h2 className="values-heading">{t('about.valuesTitle', 'Our Core Values')}</h2>
               <p className="values-subtitle">
-                The standard of technical excellence and integrity that governs every quotation, parts inspection, and client relationship.
+                {t('about.valuesSubtitle', 'The standard of technical excellence and integrity that governs every quotation, parts inspection, and client relationship.')}
               </p>
             </div>
 
@@ -408,18 +386,18 @@ function About() {
               {/* Card 01: Top Left */}
               <div className="values-card values-card--01">
                 <span className="values-card__num">01</span>
-                <h3 className="values-card__title">Traceability &amp; Compliance</h3>
+                <h3 className="values-card__title">{t('about.values.0.title', 'Traceability & Compliance')}</h3>
                 <p className="values-card__text">
-                  Every component is delivered with authentic FAA 8130-3 or EASA Form 1 certification, complete non-incident verification, and unbroken chain of custody.
+                  {t('about.values.0.text', 'Every component is delivered with authentic FAA 8130-3 or EASA Form 1 certification, complete non-incident verification, and unbroken chain of custody.')}
                 </p>
               </div>
 
               {/* Card 03: Bottom Left */}
               <div className="values-card values-card--03">
                 <span className="values-card__num">03</span>
-                <h3 className="values-card__title">Technical Integrity</h3>
+                <h3 className="values-card__title">{t('about.values.2.title', 'Technical Integrity')}</h3>
                 <p className="values-card__text">
-                  Transparent market pricing, certified quality standards, and dependable fulfillment across commercial, regional, and corporate platforms.
+                  {t('about.values.2.text', 'Transparent market pricing, certified quality standards, and dependable fulfillment across commercial, regional, and corporate platforms.')}
                 </p>
               </div>
 
@@ -435,18 +413,18 @@ function About() {
               {/* Card 02: Top Right */}
               <div className="values-card values-card--02">
                 <span className="values-card__num">02</span>
-                <h3 className="values-card__title">AOG Velocity</h3>
+                <h3 className="values-card__title">{t('about.values.1.title', 'AOG Velocity')}</h3>
                 <p className="values-card__text">
-                  Urgent aircraft-on-ground response protocol with immediate quoting, rapid warehouse retrieval, and prompt worldwide express dispatch.
+                  {t('about.values.1.text', 'Urgent aircraft-on-ground response protocol with immediate quoting, rapid warehouse retrieval, and prompt worldwide express dispatch.')}
                 </p>
               </div>
 
               {/* Card 04: Bottom Right */}
               <div className="values-card values-card--04">
                 <span className="values-card__num">04</span>
-                <h3 className="values-card__title">Global Sourcing Reach</h3>
+                <h3 className="values-card__title">{t('about.values.3.title', 'Global Sourcing Reach')}</h3>
                 <p className="values-card__text">
-                  Direct access to an established international aftermarket network, reliably procuring hard-to-find rotables, avionics, and specialized tooling.
+                  {t('about.values.3.text', 'Direct access to an established international aftermarket network, reliably procuring hard-to-find rotables, avionics, and specialized tooling.')}
                 </p>
               </div>
             </div>
@@ -487,8 +465,8 @@ function About() {
               <div className="principals-center">
                 <div className="principals-header-box">
                   <h2 className="principals-title">
-                    <span>MEET THE</span>
-                    <strong>PRINCIPALS</strong>
+                    <span>{t('about.principals.meet', 'MEET THE')}</span>
+                    <strong>{t('about.principals.title', 'PRINCIPALS')}</strong>
                   </h2>
 
                   {/* 3 Horizontal Pill / Capsule Detail Photos */}
@@ -505,7 +483,7 @@ function About() {
                   </div>
 
                   <p className="principals-statement">
-                    As principals and co-owners of Golden Wings International LLC, Pavel Aliaga and Bislavia Noriega Perez lead the company&apos;s daily operations, strategic inventory acquisition, and worldwide fleet support, fostering lasting partnerships based on trust, compliance, and excellence.
+                    {t('about.principals.statement', "As principals and co-owners of Golden Wings International LLC, Pavel Aliaga and Bislavia Noriega Perez lead the company's daily operations, strategic inventory acquisition, and worldwide fleet support, fostering lasting partnerships based on trust, compliance, and excellence.")}
                   </p>
                 </div>
               </div>
@@ -527,11 +505,11 @@ function About() {
             <div className="principals-footer">
               <div className="principal-caption principal-caption--left">
                 <h3 className="principal-name">Pavel Aliaga</h3>
-                <span className="principal-role">FOUNDER AND CEO</span>
+                <span className="principal-role">{t('about.principals.pavelRole', 'FOUNDER AND CEO')}</span>
               </div>
               <div className="principal-caption principal-caption--right">
                 <h3 className="principal-name">Bislavia Noriega Perez</h3>
-                <span className="principal-role">CO-OWNER AND EXECUTIVE DIRECTOR</span>
+                <span className="principal-role">{t('about.principals.bislaviaRole', 'CO-OWNER AND EXECUTIVE DIRECTOR')}</span>
               </div>
             </div>
           </div>
