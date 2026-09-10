@@ -1,4 +1,5 @@
-import { useState, useLayoutEffect, useRef } from 'react'
+import { useState, useLayoutEffect, useRef, useEffect } from 'react'
+import { useSearchParams } from 'react-router-dom'
 import {
   Phone,
   Mail,
@@ -19,6 +20,7 @@ import { submitContactForm } from '../services/contactForm.js'
 import FeedbackModal from '../components/FeedbackModal.jsx'
 
 function Contact() {
+  const [searchParams] = useSearchParams()
   const layoutRef = useRef(null)
   const entitiesRef = useRef(null)
   const [submitted, setSubmitted] = useState(false)
@@ -31,6 +33,17 @@ function Contact() {
     partNumber: '',
     request: '',
   })
+
+  useEffect(() => {
+    const requestedPartNumber = searchParams.get('partNumber')
+    if (!requestedPartNumber) return
+
+    setFormData((previous) => (
+      previous.partNumber
+        ? previous
+        : { ...previous, partNumber: requestedPartNumber }
+    ))
+  }, [searchParams])
 
   const handleChange = (e) => {
     const { name, value } = e.target

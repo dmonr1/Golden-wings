@@ -41,8 +41,16 @@ function getFormattedTime() {
   return new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })
 }
 
+const isPricingQuestion = (query) => /\b(price|pricing|cost|quote|quotation|rfq|precio|cotiz)/.test(query)
+
+const buildRfqAction = (part) => ({
+  type: 'rfq',
+  label: `Request RFQ for ${part.partNumber}`,
+  link: `/contact?partNumber=${encodeURIComponent(part.partNumber)}`,
+})
+
 // Smart assistant matching engine (pure logic outside component)
-function generateBotReply(userText) {
+function generateBotReply(userText, activePart = null) {
   const query = userText.trim().toLowerCase()
   const now = getFormattedTime()
   const idSuffix = `${Date.now()}-${Math.floor(Math.random() * 1000)}`
@@ -85,6 +93,17 @@ function generateBotReply(userText) {
       id: `bot-${idSuffix}`,
       sender: 'bot',
       text: 'Thank you for contacting Golden Wings International. We are here whenever you need aviation parts support.',
+      time: now,
+    }
+  }
+
+  // Continue the conversation about the last part the visitor searched for.
+  if (isPricingQuestion(query) && activePart) {
+    return {
+      id: `bot-${idSuffix}`,
+      sender: 'bot',
+      text: `${activePart.partNumber} — ${activePart.description} is currently listed at ${activePart.price}. Available condition: ${activePart.conditionLabel || activePart.condition}. Quantity shown: ${activePart.quantity}.`,
+      action: buildRfqAction(activePart),
       time: now,
     }
   }
@@ -209,6 +228,7 @@ export default function ChatFlyout() {
   const [messages, setMessages] = useState(INITIAL_MESSAGES)
   const [inputValue, setInputValue] = useState('')
   const [isTyping, setIsTyping] = useState(false)
+  const [activePart, setActivePart] = useState(null)
 
   const flyoutRef = useRef(null)
   const messagesEndRef = useRef(null)
@@ -292,6 +312,7 @@ export default function ChatFlyout() {
   const handleReset = useCallback(() => {
     setMessages(INITIAL_MESSAGES)
     setIsTyping(false)
+    setActivePart(null)
   }, [])
 
   const handleSendMessage = useCallback(async (textToSend) => {
@@ -316,30 +337,39 @@ export default function ChatFlyout() {
       const response = await fetch('/.netlify/functions/chat', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ message: query }),
+        body: JSON.stringify({ message: query, activePartNumber: activePart?.partNumber || '' }),
       })
 
       if (!response.ok) throw new Error('Chat API unavailable')
 
       const data = await response.json()
-      const botMsg = data.products?.length
+      const displayedParts = data.products?.map((part) => ({
+        ...part,
+        ...(partsInventory.find((inventoryPart) => inventoryPart.partNumber === part.partNumber) || {}),
+      }))
+      const botMsg = data.handled
         ? {
           id: `bot-${Date.now()}`,
           sender: 'bot',
           text: data.reply,
-          parts: data.products,
+          parts: displayedParts,
+          action: data.action,
           time: getFormattedTime(),
         }
-        : generateBotReply(query)
+        : generateBotReply(query, activePart)
+
+      if (displayedParts?.length) setActivePart(displayedParts[0])
 
       setMessages((prev) => [...prev, botMsg])
     } catch {
       // Keep the current local assistant available during local development.
-      setMessages((prev) => [...prev, generateBotReply(query)])
+      const botMsg = generateBotReply(query, activePart)
+      if (botMsg.parts?.length) setActivePart(botMsg.parts[0])
+      setMessages((prev) => [...prev, botMsg])
     } finally {
       setIsTyping(false)
     }
-  }, [inputValue])
+  }, [inputValue, activePart])
 
   const handleFormSubmit = useCallback((e) => {
     e.preventDefault()
