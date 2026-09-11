@@ -176,7 +176,7 @@ function Header({ hideTopBar = false }) {
                 <span className="site-header__mobile-link-text">{label}</span>
                 {to === '/catalog' && (
                   <span className="site-header__mobile-badge">
-                    <a>{partsInventory.length}</a>
+                    <span>{partsInventory.length}</span>
                   </span>
                 )}
               </NavLink>
