@@ -8,24 +8,29 @@ async function getAiReply({ message, language, activePart }) {
   const apiKey = process.env.OPENAI_API_KEY
   if (!apiKey) return null
 
-  const response = await fetch('https://api.openai.com/v1/responses', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${apiKey}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      model: process.env.OPENAI_MODEL || 'gpt-5-mini',
-      store: false,
-      max_output_tokens: 220,
-      instructions: `You are Golden Wings International's aviation parts assistant. Reply in ${language === 'es' ? 'Spanish' : 'English'} in a concise, professional tone. Use only the catalog facts supplied below for prices, conditions, quantities, and availability. Never invent a price, stock level, certification, lead time, or company policy. If the answer is not in the catalog, state that the sales team must confirm it. When the visitor wants a quote, tell them you can start an RFQ in the chat.\n\nCatalog:\n${CATALOG_CONTEXT}`,
-      input: `Visitor question: ${message}\n${activePart ? `Current selected part: ${JSON.stringify(activePart)}` : ''}`,
-    }),
-  })
+  try {
+    const response = await fetch('https://api.openai.com/v1/responses', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: process.env.OPENAI_MODEL || 'gpt-5-mini',
+        store: false,
+        max_output_tokens: 220,
+        instructions: `You are Golden Wings International's aviation parts assistant. Reply in ${language === 'es' ? 'Spanish' : 'English'} in a concise, professional tone. Use only the catalog facts supplied below for prices, conditions, quantities, and availability. Never invent a price, stock level, certification, lead time, or company policy. If the answer is not in the catalog, state that the sales team must confirm it. For AOG requests, acknowledge urgency and request the necessary operational details. When the visitor wants a quote, tell them you can start an RFQ in the chat.\n\nCatalog:\n${CATALOG_CONTEXT}`,
+        input: `Visitor question: ${message}\n${activePart ? `Current selected part: ${JSON.stringify(activePart)}` : ''}`,
+      }),
+    })
 
-  if (!response.ok) return null
-  const data = await response.json()
-  return data.output_text?.trim() || null
+    if (!response.ok) return null
+    const data = await response.json()
+    return data.output_text?.trim() || null
+  } catch (error) {
+    console.error('OpenAI chat request failed:', error)
+    return null
+  }
 }
 
 export default async (request) => {
@@ -51,9 +56,26 @@ export default async (request) => {
       (item) => item.partNumber.toLowerCase() === activePartNumber.trim().toLowerCase(),
     )
     const isPricingQuestion = /\b(price|pricing|cost|quote|quotation|rfq|precio|cotiz)/.test(query)
+    const isAogRequest = /\b(aog|urgent|urgently|emergency|critical|urgente|emergencia)\b/.test(query)
+
+    if (isAogRequest) {
+      const aiReply = await getAiReply({ message, language, activePart })
+      return new Response(JSON.stringify({
+        source: aiReply ? 'ai' : 'rules',
+        handled: Boolean(aiReply),
+        reply: aiReply || (language === 'es'
+          ? 'Entendemos que es una solicitud AOG urgente. Indique numero de parte, cantidad, aeronave, condicion requerida y ubicacion para priorizar la atencion.'
+          : 'We understand this is an urgent AOG request. Please share the part number, quantity, aircraft, required condition, and location so we can prioritize it.'),
+        action: { type: 'rfq', label: language === 'es' ? 'Iniciar RFQ AOG en el chat' : 'Start AOG RFQ in chat' },
+      }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      })
+    }
 
     if (isPricingQuestion && activePart) {
       return new Response(JSON.stringify({
+        source: 'catalog',
         handled: true,
         reply: language === 'es'
           ? `${activePart.partNumber} — ${activePart.description} esta listado en ${activePart.price}. Condicion disponible: ${activePart.condition}. Cantidad mostrada: ${activePart.quantity}.`
@@ -76,6 +98,7 @@ export default async (request) => {
 
     if (products.length) {
       return new Response(JSON.stringify({
+        source: 'catalog',
         reply: language === 'es'
           ? `Encontre ${products.length} producto(s) relacionado(s) con su busqueda.`
           : `I found ${products.length} product(s) related to your query.`,
@@ -89,6 +112,7 @@ export default async (request) => {
 
     const aiReply = await getAiReply({ message, language, activePart })
     return new Response(JSON.stringify({
+      source: aiReply ? 'ai' : 'rules',
       reply: aiReply || (language === 'es'
         ? 'No encontre una coincidencia exacta. Puedo ayudarle a iniciar una RFQ para que nuestro equipo la revise.'
         : 'I could not find an exact match. I can help you start an RFQ so our team can review it.'),
