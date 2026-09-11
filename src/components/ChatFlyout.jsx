@@ -50,7 +50,7 @@ function generateBotReply(userText, activePart = null, isSpanish = false) {
   const idSuffix = `${Date.now()}-${Math.floor(Math.random() * 1000)}`
 
   // 0. Common conversational intents
-  if (/^(hi|hello|hey|good morning|good afternoon|good evening|hola|buenos dias|buenas tardes|buenas noches)\b/.test(query)) {
+  if (/^(hi|hello|hey|good morning|good afternoon|good evening|hola|buenos dias|buenas tardes|buenas noches)[!. ,]*$/.test(query)) {
     return {
       id: `bot-${idSuffix}`,
       sender: 'bot',

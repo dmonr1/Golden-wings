@@ -6,7 +6,7 @@ const CATALOG_CONTEXT = catalog.map(({ partNumber, description, price, condition
 
 async function getAiReply({ message, language, activePart }) {
   const apiKey = process.env.OPENAI_API_KEY
-  if (!apiKey) return null
+  if (!apiKey) return { reply: null, status: 'not_configured' }
 
   try {
     const response = await fetch('https://api.openai.com/v1/responses', {
@@ -24,12 +24,16 @@ async function getAiReply({ message, language, activePart }) {
       }),
     })
 
-    if (!response.ok) return null
+    if (!response.ok) {
+      console.error('OpenAI chat request returned:', response.status)
+      return { reply: null, status: 'failed' }
+    }
     const data = await response.json()
-    return data.output_text?.trim() || null
+    const reply = data.output_text?.trim() || null
+    return { reply, status: reply ? 'active' : 'empty' }
   } catch (error) {
     console.error('OpenAI chat request failed:', error)
-    return null
+    return { reply: null, status: 'failed' }
   }
 }
 
@@ -59,11 +63,12 @@ export default async (request) => {
     const isAogRequest = /\b(aog|urgent|urgently|emergency|critical|urgente|emergencia)\b/.test(query)
 
     if (isAogRequest) {
-      const aiReply = await getAiReply({ message, language, activePart })
+      const ai = await getAiReply({ message, language, activePart })
       return new Response(JSON.stringify({
-        source: aiReply ? 'ai' : 'rules',
-        handled: Boolean(aiReply),
-        reply: aiReply || (language === 'es'
+        source: ai.reply ? 'ai' : 'rules',
+        aiStatus: ai.status,
+        handled: Boolean(ai.reply),
+        reply: ai.reply || (language === 'es'
           ? 'Entendemos que es una solicitud AOG urgente. Indique numero de parte, cantidad, aeronave, condicion requerida y ubicacion para priorizar la atencion.'
           : 'We understand this is an urgent AOG request. Please share the part number, quantity, aircraft, required condition, and location so we can prioritize it.'),
         action: { type: 'rfq', label: language === 'es' ? 'Iniciar RFQ AOG en el chat' : 'Start AOG RFQ in chat' },
@@ -76,6 +81,7 @@ export default async (request) => {
     if (isPricingQuestion && activePart) {
       return new Response(JSON.stringify({
         source: 'catalog',
+        aiStatus: 'not_used',
         handled: true,
         reply: language === 'es'
           ? `${activePart.partNumber} — ${activePart.description} esta listado en ${activePart.price}. Condicion disponible: ${activePart.condition}. Cantidad mostrada: ${activePart.quantity}.`
@@ -90,15 +96,17 @@ export default async (request) => {
       })
     }
 
+    const searchTerms = query.match(/[a-z0-9]+(?:-[a-z0-9]+)+|[a-z0-9]{3,}/g) || []
     const products = catalog.filter((item) =>
       [item.partNumber, item.description, item.fleet, item.category, item.condition]
         .filter(Boolean)
-        .some((value) => value.toLowerCase().includes(query)),
+        .some((value) => searchTerms.some((term) => value.toLowerCase().includes(term))),
     )
 
     if (products.length) {
       return new Response(JSON.stringify({
         source: 'catalog',
+        aiStatus: 'not_used',
         reply: language === 'es'
           ? `Encontre ${products.length} producto(s) relacionado(s) con su busqueda.`
           : `I found ${products.length} product(s) related to your query.`,
@@ -110,17 +118,18 @@ export default async (request) => {
       })
     }
 
-    const aiReply = await getAiReply({ message, language, activePart })
+    const ai = await getAiReply({ message, language, activePart })
     return new Response(JSON.stringify({
-      source: aiReply ? 'ai' : 'rules',
-      reply: aiReply || (language === 'es'
+      source: ai.reply ? 'ai' : 'rules',
+      aiStatus: ai.status,
+      reply: ai.reply || (language === 'es'
         ? 'No encontre una coincidencia exacta. Puedo ayudarle a iniciar una RFQ para que nuestro equipo la revise.'
         : 'I could not find an exact match. I can help you start an RFQ so our team can review it.'),
       action: /\b(rfq|quote|quotation|price|pricing|cost|precio|cotiz)/.test(query)
         ? { type: 'rfq', label: language === 'es' ? 'Iniciar RFQ en el chat' : 'Start RFQ in chat' }
         : undefined,
-      handled: Boolean(aiReply),
-      needsContact: !aiReply,
+      handled: Boolean(ai.reply),
+      needsContact: !ai.reply,
     }), {
       status: 200,
       headers: { 'Content-Type': 'application/json' },
