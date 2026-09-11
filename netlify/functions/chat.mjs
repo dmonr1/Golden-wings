@@ -26,14 +26,14 @@ async function getAiReply({ message, language, activePart }) {
 
     if (!response.ok) {
       console.error('OpenAI chat request returned:', response.status)
-      return { reply: null, status: 'failed' }
+      return { reply: null, status: `failed_${response.status}` }
     }
     const data = await response.json()
     const reply = data.output_text?.trim() || null
     return { reply, status: reply ? 'active' : 'empty' }
   } catch (error) {
     console.error('OpenAI chat request failed:', error)
-    return { reply: null, status: 'failed' }
+    return { reply: null, status: 'failed_network' }
   }
 }
 
