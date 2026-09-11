@@ -8015,6 +8015,12 @@ a.site-footer__link:hover {
     height: 45px;
   }
 
+  .chat-fab--active {
+    visibility: hidden;
+    pointer-events: none;
+    opacity: 0;
+  }
+
   .floating-back-to-top {
     right: 16px;
     bottom: 72px;
