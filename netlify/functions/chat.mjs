@@ -5,34 +5,45 @@ const CATALOG_CONTEXT = catalog.map(({ partNumber, description, price, condition
 )).join('\n')
 
 async function getAiReply({ message, language, activePart }) {
-  const apiKey = process.env.OPENAI_API_KEY
+  const apiKey = process.env.GEMINI_API_KEY
   if (!apiKey) return { reply: null, status: 'not_configured' }
 
   try {
-    const response = await fetch('https://api.openai.com/v1/responses', {
+    const systemInstruction = `You are Golden Wings International's aviation parts assistant. Reply in ${language === 'es' ? 'Spanish' : 'English'} in a concise, professional tone. Use only the catalog facts supplied below for prices, conditions, quantities, and availability. Never invent a price, stock level, certification, lead time, or company policy. If the answer is not in the catalog, state that the sales team must confirm it. For AOG requests, acknowledge urgency and request the necessary operational details. When the visitor wants a quote, tell them you can start an RFQ in the chat.\n\nCatalog:\n${CATALOG_CONTEXT}`
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/${process.env.GEMINI_MODEL || 'gemini-2.5-flash'}:generateContent?key=${encodeURIComponent(apiKey)}`, {
       method: 'POST',
       headers: {
-        Authorization: `Bearer ${apiKey}`,
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        model: process.env.OPENAI_MODEL || 'gpt-5-mini',
-        store: false,
-        max_output_tokens: 220,
-        instructions: `You are Golden Wings International's aviation parts assistant. Reply in ${language === 'es' ? 'Spanish' : 'English'} in a concise, professional tone. Use only the catalog facts supplied below for prices, conditions, quantities, and availability. Never invent a price, stock level, certification, lead time, or company policy. If the answer is not in the catalog, state that the sales team must confirm it. For AOG requests, acknowledge urgency and request the necessary operational details. When the visitor wants a quote, tell them you can start an RFQ in the chat.\n\nCatalog:\n${CATALOG_CONTEXT}`,
-        input: `Visitor question: ${message}\n${activePart ? `Current selected part: ${JSON.stringify(activePart)}` : ''}`,
+        system_instruction: {
+          parts: [{ text: systemInstruction }],
+        },
+        contents: [{
+          role: 'user',
+          parts: [{
+            text: `Visitor question: ${message}\n${activePart ? `Current selected part: ${JSON.stringify(activePart)}` : ''}`,
+          }],
+        }],
+        generationConfig: {
+          maxOutputTokens: 220,
+          temperature: 0.3,
+        },
       }),
     })
 
     if (!response.ok) {
-      console.error('OpenAI chat request returned:', response.status)
+      console.error('Gemini chat request returned:', response.status)
       return { reply: null, status: `failed_${response.status}` }
     }
     const data = await response.json()
-    const reply = data.output_text?.trim() || null
+    const reply = data.candidates?.[0]?.content?.parts
+      ?.map((part) => part.text || '')
+      .join('')
+      .trim() || null
     return { reply, status: reply ? 'active' : 'empty' }
   } catch (error) {
-    console.error('OpenAI chat request failed:', error)
+    console.error('Gemini chat request failed:', error)
     return { reply: null, status: 'failed_network' }
   }
 }
